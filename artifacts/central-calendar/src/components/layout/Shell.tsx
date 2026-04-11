@@ -21,48 +21,43 @@ const NAV_LINKS = [
 ];
 
 /**
- * Renders a logo image from a black-background JPG using mix-blend-mode: screen.
- * The image is scaled up and centered inside a clipping container so the logo
- * content fills the available space (the black borders become transparent on dark bgs).
- *
- * scale: how many times larger to render the image relative to the container
- *        (higher = zoom in more; tune so the logo content fills the container)
+ * Renders a logo from a black-background JPG using CSS background-image +
+ * mix-blend-mode: screen. On a dark bg the black pixels become invisible,
+ * leaving only the green spiral. backgroundSize controls zoom level:
+ * lower % = more of the image visible (less zoom); 250-300% is a good range
+ * for the icon-only image so the spiral fills most of the container.
  */
 function LogoImage({
   src,
   alt,
   width,
   height,
-  scale,
+  bgSize = "280% auto",
   className = "",
 }: {
   src: string;
   alt: string;
   width: number;
   height: number;
-  scale: number;
+  bgSize?: string;
   className?: string;
 }) {
   return (
     <div
-      style={{ width, height, overflow: "hidden", position: "relative", mixBlendMode: "screen" }}
+      style={{
+        width,
+        height,
+        backgroundImage: `url('${src}')`,
+        backgroundSize: bgSize,
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        mixBlendMode: "screen",
+        flexShrink: 0,
+      }}
       className={className}
       role="img"
       aria-label={alt}
-    >
-      <img
-        src={src}
-        alt=""
-        style={{
-          height: `${height * scale}px`,
-          width: "auto",
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-        }}
-      />
-    </div>
+    />
   );
 }
 
@@ -114,14 +109,14 @@ export function Shell({ children }: { children: ReactNode }) {
             scrolled ? "h-12" : "h-16"
           }`}
         >
-          {/* Horizontal logo — zoomed in 3× so the content area fills the container */}
+          {/* Icon-only logo — 280% zoom centres the spiral in the container */}
           <Link href="/" className="shrink-0 mr-4" aria-label="Central Calendar home">
             <LogoImage
-              src="/logo-horizontal.jpg"
+              src="/logo-icon.jpg"
               alt="Central Calendar"
-              width={scrolled ? 150 : 190}
-              height={scrolled ? 28 : 36}
-              scale={3}
+              width={scrolled ? 32 : 40}
+              height={scrolled ? 32 : 40}
+              bgSize="280% auto"
             />
           </Link>
 
@@ -301,13 +296,13 @@ export function Shell({ children }: { children: ReactNode }) {
         <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-10">
           <div className="max-w-xs text-center md:text-left">
             <Link href="/" aria-label="Central Calendar home" className="inline-block">
-              {/* Stacked vertical logo — zoomed 2.8× to fill the container */}
+              {/* Icon-only logo — larger footprint so the spiral is prominent */}
               <LogoImage
-                src="/logo-vertical.jpg"
+                src="/logo-icon.jpg"
                 alt="Central Calendar"
-                width={150}
-                height={180}
-                scale={2.1}
+                width={90}
+                height={90}
+                bgSize="280% auto"
               />
             </Link>
             <p className="text-sm text-primary-foreground/50 mt-3">
