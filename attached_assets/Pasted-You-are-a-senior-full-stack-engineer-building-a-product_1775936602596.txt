@@ -1,0 +1,479 @@
+You are a senior full-stack engineer building a production-ready MVP platform called:
+
+CENTRAL CALENDAR
+
+This is a regional coordination intelligence platform for Central Asia and the Caspian region.
+
+The platform aggregates high-level strategic events across:
+
+Uzbekistan
+Kazakhstan
+Kyrgyzstan
+Turkmenistan
+Caspian Region
+Cross-border Events
+
+The mission of the platform:
+
+PLAN THE REGION.
+
+This is NOT an entertainment events listing website.
+This is a strategic coordination calendar for institutions, corporations and regional stakeholders.
+
+Build the project from scratch.
+
+Use modern production stack architecture.
+
+-------------------------------------
+
+STACK REQUIREMENTS
+
+Frontend:
+
+Next.js 14
+TypeScript
+TailwindCSS
+Server components architecture
+
+Backend:
+
+Supabase
+
+Database:
+
+PostgreSQL
+
+Hosting:
+
+Vercel compatible deployment
+
+Admin panel:
+
+Protected route dashboard
+
+SEO:
+
+schema.org Event markup required
+
+-------------------------------------
+
+CORE PRODUCT FEATURES
+
+Homepage must include:
+
+Hero section
+
+Headline:
+
+PLAN THE REGION.
+
+Subheadline:
+
+Central Calendar is the definitive coordination and intelligence platform for key events across Central Asia and the Caspian region.
+
+Homepage sections:
+
+Featured events
+Upcoming events
+Filter by country
+Filter by sector
+Cross-border events highlight
+
+Sidebar:
+
+Hashtag filtering navigation
+
+-------------------------------------
+
+COUNTRY FILTERS
+
+Uzbekistan
+Kazakhstan
+Kyrgyzstan
+Turkmenistan
+Caspian Region
+Cross-border Events
+
+Each must have dedicated route pages:
+
+/uzbekistan
+/kazakhstan
+/kyrgyzstan
+/turkmenistan
+/caspian-region
+/cross-border
+
+-------------------------------------
+
+SECTOR FILTER TAGS
+
+Investment
+Energy
+Economy & Finance
+Technology
+Sustainability / ESG
+Marketing & Media
+Retail
+Heavy Industry
+
+Each tag must be clickable and filter events dynamically.
+
+-------------------------------------
+
+EVENT CARD STRUCTURE
+
+Each event must contain:
+
+title
+preview image
+description
+date
+time
+location
+organizer external link
+country
+sector tag
+
+CTA button:
+
+Participate
+
+Opens organizer website in new tab
+
+-------------------------------------
+
+DESIGN SYSTEM
+
+Design inspiration:
+
+https://www.afisha.ru/spb/
+https://ticketon.uz/tashkent
+
+But adapt UI to look:
+
+institutional
+minimal
+strategic
+clean
+modern
+not entertainment-focused
+
+Visual tone:
+
+Bloomberg meets Notion meets Stripe events platform
+
+Avoid bright entertainment styling.
+
+Use:
+
+white background
+light gray surfaces
+soft shadows
+large typography hierarchy
+grid layout
+
+-------------------------------------
+
+LAYOUT STRUCTURE
+
+HEADER
+
+Left:
+
+Logo
+
+Center:
+
+Navigation
+
+Countries
+Calendar
+About
+
+Right:
+
+Search
+Admin login
+
+-------------------------------------
+
+SIDEBAR
+
+Right sidebar:
+
+Hashtags filtering
+
+Clickable chips:
+
+Investment
+Energy
+Technology
+etc
+
+Sticky sidebar behavior
+
+-------------------------------------
+
+CALENDAR VIEW
+
+Calendar page:
+
+/calendar
+
+Must support:
+
+month view
+week view
+agenda list
+
+Events clickable
+
+-------------------------------------
+
+EVENT PAGE
+
+Route example:
+
+/event/central-asia-energy-forum
+
+Layout:
+
+Hero image
+
+Title
+
+Date
+
+Location
+
+Description
+
+Sector tags
+
+Participate button
+
+Related events section
+
+-------------------------------------
+
+DATABASE STRUCTURE
+
+Create tables:
+
+events
+
+fields:
+
+id
+title
+slug
+description
+preview_image
+country
+sector
+location
+start_date
+end_date
+organizer_link
+created_at
+
+countries
+
+id
+name
+
+sectors
+
+id
+name
+
+-------------------------------------
+
+ADMIN PANEL
+
+Route:
+
+/admin
+
+Authentication required
+
+Admin capabilities:
+
+create event
+edit event
+delete event
+
+Upload preview image
+
+Assign:
+
+country
+sector
+date
+location
+
+-------------------------------------
+
+FILTERING SYSTEM
+
+Allow filtering by:
+
+country
+sector
+date
+
+Filtering must work:
+
+without page reload
+
+Use server actions or API routes
+
+-------------------------------------
+
+SEO STRUCTURE
+
+Each event page must include:
+
+schema.org Event JSON-LD
+
+Meta tags:
+
+title
+description
+open graph image
+
+Generate sitemap.xml automatically
+
+Generate robots.txt
+
+-------------------------------------
+
+SEARCH FEATURE
+
+Search input in header
+
+Must search:
+
+event title
+country
+sector
+
+Realtime filtering preferred
+
+-------------------------------------
+
+PERFORMANCE REQUIREMENTS
+
+Use:
+
+server components where possible
+
+lazy loading images
+
+dynamic routing
+
+optimized fonts
+
+-------------------------------------
+
+ACCESSIBILITY
+
+Support:
+
+keyboard navigation
+
+aria labels
+
+semantic html
+
+-------------------------------------
+
+RESPONSIVE DESIGN
+
+Must support:
+
+desktop
+tablet
+mobile
+
+Sidebar collapses on mobile
+
+Filters move into drawer
+
+-------------------------------------
+
+DEPLOYMENT CONFIGURATION
+
+Prepare project for:
+
+Vercel deployment
+
+Environment variables:
+
+SUPABASE_URL
+SUPABASE_KEY
+
+-------------------------------------
+
+INITIAL DATA SEED
+
+Prepare JSON seed example:
+
+10 demo events
+
+Across:
+
+Uzbekistan
+Kazakhstan
+Cross-border
+
+Different sectors
+
+-------------------------------------
+
+PROJECT STRUCTURE
+
+Use folder layout:
+
+/app
+/components
+/lib
+/utils
+/styles
+/public
+
+-------------------------------------
+
+ABOUT PAGE
+
+Explain platform mission:
+
+Central Calendar creates shared visibility across Central Asia strategic activity landscape.
+
+Include headline:
+
+Plan the Region.
+
+-------------------------------------
+
+FINAL DELIVERABLE
+
+Production-ready MVP
+
+Includes:
+
+homepage
+country pages
+calendar page
+event page
+admin dashboard
+filtering system
+search system
+SEO setup
+responsive layout
+database schema
+seed data
+
+-------------------------------------
+
+START BUILDING NOW

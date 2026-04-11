@@ -1,0 +1,257 @@
+Upgrade the existing Central Calendar project.
+
+The UI already exists.
+
+Now implement backend logic and admin CMS functionality using Supabase.
+
+-------------------------------------
+
+OBJECTIVE
+
+Enable:
+
+event filtering
+search
+admin dashboard
+CRUD events
+archive system
+country filtering
+tag filtering
+
+-------------------------------------
+
+DATABASE STRUCTURE
+
+Create tables:
+
+events
+
+fields:
+
+id uuid primary key
+title text
+slug text unique
+description text
+preview_image text
+country_id uuid
+location text
+start_date timestamp
+end_date timestamp
+organizer_link text
+status text default 'draft'
+created_at timestamp default now()
+updated_at timestamp default now()
+
+-------------------------------------
+
+countries
+
+fields:
+
+id uuid primary key
+name text
+slug text
+
+Insert values:
+
+uzbekistan
+kazakhstan
+kyrgyzstan
+turkmenistan
+caspian-region
+cross-border
+
+-------------------------------------
+
+tags
+
+fields:
+
+id uuid primary key
+name text
+slug text
+
+Insert values:
+
+investment
+energy
+economy-finance
+technology
+sustainability
+marketing-media
+retail
+heavy-industry
+
+-------------------------------------
+
+event_tags
+
+fields:
+
+id uuid primary key
+event_id uuid references events(id)
+tag_id uuid references tags(id)
+
+-------------------------------------
+
+FILTERING SYSTEM
+
+Implement filters:
+
+country filter
+tag filter
+date filter
+
+Support combined filtering:
+
+country + tag
+
+Example:
+
+/events?country=uzbekistan&tag=energy
+
+Return only:
+
+status = published
+
+-------------------------------------
+
+SEARCH SYSTEM
+
+Search must support:
+
+title
+description
+location
+tags
+
+Implement realtime search endpoint:
+
+/search?q=query
+
+Use ilike queries
+
+-------------------------------------
+
+ARCHIVE SYSTEM
+
+Do not delete events.
+
+Instead:
+
+status = archived
+
+Archived events:
+
+hidden from frontend
+visible in admin panel
+
+-------------------------------------
+
+ADMIN PANEL
+
+Route:
+
+/admin
+
+Protected route
+
+Authentication required
+
+Admin must be able to:
+
+create event
+edit event
+delete event
+archive event
+publish event
+
+-------------------------------------
+
+ADMIN EVENTS TABLE VIEW
+
+Columns:
+
+title
+country
+tags
+date
+status
+
+Actions:
+
+edit
+archive
+delete
+publish
+
+-------------------------------------
+
+EVENT EDIT PAGE
+
+Allow editing:
+
+title
+description
+image
+country
+tags
+date
+location
+organizer link
+status
+
+-------------------------------------
+
+CREATE EVENT PAGE
+
+Allow selecting:
+
+country dropdown
+multiple tags selection
+date picker
+image upload
+
+-------------------------------------
+
+API ROUTES REQUIRED
+
+/events
+/events/create
+/events/update
+/events/archive
+/events/delete
+/search
+
+-------------------------------------
+
+FRONTEND REQUIREMENTS
+
+Filtering must update UI without page reload.
+
+Use server actions or API fetch.
+
+Search must update results live.
+
+-------------------------------------
+
+SECURITY
+
+Admin routes protected
+
+Only admin users allowed to modify events
+
+-------------------------------------
+
+FINAL RESULT
+
+Working:
+
+filtering system
+search system
+admin CMS
+archive logic
+country filtering
+tag filtering
+
+Production-ready implementation

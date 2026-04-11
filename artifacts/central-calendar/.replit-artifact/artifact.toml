@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Central Calendar"
+version = "1.0.0"
+id = "artifacts/central-calendar"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25018
+
+[services.development]
+run = "pnpm --filter @workspace/central-calendar run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/central-calendar", "run", "build" ]
+publicDir = "artifacts/central-calendar/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25018"
+BASE_PATH = "/"
