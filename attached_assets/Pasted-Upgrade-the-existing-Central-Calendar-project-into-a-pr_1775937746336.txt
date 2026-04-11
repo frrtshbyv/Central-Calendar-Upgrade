@@ -1,0 +1,364 @@
+Upgrade the existing Central Calendar project into a production-ready event intelligence platform.
+
+The UI already exists.
+
+Now implement missing functionality:
+
+1) tag filtering
+2) responsive layout
+3) backend CMS admin panel
+4) archive system
+5) animations (lightweight)
+6) search improvements
+7) protected admin access
+8) logo integration
+
+Do NOT rebuild UI from scratch.
+Extend current architecture.
+
+-------------------------------------
+
+USE PROVIDED LOGO
+
+Replace current placeholder logo with uploaded file:
+
+/public/logo.png
+
+Logo must appear:
+
+header left
+footer
+mobile header
+
+Height:
+
+desktop = 40px
+mobile = 28px
+
+Keep aspect ratio.
+
+-------------------------------------
+
+RESPONSIVE DESIGN FIXES REQUIRED
+
+Fix layout for:
+
+desktop ≥ 1440px
+laptop 1024px
+tablet 768px
+mobile 375px
+
+Required behavior:
+
+sidebar collapses into drawer on tablet/mobile
+
+filters become dropdown selector
+
+event grid becomes:
+
+4 columns desktop
+2 columns tablet
+1 column mobile
+
+calendar switches:
+
+month view → list view on mobile
+
+header becomes compact on scroll
+
+-------------------------------------
+
+TAG FILTERING SYSTEM
+
+Add filtering by tags:
+
+Investment
+Energy
+Economy & Finance
+Technology
+Sustainability / ESG
+Marketing & Media
+Retail
+Heavy Industry
+
+Filtering must support:
+
+multi-tag filtering
+
+Example:
+
+Energy + Investment
+
+Filtering must update results without page reload.
+
+Use Supabase query filtering.
+
+Example:
+
+select events
+where tag in selected_tags
+and status = 'published'
+
+-------------------------------------
+
+COUNTRY FILTERING
+
+Enable filters:
+
+Uzbekistan
+Kazakhstan
+Kyrgyzstan
+Turkmenistan
+Caspian Region
+Cross-border Events
+
+Support combined filters:
+
+country + tag
+
+-------------------------------------
+
+SEARCH SYSTEM IMPROVEMENT
+
+Search must support:
+
+title
+description
+location
+tags
+country
+
+Realtime filtering preferred.
+
+Endpoint:
+
+/search?q=
+
+Use ilike queries.
+
+-------------------------------------
+
+FULL ADMIN PANEL CMS
+
+Create protected admin dashboard:
+
+Route:
+
+/control-room-centralcalendar-9xA2m
+
+Admin panel must allow:
+
+create event
+edit event
+delete event
+archive event
+publish event
+
+-------------------------------------
+
+EVENT STATUS SYSTEM
+
+Each event must support:
+
+draft
+published
+archived
+
+Frontend shows only:
+
+published
+
+Admin panel shows:
+
+all
+
+Archive does NOT delete record.
+
+Archive only changes:
+
+status = archived
+
+-------------------------------------
+
+DATABASE STRUCTURE REQUIRED
+
+events
+
+fields:
+
+id uuid
+title text
+slug text
+description text
+preview_image text
+country text
+location text
+start_date timestamp
+end_date timestamp
+organizer_link text
+status text
+created_at timestamp
+updated_at timestamp
+
+-------------------------------------
+
+tags
+
+fields:
+
+id uuid
+name text
+slug text
+
+-------------------------------------
+
+event_tags
+
+fields:
+
+event_id
+tag_id
+
+Support many-to-many relationship.
+
+-------------------------------------
+
+ADMIN AUTHENTICATION
+
+Admin panel accessible only via:
+
+/control-room-centralcalendar-9xA2m
+
+No public signup allowed.
+
+Use environment variables:
+
+ADMIN_EMAIL
+ADMIN_PASSWORD
+
+Protect routes using middleware.
+
+Redirect unauthorized users:
+
+homepage
+
+-------------------------------------
+
+ARCHIVE MANAGEMENT PAGE
+
+Add route:
+
+/control-room-centralcalendar-9xA2m/archive
+
+Display archived events.
+
+Allow restore option:
+
+status = published
+
+-------------------------------------
+
+EVENT CREATION FORM
+
+Admin must select:
+
+title
+description
+country dropdown
+multi-tag selector
+date picker
+location
+organizer link
+image upload
+status selector
+
+-------------------------------------
+
+LIGHTWEIGHT UI ANIMATIONS
+
+Add animations carefully.
+
+Use ONLY:
+
+CSS transitions
+Tailwind transitions
+
+Avoid:
+
+Framer Motion
+GSAP
+
+Animations required:
+
+card hover elevation
+button hover fade
+filter selection highlight
+sidebar slide animation
+mobile drawer slide
+page fade-in on navigation
+
+Duration:
+
+150ms–250ms
+
+Must NOT impact performance.
+
+-------------------------------------
+
+PERFORMANCE RULES
+
+Use:
+
+lazy image loading
+next/image optimization
+server components
+
+Avoid heavy javascript animations.
+
+-------------------------------------
+
+SEO STRUCTURE
+
+Each event page must include:
+
+schema.org Event JSON-LD
+
+Meta tags:
+
+title
+description
+open graph preview image
+
+Generate:
+
+robots.txt
+sitemap.xml
+
+-------------------------------------
+
+ACCESSIBILITY
+
+Support:
+
+keyboard navigation
+aria labels
+semantic html
+
+-------------------------------------
+
+FINAL RESULT REQUIRED
+
+Working:
+
+tag filtering
+country filtering
+search
+admin dashboard CMS
+archive logic
+responsive layout
+logo integration
+lightweight animations
+protected admin route
+Supabase backend integration
+
+Production-ready Central Calendar platform.

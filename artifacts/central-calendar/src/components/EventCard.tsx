@@ -3,19 +3,18 @@ import { Event } from "@workspace/api-client-react";
 import { format } from "date-fns";
 import { Calendar, MapPin, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
 
-export function EventCard({ event, index = 0 }: { event: Event, index?: number }) {
+export function EventCard({ event, index = 0 }: { event: Event; index?: number }) {
   const isPast = new Date(event.endDate || event.startDate) < new Date();
-  
+
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: index * 0.1 }}
-      className={`group flex flex-col sm:flex-row bg-card border border-border rounded-lg overflow-hidden transition-all hover:border-primary/50 hover:shadow-md ${isPast ? 'opacity-70' : ''}`}
+    <div
+      className={`group flex flex-col sm:flex-row bg-card border border-border rounded-lg overflow-hidden
+        transition-all duration-200 hover:border-primary/50 hover:shadow-md hover:-translate-y-0.5
+        ${isPast ? "opacity-70" : ""}
+      `}
+      style={{ animationDelay: `${index * 60}ms` }}
     >
-      {/* Date block */}
       <div className="sm:w-32 bg-muted/50 p-4 flex flex-col justify-center items-center border-b sm:border-b-0 sm:border-r border-border shrink-0">
         <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-1">
           {format(new Date(event.startDate), "MMM")}
@@ -27,15 +26,18 @@ export function EventCard({ event, index = 0 }: { event: Event, index?: number }
           {format(new Date(event.startDate), "yyyy")}
         </span>
       </div>
-      
-      {/* Content */}
+
       <div className="p-5 flex-1 flex flex-col">
         <div className="flex flex-wrap gap-2 mb-3">
           <Badge variant="secondary" className="rounded-sm font-medium">
             {event.countryName}
           </Badge>
-          {event.tags?.map(tag => (
-            <Badge key={tag.id} variant="outline" className="rounded-sm font-normal text-muted-foreground bg-transparent">
+          {event.tags?.map((tag) => (
+            <Badge
+              key={tag.id}
+              variant="outline"
+              className="rounded-sm font-normal text-muted-foreground bg-transparent"
+            >
               {tag.name}
             </Badge>
           ))}
@@ -45,15 +47,16 @@ export function EventCard({ event, index = 0 }: { event: Event, index?: number }
             </Badge>
           )}
         </div>
-        
-        <Link href={`/event/${event.slug}`} className="text-xl font-bold mb-2 group-hover:text-primary transition-colors line-clamp-2">
+
+        <Link
+          href={`/event/${event.slug}`}
+          className="text-xl font-bold mb-2 group-hover:text-primary transition-colors duration-150 line-clamp-2"
+        >
           {event.title}
         </Link>
-        
-        <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-1">
-          {event.description}
-        </p>
-        
+
+        <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-1">{event.description}</p>
+
         <div className="flex flex-wrap items-center justify-between gap-4 mt-auto pt-4 border-t border-border/50">
           <div className="flex items-center gap-4 text-xs text-muted-foreground">
             <div className="flex items-center gap-1.5">
@@ -67,15 +70,14 @@ export function EventCard({ event, index = 0 }: { event: Event, index?: number }
               </div>
             )}
           </div>
-          
-          <Link 
+          <Link
             href={`/event/${event.slug}`}
-            className="text-sm font-medium text-primary flex items-center gap-1 hover:underline"
+            className="text-sm font-medium text-primary flex items-center gap-1 hover:underline transition-colors duration-150"
           >
             Details <ExternalLink className="w-3 h-3" />
           </Link>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

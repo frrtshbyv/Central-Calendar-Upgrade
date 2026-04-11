@@ -1,0 +1,255 @@
+Upgrade Central Calendar admin panel security to production-grade restricted access.
+
+The admin panel must NOT be publicly accessible.
+
+Implement a secure private CMS system.
+
+-------------------------------------
+
+ADMIN PANEL ACCESS STRATEGY
+
+Admin panel must be available ONLY through a private route.
+
+Do NOT use:
+
+/admin
+
+Instead generate:
+
+/control-room-7f92x
+
+Use this route as admin dashboard entry.
+
+This route must NOT appear anywhere in navigation.
+
+-------------------------------------
+
+NO PUBLIC REGISTRATION
+
+Disable:
+
+signup
+self-registration
+public login
+
+Only one admin account exists.
+
+-------------------------------------
+
+ADMIN ACCOUNT
+
+Create one admin user only.
+
+Credentials must be stored securely via environment variables:
+
+ADMIN_EMAIL
+ADMIN_PASSWORD
+
+Example:
+
+ADMIN_EMAIL=admin@centralcalendar.org
+ADMIN_PASSWORD=SuperSecurePassword123
+
+Only this user can access admin dashboard.
+
+-------------------------------------
+
+SUPABASE AUTHORIZATION
+
+Use Supabase Auth.
+
+Restrict admin routes:
+
+Only authenticated admin allowed.
+
+Implement middleware protection:
+
+if not admin → redirect to homepage
+
+-------------------------------------
+
+ROLE-BASED ACCESS CONTROL
+
+Add role column:
+
+users.role
+
+Default:
+
+viewer
+
+Admin user role:
+
+admin
+
+Only role=admin can:
+
+create events
+edit events
+archive events
+delete events
+
+-------------------------------------
+
+HIDE ADMIN PANEL FROM SEARCH ENGINES
+
+Add robots.txt rule:
+
+Disallow: /control-room-7f92x
+
+Add meta tag:
+
+noindex
+
+for admin routes
+
+-------------------------------------
+
+PROTECT API ROUTES
+
+Protect endpoints:
+
+/events/create
+/events/update
+/events/delete
+/events/archive
+
+Allow access ONLY if:
+
+user.role == admin
+
+-------------------------------------
+
+ENABLE ROW LEVEL SECURITY
+
+Enable Supabase RLS on:
+
+events table
+
+Policies:
+
+Public users:
+
+select where status = 'published'
+
+Admin:
+
+full access
+
+-------------------------------------
+
+SECURE IMAGE UPLOAD
+
+Only admin can upload images.
+
+Store inside:
+
+/storage/events-previews
+
+-------------------------------------
+
+ADMIN PANEL STRUCTURE
+
+Route:
+
+/control-room-7f92x
+
+Subpages:
+
+/control-room-7f92x/events
+/control-room-7f92x/events/new
+/control-room-7f92x/events/edit/:id
+/control-room-7f92x/archive
+
+-------------------------------------
+
+ADMIN LOGIN PAGE
+
+Route:
+
+/control-room-7f92x/login
+
+Require login before dashboard access.
+
+After login redirect:
+
+/control-room-7f92x/events
+
+-------------------------------------
+
+SESSION SECURITY
+
+Use:
+
+httpOnly cookies
+secure cookies
+JWT session validation
+
+Auto logout after inactivity:
+
+60 minutes
+
+-------------------------------------
+
+BRUTE FORCE PROTECTION
+
+Limit login attempts:
+
+max 5 attempts per 10 minutes
+
+After limit:
+
+temporary lockout
+
+-------------------------------------
+
+LOGGING
+
+Log admin actions:
+
+create event
+edit event
+archive event
+delete event
+
+Store inside:
+
+admin_logs table
+
+fields:
+
+id
+admin_id
+action
+event_id
+timestamp
+
+-------------------------------------
+
+SECURE SEARCH ENGINE INDEXING
+
+Prevent indexing:
+
+/control-room-7f92x
+
+Add:
+
+X-Robots-Tag: noindex
+
+-------------------------------------
+
+FINAL RESULT
+
+Admin panel must:
+
+be hidden
+be private
+require authentication
+require admin role
+have protected API routes
+have secure session handling
+have Supabase RLS protection
+have login attempt protection
+have activity logging
+
+Production-grade CMS security enabled.
