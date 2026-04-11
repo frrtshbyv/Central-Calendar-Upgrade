@@ -299,7 +299,7 @@ export default function AdminEventForm() {
             )} />
 
             <div className="md:col-span-2 space-y-4">
-              <FormLabel>Sectors (Tags)</FormLabel>
+              <label className="text-sm font-medium leading-none">Sectors (Tags)</label>
               <div className="flex flex-wrap gap-2">
                 {tags?.map(tag => {
                   const isSelected = form.watch("tagIds").includes(tag.id);
