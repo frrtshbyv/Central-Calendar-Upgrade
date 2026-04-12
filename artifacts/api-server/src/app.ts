@@ -1,4 +1,4 @@
-import express, { type Express } from "express";
+import express, { type Express, type Request, type Response, type NextFunction } from "express";
 import cors from "cors";
 import pinoHttp from "pino-http";
 import session from "express-session";
@@ -8,6 +8,12 @@ import router from "./routes";
 import { logger } from "./lib/logger";
 
 const app: Express = express();
+
+// Trust Replit's reverse proxy so secure cookies work over HTTPS in production
+app.set("trust proxy", 1);
+
+// Disable ETags globally — prevents browsers caching auth state as 304
+app.set("etag", false);
 
 app.use(
   pinoHttp({
@@ -32,6 +38,14 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// No-cache middleware for all admin endpoints
+app.use("/api/admin", (_req: Request, res: Response, next: NextFunction) => {
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  res.set("Pragma", "no-cache");
+  res.set("Expires", "0");
+  next();
+});
+
 const sessionSecret = process.env.SESSION_SECRET ?? "central-calendar-secret-key-change-in-production";
 
 const PgStore = PgSession(session);
@@ -54,8 +68,8 @@ app.use(
     store: new PgStore({
       pool,
       tableName: "admin_sessions",
-      ttl: 60 * 60, // 1 hour in seconds
-      pruneSessionInterval: 60 * 15, // prune every 15 minutes
+      ttl: 60 * 60,
+      pruneSessionInterval: 60 * 15,
     }),
     secret: sessionSecret,
     resave: false,
@@ -63,7 +77,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: isProduction,
-      maxAge: 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
       sameSite: isProduction ? "none" : "lax",
     },
   })
