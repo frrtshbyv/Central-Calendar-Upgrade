@@ -3,7 +3,8 @@ import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useAdminLogin, useAdminMe } from "@workspace/api-client-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAdminLogin, useAdminMe, getAdminMeQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -18,6 +19,7 @@ const formSchema = z.object({
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const login = useAdminLogin();
   const { data: me, isLoading: checkingAuth } = useAdminMe();
   
@@ -55,9 +57,11 @@ export default function AdminLogin() {
       onSuccess: (res) => {
         if (res.success) {
           toast({ title: "Authentication successful", description: "Accessing control room..." });
+          // Update the cache immediately so ProtectedAdminRoute sees authenticated=true
+          // before the background refetch completes, preventing a stale-cache bounce
+          queryClient.setQueryData(getAdminMeQueryKey(), { authenticated: true, email: values.email });
           setLocation("/control-room-7f92x/events");
         } else {
-          // Should not hit here if API throws 401, but just in case
           handleFailedAttempt();
         }
       },
