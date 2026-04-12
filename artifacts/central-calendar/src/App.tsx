@@ -55,6 +55,9 @@ function AppRouter() {
       <Route path="/control-room-7f92x/*">
         <AdminShell>
           <Switch>
+            <Route path="/control-room-7f92x">
+              <Redirect to="/control-room-7f92x/events" />
+            </Route>
             <Route path="/control-room-7f92x/events">
               <ProtectedAdminRoute component={AdminDashboard} />
             </Route>
