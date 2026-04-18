@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Link, useLocation, useParams } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +22,32 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
 import { format } from "date-fns";
+
+const CYRILLIC_TO_LATIN: Record<string, string> = {
+  а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "yo", ж: "zh",
+  з: "z", и: "i", й: "y", к: "k", л: "l", м: "m", н: "n", о: "o",
+  п: "p", р: "r", с: "s", т: "t", у: "u", ф: "f", х: "kh", ц: "ts",
+  ч: "ch", ш: "sh", щ: "shch", ъ: "", ы: "y", ь: "", э: "e", ю: "yu",
+  я: "ya", і: "i", ї: "yi", є: "ye", ґ: "g", ў: "u",
+};
+
+function transliterate(input: string): string {
+  let out = "";
+  for (const ch of input.toLowerCase()) {
+    out += CYRILLIC_TO_LATIN[ch] ?? ch;
+  }
+  return out;
+}
+
+function slugify(title: string): string {
+  const base = transliterate(title)
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)+/g, "");
+  if (base.length >= 3) return base;
+  return `event-${Date.now()}`;
+}
 
 const formSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -94,16 +120,30 @@ export default function AdminEventForm() {
     }
   }, [isEditing, existingEvent, form]);
 
-  // Auto-generate slug from title
+  // Auto-generate slug from title until the user manually edits the slug.
   const watchTitle = form.watch("title");
+  const watchSlug = form.watch("slug");
+  const slugManuallyEditedRef = useRef(false);
+  const lastAutoSlugRef = useRef("");
+
   useEffect(() => {
-    if (!isEditing && watchTitle) {
-      const generatedSlug = watchTitle
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)+/g, '');
-      form.setValue("slug", generatedSlug, { shouldValidate: true });
+    if (isEditing) return;
+    if (watchSlug === "") {
+      slugManuallyEditedRef.current = false;
+      return;
     }
+    if (watchSlug !== lastAutoSlugRef.current) {
+      slugManuallyEditedRef.current = true;
+    }
+  }, [watchSlug, isEditing]);
+
+  useEffect(() => {
+    if (isEditing) return;
+    if (slugManuallyEditedRef.current) return;
+    if (!watchTitle) return;
+    const generatedSlug = slugify(watchTitle);
+    lastAutoSlugRef.current = generatedSlug;
+    form.setValue("slug", generatedSlug, { shouldValidate: true });
   }, [watchTitle, isEditing, form]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
