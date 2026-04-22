@@ -110,18 +110,36 @@ if (isProduction) {
     path.resolve(process.cwd(), "artifacts/central-calendar/dist/public"),
     path.resolve(process.cwd(), "../central-calendar/dist/public"),
     path.resolve(process.cwd(), "dist/public"),
+    path.resolve(import.meta.dirname ?? process.cwd(), "../../central-calendar/dist/public"),
   ];
   const spaDir = candidates.find((p) => fs.existsSync(path.join(p, "index.html")));
 
   if (spaDir) {
     logger.info({ spaDir }, "Serving SPA from disk");
     app.use(express.static(spaDir, { index: false, maxAge: "1h" }));
-    app.get(/^(?!\/api\/).*/, (_req: Request, res: Response) => {
-      res.sendFile(path.join(spaDir, "index.html"));
+    app.use((req: Request, res: Response, next: NextFunction) => {
+      if (req.path.startsWith("/api/")) return next();
+      if (req.method !== "GET" && req.method !== "HEAD") return next();
+      res.sendFile(path.join(spaDir, "index.html"), (err) => {
+        if (err) {
+          logger.error({ err, path: req.path }, "Failed to send SPA index");
+          if (!res.headersSent) res.status(500).send("Failed to load app");
+        }
+      });
     });
   } else {
-    logger.warn({ candidates }, "SPA build directory not found; static serving disabled");
+    logger.warn({ candidates, cwd: process.cwd() }, "SPA build directory not found; static serving disabled");
   }
 }
+
+// Final error handler — log details so production 500s are diagnosable
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
+  logger.error(
+    { err: { message: err.message, stack: err.stack }, path: req.path, method: req.method },
+    "Unhandled request error",
+  );
+  if (res.headersSent) return;
+  res.status(500).json({ error: "Internal Server Error", message: err.message });
+});
 
 export default app;
