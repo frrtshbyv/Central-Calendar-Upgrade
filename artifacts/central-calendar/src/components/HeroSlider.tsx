@@ -14,6 +14,10 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
   const hasSlides = items.length > 0;
 
   useEffect(() => {
+    if (idx >= items.length) setIdx(0);
+  }, [items.length, idx]);
+
+  useEffect(() => {
     if (items.length <= 1) return;
     const t = setInterval(() => setIdx((i) => (i + 1) % items.length), ROTATE_MS);
     return () => clearInterval(t);

@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { Link } from "wouter";
-import { useGetEventStats, useListEvents, useGetSiteSettings, useListArticles } from "@workspace/api-client-react";
+import { useGetEventStats, useListEvents, useGetSiteSettings, useListArticles, useListTags } from "@workspace/api-client-react";
 import { EventCard } from "@/components/EventCard";
 import { Logo } from "@/components/Logo";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -29,6 +29,7 @@ export default function Home() {
   const { data: stats } = useGetEventStats();
   const { data: settings } = useGetSiteSettings();
   const { data: articles } = useListArticles({ limit: 3 });
+  const { data: allTags } = useListTags();
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [selectedFormat, setSelectedFormat] = useState<string>("");
@@ -244,17 +245,19 @@ export default function Home() {
               <div className="bg-card border border-border rounded-lg p-5 shadow-sm">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">{t("filter.tag")}</h3>
                 <div className="flex flex-wrap gap-2">
-                  {stats?.byTag?.map((tag) => {
-                    const active = selectedTags.includes(tag.tagSlug);
+                  {allTags?.map((tag) => {
+                    const active = selectedTags.includes(tag.slug);
+                    const count = stats?.byTag?.find((s) => s.tagSlug === tag.slug)?.count ?? 0;
                     return (
                       <button
-                        key={tag.tagSlug}
-                        onClick={() => toggleTag(tag.tagSlug)}
-                        className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-all duration-150 ${
+                        key={tag.slug}
+                        onClick={() => toggleTag(tag.slug)}
+                        className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-all duration-150 inline-flex items-center gap-1 ${
                           active ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-foreground border-border hover:border-primary hover:text-primary"
-                        }`}
+                        } ${count === 0 ? "opacity-60" : ""}`}
                       >
-                        #{tag.tagName}
+                        #{tag.name}
+                        {count > 0 && <span className={`text-[10px] ${active ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{count}</span>}
                       </button>
                     );
                   })}

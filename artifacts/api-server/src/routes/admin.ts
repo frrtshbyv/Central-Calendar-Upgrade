@@ -25,8 +25,12 @@ import { makeAdminToken } from "../lib/admin-token";
 
 const router: IRouter = Router();
 
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "admin@centralcalendar.org";
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "CentralCalendar2024!";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? (process.env.NODE_ENV === "production"
+  ? (() => { throw new Error("ADMIN_EMAIL environment variable is required in production"); })()
+  : "admin@centralcalendar.org");
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? (process.env.NODE_ENV === "production"
+  ? (() => { throw new Error("ADMIN_PASSWORD environment variable is required in production"); })()
+  : "CentralCalendar2024!");
 
 const loginAttempts: Map<string, { count: number; lastAttempt: number }> = new Map();
 
