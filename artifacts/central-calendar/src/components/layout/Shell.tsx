@@ -1,65 +1,28 @@
 import { ReactNode, useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
-import { useSearchEvents } from "@workspace/api-client-react";
+import { useSearchEvents, getSearchEventsQueryKey } from "@workspace/api-client-react";
 import { Input } from "@/components/ui/input";
 import { Search, Menu, X, ChevronDown } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
+import { Logo } from "@/components/Logo";
 
 const COUNTRIES = [
   { href: "/uzbekistan", label: "Uzbekistan" },
   { href: "/kazakhstan", label: "Kazakhstan" },
   { href: "/kyrgyzstan", label: "Kyrgyzstan" },
   { href: "/turkmenistan", label: "Turkmenistan" },
-  { href: "/caspian-region", label: "Caspian Region" },
+  { href: "/caucasus", label: "Caucasus" },
   { href: "/cross-border", label: "Cross-Border Events", accent: true },
 ];
 
 const NAV_LINKS = [
-  { href: "/", label: "Overview" },
+  { href: "/", label: "Home" },
   { href: "/calendar", label: "Calendar" },
+  { href: "/online", label: "Online" },
+  { href: "/articles", label: "Articles" },
+  { href: "/submit-event", label: "Submit Event" },
   { href: "/about", label: "About" },
 ];
-
-/**
- * Renders a logo from a black-background JPG using CSS background-image +
- * mix-blend-mode: screen. On a dark bg the black pixels become invisible,
- * leaving only the green spiral. backgroundSize controls zoom level:
- * lower % = more of the image visible (less zoom); 250-300% is a good range
- * for the icon-only image so the spiral fills most of the container.
- */
-function LogoImage({
-  src,
-  alt,
-  width,
-  height,
-  bgSize = "280% auto",
-  className = "",
-}: {
-  src: string;
-  alt: string;
-  width: number;
-  height: number;
-  bgSize?: string;
-  className?: string;
-}) {
-  return (
-    <div
-      style={{
-        width,
-        height,
-        backgroundImage: `url('${src}')`,
-        backgroundSize: bgSize,
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        mixBlendMode: "screen",
-        flexShrink: 0,
-      }}
-      className={className}
-      role="img"
-      aria-label={alt}
-    />
-  );
-}
 
 export function Shell({ children }: { children: ReactNode }) {
   const [location] = useLocation();
@@ -72,7 +35,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
   const { data: searchResults, isLoading: isSearching } = useSearchEvents(
     { q: debouncedSearch },
-    { query: { enabled: debouncedSearch.length > 2 } }
+    { query: { enabled: debouncedSearch.length > 2, queryKey: getSearchEventsQueryKey({ q: debouncedSearch }) } }
   );
 
   useEffect(() => {
@@ -98,7 +61,6 @@ export function Shell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans">
-      {/* ── HEADER (dark so the black JPG backgrounds blend away via screen) ── */}
       <header
         className={`sticky top-0 z-50 w-full bg-primary border-b border-primary-foreground/10 transition-shadow duration-200 ${
           scrolled ? "shadow-lg shadow-black/20" : ""
@@ -106,32 +68,25 @@ export function Shell({ children }: { children: ReactNode }) {
       >
         <div
           className={`container mx-auto px-4 md:px-8 flex items-center gap-4 transition-all duration-200 ${
-            scrolled ? "h-12" : "h-16"
+            scrolled ? "h-14" : "h-20"
           }`}
         >
-          {/* Icon-only logo — 280% zoom centres the spiral in the container */}
           <Link href="/" className="shrink-0 mr-4" aria-label="Central Calendar home">
-            <LogoImage
-              src="/logo-icon.jpg"
-              alt="Central Calendar"
-              width={scrolled ? 32 : 40}
-              height={scrolled ? 32 : 40}
-              bgSize="280% auto"
-            />
+            <Logo size={scrolled ? 32 : 40} variant="light" />
           </Link>
 
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-primary-foreground/70 mr-auto">
+          <nav className="hidden lg:flex items-center gap-5 text-sm font-medium text-primary-foreground/70 mr-auto">
             <Link
               href="/"
               className={`transition-colors hover:text-primary-foreground duration-150 ${
                 location === "/" ? "text-primary-foreground" : ""
               }`}
             >
-              Overview
+              Home
             </Link>
 
             <div
-              className="relative group"
+              className="relative"
               onMouseEnter={() => setCountriesOpen(true)}
               onMouseLeave={() => setCountriesOpen(false)}
             >
@@ -163,25 +118,14 @@ export function Shell({ children }: { children: ReactNode }) {
               </div>
             </div>
 
-            <Link
-              href="/calendar"
-              className={`transition-colors hover:text-primary-foreground duration-150 ${
-                location === "/calendar" ? "text-primary-foreground" : ""
-              }`}
-            >
-              Calendar
-            </Link>
-            <Link
-              href="/about"
-              className={`transition-colors hover:text-primary-foreground duration-150 ${
-                location === "/about" ? "text-primary-foreground" : ""
-              }`}
-            >
-              About
-            </Link>
+            <Link href="/calendar" className={`hover:text-primary-foreground duration-150 ${location === "/calendar" ? "text-primary-foreground" : ""}`}>Calendar</Link>
+            <Link href="/online" className={`hover:text-primary-foreground duration-150 ${location === "/online" ? "text-primary-foreground" : ""}`}>Online</Link>
+            <Link href="/articles" className={`hover:text-primary-foreground duration-150 ${location.startsWith("/articles") ? "text-primary-foreground" : ""}`}>Articles</Link>
+            <Link href="/submit-event" className={`hover:text-primary-foreground duration-150 ${location === "/submit-event" ? "text-primary-foreground" : ""}`}>Submit Event</Link>
+            <Link href="/about" className={`hover:text-primary-foreground duration-150 ${location === "/about" ? "text-primary-foreground" : ""}`}>About</Link>
           </nav>
 
-          <div ref={searchRef} className="hidden md:flex relative items-center w-64">
+          <div ref={searchRef} className="hidden md:flex relative items-center w-56 ml-auto">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-primary-foreground/50 pointer-events-none" />
             <Input
               type="search"
@@ -192,18 +136,13 @@ export function Shell({ children }: { children: ReactNode }) {
               aria-label="Search events"
             />
             {debouncedSearch.length > 2 && (
-              <div className="absolute top-full mt-2 left-0 w-full min-w-[320px] bg-popover border border-border rounded-md shadow-lg p-2 max-h-96 overflow-y-auto z-50">
+              <div className="absolute top-full mt-2 right-0 w-[320px] bg-popover border border-border rounded-md shadow-lg p-2 max-h-96 overflow-y-auto z-50">
                 {isSearching ? (
                   <div className="p-4 text-center text-sm text-muted-foreground">Searching...</div>
                 ) : searchResults && searchResults.length > 0 ? (
                   <div className="flex flex-col gap-0.5">
                     {searchResults.map((event) => (
-                      <Link
-                        key={event.id}
-                        href={`/event/${event.slug}`}
-                        className="p-2 hover:bg-muted rounded-md cursor-pointer block transition-colors duration-150"
-                        onClick={() => setSearch("")}
-                      >
+                      <Link key={event.id} href={`/event/${event.slug}`} className="p-2 hover:bg-muted rounded-md cursor-pointer block transition-colors duration-150" onClick={() => setSearch("")}>
                         <div className="font-medium text-sm truncate">{event.title}</div>
                         <div className="text-xs text-muted-foreground flex gap-2 mt-0.5">
                           <span>{new Date(event.startDate).toLocaleDateString()}</span>
@@ -221,7 +160,7 @@ export function Shell({ children }: { children: ReactNode }) {
           </div>
 
           <button
-            className="ml-auto md:hidden p-2 rounded-md text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10 transition-colors duration-150"
+            className="ml-auto lg:hidden p-2 rounded-md text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10 transition-colors duration-150"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
@@ -229,9 +168,8 @@ export function Shell({ children }: { children: ReactNode }) {
           </button>
         </div>
 
-        {/* Mobile drawer */}
         {mobileOpen && (
-          <div className="md:hidden border-t border-primary-foreground/10 bg-primary animate-in slide-in-from-top-2 duration-200">
+          <div className="lg:hidden border-t border-primary-foreground/10 bg-primary animate-in slide-in-from-top-2 duration-200">
             <div className="container mx-auto px-4 py-4 flex flex-col gap-1">
               <div className="relative mb-3">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-primary-foreground/50 pointer-events-none" />
@@ -243,20 +181,6 @@ export function Shell({ children }: { children: ReactNode }) {
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
-              {search.length > 2 && searchResults && searchResults.length > 0 && (
-                <div className="mb-3 bg-primary-foreground/5 border border-primary-foreground/10 rounded-md p-2 flex flex-col gap-0.5 max-h-48 overflow-y-auto">
-                  {searchResults.map((event) => (
-                    <Link
-                      key={event.id}
-                      href={`/event/${event.slug}`}
-                      className="p-2 hover:bg-primary-foreground/10 rounded text-sm block text-primary-foreground"
-                    >
-                      <div className="font-medium truncate">{event.title}</div>
-                      <div className="text-xs text-primary-foreground/50">{event.countryName}</div>
-                    </Link>
-                  ))}
-                </div>
-              )}
               {NAV_LINKS.map((l) => (
                 <Link
                   key={l.href}
@@ -291,40 +215,31 @@ export function Shell({ children }: { children: ReactNode }) {
 
       <main className="flex-1">{children}</main>
 
-      {/* ── FOOTER (dark so vertical logo blends in) ── */}
       <footer className="bg-primary border-t border-primary-foreground/10 py-12 mt-12">
         <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-10">
           <div className="max-w-xs text-center md:text-left">
             <Link href="/" aria-label="Central Calendar home" className="inline-block">
-              {/* Icon-only logo — larger footprint so the spiral is prominent */}
-              <LogoImage
-                src="/logo-icon.jpg"
-                alt="Central Calendar"
-                width={90}
-                height={90}
-                bgSize="280% auto"
-              />
+              <Logo size={56} variant="light" />
             </Link>
             <p className="text-sm text-primary-foreground/50 mt-3">
-              Strategic coordination intelligence for Central Asia and the Caspian region.
+              Strategic coordination intelligence for Central Asia and the Caucasus.
             </p>
           </div>
-          <div className="flex gap-12 text-sm">
+          <div className="flex flex-wrap gap-12 text-sm">
             <div className="flex flex-col gap-2">
               <span className="font-medium text-primary-foreground mb-1">Platform</span>
-              <Link href="/" className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">Overview</Link>
+              <Link href="/" className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">Home</Link>
               <Link href="/calendar" className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">Calendar</Link>
+              <Link href="/online" className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">Online</Link>
+              <Link href="/articles" className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">Articles</Link>
               <Link href="/cross-border" className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">Cross-Border</Link>
+              <Link href="/submit-event" className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">Submit Event</Link>
               <Link href="/about" className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">About</Link>
             </div>
             <div className="flex flex-col gap-2">
               <span className="font-medium text-primary-foreground mb-1">Regions</span>
-              {COUNTRIES.slice(0, 4).map((c) => (
-                <Link
-                  key={c.href}
-                  href={c.href}
-                  className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150"
-                >
+              {COUNTRIES.slice(0, 5).map((c) => (
+                <Link key={c.href} href={c.href} className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">
                   {c.label}
                 </Link>
               ))}

@@ -7,28 +7,14 @@
  */
 
 export type ListEventsParams = {
-  /**
-   * Filter by country slug
-   */
   country?: string;
-  /**
-   * Filter by tag slug
-   */
   tag?: string;
-  /**
-   * Filter by status (published, draft, archived)
-   */
   status?: string;
   /**
-   * Filter featured events (true/false)
+   * Filter by event format (offline, online, hybrid)
    */
+  format?: string;
   featured?: string;
-  /**
-   * Limit results
-   */
   limit?: number;
-  /**
-   * Offset for pagination
-   */
   offset?: number;
 };

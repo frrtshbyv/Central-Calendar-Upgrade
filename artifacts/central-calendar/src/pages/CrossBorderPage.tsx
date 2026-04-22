@@ -12,7 +12,7 @@ export default function CrossBorderPage() {
         <div className="container mx-auto max-w-5xl text-center">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4 font-serif">Cross-Border Summits</h1>
           <p className="text-lg text-primary-foreground/80 max-w-2xl mx-auto">
-            Multilateral forums, regional coordination meetings, and trans-national initiatives connecting Central Asia and the Caspian.
+            Multilateral forums, regional coordination meetings, and trans-national initiatives connecting Central Asia and the Caucasus.
           </p>
         </div>
       </section>

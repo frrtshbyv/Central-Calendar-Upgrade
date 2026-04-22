@@ -2,7 +2,9 @@
 
 ## Overview
 
-**Central Calendar** is a regional coordination intelligence platform for Central Asia and the Caspian region. The tagline is "PLAN THE REGION." — a strategic event coordination hub for government ministries, corporations, and institutional stakeholders.
+**Central Calendar** is a regional coordination intelligence platform for Central Asia and the Caucasus. The tagline is "Plan the region." — a strategic event coordination hub for government ministries, corporations, and institutional stakeholders.
+
+Public site features: homepage with admin-editable banner, country pages, calendar, online events page, articles section, public event submission (queued for editorial review), and a hidden admin panel.
 
 pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
 
@@ -31,20 +33,25 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 ## Architecture
 
 ### Frontend (artifacts/central-calendar)
-- React + Vite app at route `/`
-- Pages: Homepage, Country pages (/uzbekistan, /kazakhstan, /kyrgyzstan, /turkmenistan, /caspian-region, /cross-border), Calendar (/calendar), Event detail (/event/:slug), About (/about)
-- Admin panel: `/control-room-7f92x/*` (hidden from nav, protected by session auth)
+- React + Vite app
+- Public pages: `/` (Home), `/uzbekistan`, `/kazakhstan`, `/kyrgyzstan`, `/turkmenistan`, `/caucasus`, `/cross-border`, `/calendar`, `/online`, `/articles`, `/articles/:slug`, `/submit-event`, `/event/:slug`, `/about`
+- `/caspian-region` redirects to `/caucasus` for backward compatibility
+- Admin panel: `/control-room-7f92x/*` (hidden from nav, protected by session auth) — events dashboard, new event, pending submissions, archive, articles CRUD, site settings
+- New SVG logo at `/logo.svg` rendered via `Logo` component
 
 ### Backend (artifacts/api-server)
 - Express 5 API at `/api`
 - Session-based admin auth with brute force protection (5 attempts per 10 min)
-- Routes: /events, /countries, /tags, /search, /admin/*
+- Public routes: `/events` (with `format` filter), `/countries`, `/tags`, `/search`, `/articles`, `/articles/:slug`, `/site-settings`, `/submit-event` (rate-limited)
+- Admin routes: `/admin/events` (incl. publish/archive/reject), `/admin/articles` CRUD, `/admin/site-settings`
 
 ### Database Schema (lib/db/src/schema/)
-- `countries` — 6 records (Uzbekistan, Kazakhstan, Kyrgyzstan, Turkmenistan, Caspian Region, Cross-border)
-- `tags` — 8 records (Investment, Energy, Economy & Finance, Technology, Sustainability, Marketing & Media, Retail, Heavy Industry)
-- `events` — main events table with status (published/draft/archived), featured flag
-- `event_tags` — many-to-many pivot
+- `countries` — 6 records (Uzbekistan, Kazakhstan, Kyrgyzstan, Turkmenistan, Caucasus, Cross-border)
+- `tags` — 12 atomic tags
+- `events` — status enum: draft / published / archived / pending_review / rejected; columns include `event_format` (offline/online/hybrid) and `contact_email` (internal)
+- `articles` — id, slug, title, content, cover_image, country_id, author, status, published_at
+- `event_tags`, `article_tags` — many-to-many pivots
+- `site_settings` — single row holding `homepage_banner_url`
 - `admin_logs` — audit log for admin actions
 
 ## Admin Panel Security

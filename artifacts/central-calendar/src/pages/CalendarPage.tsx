@@ -96,7 +96,7 @@ export default function CalendarPage() {
             Events on {format(selectedDate, "MMMM d, yyyy")}
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Strategic events across Central Asia and the Caspian Region
+            Strategic events across Central Asia and the Caucasus
           </p>
         </div>
 

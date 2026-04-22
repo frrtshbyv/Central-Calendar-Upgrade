@@ -42,7 +42,10 @@ export interface Event {
   endDate?: string | null;
   /** @nullable */
   organizerLink?: string | null;
+  /** @nullable */
+  contactEmail?: string | null;
   status: string;
+  eventFormat: string;
   featured: boolean;
   countryId: number;
   countryName: string;
@@ -95,7 +98,10 @@ export interface CreateEventBody {
   endDate?: string | null;
   /** @nullable */
   organizerLink?: string | null;
+  /** @nullable */
+  contactEmail?: string | null;
   status?: string;
+  eventFormat?: string;
   featured?: boolean;
   countryId: number;
   tagIds?: number[];
@@ -113,10 +119,30 @@ export interface UpdateEventBody {
   endDate?: string | null;
   /** @nullable */
   organizerLink?: string | null;
+  /** @nullable */
+  contactEmail?: string | null;
   status?: string;
+  eventFormat?: string;
   featured?: boolean;
   countryId?: number;
   tagIds?: number[];
+}
+
+export interface SubmitEventBody {
+  title: string;
+  description: string;
+  countryId: number;
+  tagIds?: number[];
+  startDate: string;
+  /** @nullable */
+  endDate?: string | null;
+  location: string;
+  /** @nullable */
+  organizerLink?: string | null;
+  contactEmail: string;
+  /** @nullable */
+  previewImage?: string | null;
+  eventFormat?: string;
 }
 
 export interface AdminLoginBody {
@@ -135,6 +161,69 @@ export interface AdminSession {
   email?: string | null;
 }
 
+export interface SiteSettings {
+  id: number;
+  /** @nullable */
+  homepageBannerUrl?: string | null;
+  updatedAt: string;
+}
+
+export interface UpdateSiteSettingsBody {
+  /** @nullable */
+  homepageBannerUrl?: string | null;
+}
+
+export interface Article {
+  id: number;
+  title: string;
+  slug: string;
+  /** @nullable */
+  coverImage?: string | null;
+  content: string;
+  /** @nullable */
+  countryId?: number | null;
+  /** @nullable */
+  countryName?: string | null;
+  /** @nullable */
+  countrySlug?: string | null;
+  /** @nullable */
+  author?: string | null;
+  status: string;
+  /** @nullable */
+  publishedAt?: string | null;
+  tags: Tag[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateArticleBody {
+  title: string;
+  slug: string;
+  /** @nullable */
+  coverImage?: string | null;
+  content: string;
+  /** @nullable */
+  countryId?: number | null;
+  /** @nullable */
+  author?: string | null;
+  status?: string;
+  tagIds?: number[];
+}
+
+export interface UpdateArticleBody {
+  title?: string;
+  slug?: string;
+  /** @nullable */
+  coverImage?: string | null;
+  content?: string;
+  /** @nullable */
+  countryId?: number | null;
+  /** @nullable */
+  author?: string | null;
+  status?: string;
+  tagIds?: number[];
+}
+
 export type ListEventsResponse = Event[];
 
 export type ListCountriesResponse = Country[];
@@ -143,37 +232,28 @@ export type ListTagsResponse = Tag[];
 
 export type ListAdminLogsResponse = AdminLog[];
 
+export type ListArticlesResponse = Article[];
+
 export type ListEventsParams = {
-  /**
-   * Filter by country slug
-   */
   country?: string;
-  /**
-   * Filter by tag slug
-   */
   tag?: string;
-  /**
-   * Filter by status (published, draft, archived)
-   */
   status?: string;
   /**
-   * Filter featured events (true/false)
+   * Filter by event format (offline, online, hybrid)
    */
+  format?: string;
   featured?: string;
-  /**
-   * Limit results
-   */
   limit?: number;
-  /**
-   * Offset for pagination
-   */
   offset?: number;
 };
 
 export type GetUpcomingEventsParams = {
-  /**
-   * Limit results
-   */
+  limit?: number;
+};
+
+export type ListArticlesParams = {
+  country?: string;
+  tag?: string;
   limit?: number;
 };
 
@@ -188,8 +268,5 @@ export type GetAdminLogsParams = {
 };
 
 export type SearchEventsParams = {
-  /**
-   * Search query
-   */
   q: string;
 };

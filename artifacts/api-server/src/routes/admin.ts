@@ -74,7 +74,9 @@ async function getEventsWithTagsAdmin(whereConditions?: any) {
       startDate: eventsTable.startDate,
       endDate: eventsTable.endDate,
       organizerLink: eventsTable.organizerLink,
+      contactEmail: eventsTable.contactEmail,
       status: eventsTable.status,
+      eventFormat: eventsTable.eventFormat,
       featured: eventsTable.featured,
       countryId: eventsTable.countryId,
       countryName: countriesTable.name,
@@ -424,6 +426,50 @@ router.post("/admin/events/:id/archive", requireAdmin, async (req, res): Promise
     countrySlug: country?.slug ?? "",
     tags,
   }));
+});
+
+router.post("/admin/events/:id/reject", requireAdmin, async (req, res): Promise<void> => {
+  const rawId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+  const id = Number(rawId);
+  if (!Number.isInteger(id)) {
+    res.status(400).json({ error: "Invalid id" });
+    return;
+  }
+
+  const [updated] = await db
+    .update(eventsTable)
+    .set({ status: "rejected" })
+    .where(eq(eventsTable.id, id))
+    .returning();
+
+  if (!updated) {
+    res.status(404).json({ error: "Event not found" });
+    return;
+  }
+
+  await logAdminAction("reject_event", updated.id, updated.title);
+
+  const [country] = await db
+    .select({ name: countriesTable.name, slug: countriesTable.slug })
+    .from(countriesTable)
+    .where(eq(countriesTable.id, updated.countryId));
+
+  const tags = await db
+    .select({ id: tagsTable.id, name: tagsTable.name, slug: tagsTable.slug })
+    .from(eventTagsTable)
+    .innerJoin(tagsTable, eq(eventTagsTable.tagId, tagsTable.id))
+    .where(eq(eventTagsTable.eventId, updated.id));
+
+  res.json({
+    ...updated,
+    startDate: updated.startDate.toISOString(),
+    endDate: updated.endDate ? updated.endDate.toISOString() : null,
+    createdAt: updated.createdAt.toISOString(),
+    updatedAt: updated.updatedAt.toISOString(),
+    countryName: country?.name ?? "",
+    countrySlug: country?.slug ?? "",
+    tags,
+  });
 });
 
 router.get("/admin/logs", requireAdmin, async (req, res): Promise<void> => {

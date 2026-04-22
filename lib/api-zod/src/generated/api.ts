@@ -8,7 +8,6 @@
 import * as zod from "zod";
 
 /**
- * Returns server health status
  * @summary Health check
  */
 export const HealthCheckResponse = zod.object({
@@ -16,22 +15,19 @@ export const HealthCheckResponse = zod.object({
 });
 
 /**
- * Returns published events with optional filters
  * @summary List events
  */
 export const ListEventsQueryParams = zod.object({
-  country: zod.coerce.string().optional().describe("Filter by country slug"),
-  tag: zod.coerce.string().optional().describe("Filter by tag slug"),
-  status: zod.coerce
+  country: zod.coerce.string().optional(),
+  tag: zod.coerce.string().optional(),
+  status: zod.coerce.string().optional(),
+  format: zod.coerce
     .string()
     .optional()
-    .describe("Filter by status (published, draft, archived)"),
-  featured: zod.coerce
-    .string()
-    .optional()
-    .describe("Filter featured events (true\/false)"),
-  limit: zod.coerce.number().optional().describe("Limit results"),
-  offset: zod.coerce.number().optional().describe("Offset for pagination"),
+    .describe("Filter by event format (offline, online, hybrid)"),
+  featured: zod.coerce.string().optional(),
+  limit: zod.coerce.number().optional(),
+  offset: zod.coerce.number().optional(),
 });
 
 export const ListEventsResponseItem = zod.object({
@@ -44,7 +40,9 @@ export const ListEventsResponseItem = zod.object({
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
   status: zod.string(),
+  eventFormat: zod.string(),
   featured: zod.boolean(),
   countryId: zod.number(),
   countryName: zod.string(),
@@ -62,7 +60,6 @@ export const ListEventsResponseItem = zod.object({
 export const ListEventsResponse = zod.array(ListEventsResponseItem);
 
 /**
- * Returns featured published events for homepage hero
  * @summary Get featured events
  */
 export const GetFeaturedEventsResponseItem = zod.object({
@@ -75,7 +72,9 @@ export const GetFeaturedEventsResponseItem = zod.object({
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
   status: zod.string(),
+  eventFormat: zod.string(),
   featured: zod.boolean(),
   countryId: zod.number(),
   countryName: zod.string(),
@@ -95,11 +94,10 @@ export const GetFeaturedEventsResponse = zod.array(
 );
 
 /**
- * Returns upcoming published events sorted by start date
  * @summary Get upcoming events
  */
 export const GetUpcomingEventsQueryParams = zod.object({
-  limit: zod.coerce.number().optional().describe("Limit results"),
+  limit: zod.coerce.number().optional(),
 });
 
 export const GetUpcomingEventsResponseItem = zod.object({
@@ -112,7 +110,9 @@ export const GetUpcomingEventsResponseItem = zod.object({
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
   status: zod.string(),
+  eventFormat: zod.string(),
   featured: zod.boolean(),
   countryId: zod.number(),
   countryName: zod.string(),
@@ -132,7 +132,6 @@ export const GetUpcomingEventsResponse = zod.array(
 );
 
 /**
- * Returns cross-border published events
  * @summary Get cross-border events
  */
 export const GetCrossBorderEventsResponseItem = zod.object({
@@ -145,7 +144,9 @@ export const GetCrossBorderEventsResponseItem = zod.object({
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
   status: zod.string(),
+  eventFormat: zod.string(),
   featured: zod.boolean(),
   countryId: zod.number(),
   countryName: zod.string(),
@@ -165,7 +166,6 @@ export const GetCrossBorderEventsResponse = zod.array(
 );
 
 /**
- * Returns aggregate statistics for the platform
  * @summary Get event statistics
  */
 export const GetEventStatsResponse = zod.object({
@@ -206,7 +206,9 @@ export const GetEventBySlugResponse = zod.object({
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
   status: zod.string(),
+  eventFormat: zod.string(),
   featured: zod.boolean(),
   countryId: zod.number(),
   countryName: zod.string(),
@@ -239,7 +241,9 @@ export const GetRelatedEventsResponseItem = zod.object({
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
   status: zod.string(),
+  eventFormat: zod.string(),
   featured: zod.boolean(),
   countryId: zod.number(),
   countryName: zod.string(),
@@ -257,7 +261,200 @@ export const GetRelatedEventsResponseItem = zod.object({
 export const GetRelatedEventsResponse = zod.array(GetRelatedEventsResponseItem);
 
 /**
- * Returns all events including drafts and archived (admin only)
+ * Submits an event for admin approval. Stored with status pending_review.
+ * @summary Public event submission
+ */
+export const SubmitEventBody = zod.object({
+  title: zod.string(),
+  description: zod.string(),
+  countryId: zod.number(),
+  tagIds: zod.array(zod.number()).optional(),
+  startDate: zod.string(),
+  endDate: zod.string().nullish(),
+  location: zod.string(),
+  organizerLink: zod.string().nullish(),
+  contactEmail: zod.string(),
+  previewImage: zod.string().nullish(),
+  eventFormat: zod.string().optional(),
+});
+
+/**
+ * @summary List published articles
+ */
+export const ListArticlesQueryParams = zod.object({
+  country: zod.coerce.string().optional(),
+  tag: zod.coerce.string().optional(),
+  limit: zod.coerce.number().optional(),
+});
+
+export const ListArticlesResponseItem = zod.object({
+  id: zod.number(),
+  title: zod.string(),
+  slug: zod.string(),
+  coverImage: zod.string().nullish(),
+  content: zod.string(),
+  countryId: zod.number().nullish(),
+  countryName: zod.string().nullish(),
+  countrySlug: zod.string().nullish(),
+  author: zod.string().nullish(),
+  status: zod.string(),
+  publishedAt: zod.string().nullish(),
+  tags: zod.array(
+    zod.object({
+      id: zod.number(),
+      name: zod.string(),
+      slug: zod.string(),
+    }),
+  ),
+  createdAt: zod.string(),
+  updatedAt: zod.string(),
+});
+export const ListArticlesResponse = zod.array(ListArticlesResponseItem);
+
+/**
+ * @summary Get article by slug
+ */
+export const GetArticleBySlugParams = zod.object({
+  slug: zod.coerce.string(),
+});
+
+export const GetArticleBySlugResponse = zod.object({
+  id: zod.number(),
+  title: zod.string(),
+  slug: zod.string(),
+  coverImage: zod.string().nullish(),
+  content: zod.string(),
+  countryId: zod.number().nullish(),
+  countryName: zod.string().nullish(),
+  countrySlug: zod.string().nullish(),
+  author: zod.string().nullish(),
+  status: zod.string(),
+  publishedAt: zod.string().nullish(),
+  tags: zod.array(
+    zod.object({
+      id: zod.number(),
+      name: zod.string(),
+      slug: zod.string(),
+    }),
+  ),
+  createdAt: zod.string(),
+  updatedAt: zod.string(),
+});
+
+/**
+ * @summary Get public site settings (banner image)
+ */
+export const GetSiteSettingsResponse = zod.object({
+  id: zod.number(),
+  homepageBannerUrl: zod.string().nullish(),
+  updatedAt: zod.string(),
+});
+
+/**
+ * @summary Update site settings
+ */
+export const UpdateSiteSettingsBody = zod.object({
+  homepageBannerUrl: zod.string().nullish(),
+});
+
+export const UpdateSiteSettingsResponse = zod.object({
+  id: zod.number(),
+  homepageBannerUrl: zod.string().nullish(),
+  updatedAt: zod.string(),
+});
+
+/**
+ * @summary Admin list all articles
+ */
+export const AdminListArticlesResponseItem = zod.object({
+  id: zod.number(),
+  title: zod.string(),
+  slug: zod.string(),
+  coverImage: zod.string().nullish(),
+  content: zod.string(),
+  countryId: zod.number().nullish(),
+  countryName: zod.string().nullish(),
+  countrySlug: zod.string().nullish(),
+  author: zod.string().nullish(),
+  status: zod.string(),
+  publishedAt: zod.string().nullish(),
+  tags: zod.array(
+    zod.object({
+      id: zod.number(),
+      name: zod.string(),
+      slug: zod.string(),
+    }),
+  ),
+  createdAt: zod.string(),
+  updatedAt: zod.string(),
+});
+export const AdminListArticlesResponse = zod.array(
+  AdminListArticlesResponseItem,
+);
+
+/**
+ * @summary Create article
+ */
+export const CreateArticleBody = zod.object({
+  title: zod.string(),
+  slug: zod.string(),
+  coverImage: zod.string().nullish(),
+  content: zod.string(),
+  countryId: zod.number().nullish(),
+  author: zod.string().nullish(),
+  status: zod.string().optional(),
+  tagIds: zod.array(zod.number()).optional(),
+});
+
+/**
+ * @summary Update article
+ */
+export const UpdateArticleParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UpdateArticleBody = zod.object({
+  title: zod.string().optional(),
+  slug: zod.string().optional(),
+  coverImage: zod.string().nullish(),
+  content: zod.string().optional(),
+  countryId: zod.number().nullish(),
+  author: zod.string().nullish(),
+  status: zod.string().optional(),
+  tagIds: zod.array(zod.number()).optional(),
+});
+
+export const UpdateArticleResponse = zod.object({
+  id: zod.number(),
+  title: zod.string(),
+  slug: zod.string(),
+  coverImage: zod.string().nullish(),
+  content: zod.string(),
+  countryId: zod.number().nullish(),
+  countryName: zod.string().nullish(),
+  countrySlug: zod.string().nullish(),
+  author: zod.string().nullish(),
+  status: zod.string(),
+  publishedAt: zod.string().nullish(),
+  tags: zod.array(
+    zod.object({
+      id: zod.number(),
+      name: zod.string(),
+      slug: zod.string(),
+    }),
+  ),
+  createdAt: zod.string(),
+  updatedAt: zod.string(),
+});
+
+/**
+ * @summary Delete article
+ */
+export const DeleteArticleParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
  * @summary Admin list all events
  */
 export const AdminListEventsQueryParams = zod.object({
@@ -276,7 +473,9 @@ export const AdminListEventsResponseItem = zod.object({
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
   status: zod.string(),
+  eventFormat: zod.string(),
   featured: zod.boolean(),
   countryId: zod.number(),
   countryName: zod.string(),
@@ -305,7 +504,9 @@ export const CreateEventBody = zod.object({
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
   status: zod.string().optional(),
+  eventFormat: zod.string().optional(),
   featured: zod.boolean().optional(),
   countryId: zod.number(),
   tagIds: zod.array(zod.number()).optional(),
@@ -327,7 +528,9 @@ export const UpdateEventBody = zod.object({
   startDate: zod.string().optional(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
   status: zod.string().optional(),
+  eventFormat: zod.string().optional(),
   featured: zod.boolean().optional(),
   countryId: zod.number().optional(),
   tagIds: zod.array(zod.number()).optional(),
@@ -343,7 +546,9 @@ export const UpdateEventResponse = zod.object({
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
   status: zod.string(),
+  eventFormat: zod.string(),
   featured: zod.boolean(),
   countryId: zod.number(),
   countryName: zod.string(),
@@ -383,7 +588,9 @@ export const PublishEventResponse = zod.object({
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
   status: zod.string(),
+  eventFormat: zod.string(),
   featured: zod.boolean(),
   countryId: zod.number(),
   countryName: zod.string(),
@@ -416,7 +623,44 @@ export const ArchiveEventResponse = zod.object({
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
   status: zod.string(),
+  eventFormat: zod.string(),
+  featured: zod.boolean(),
+  countryId: zod.number(),
+  countryName: zod.string(),
+  countrySlug: zod.string(),
+  tags: zod.array(
+    zod.object({
+      id: zod.number(),
+      name: zod.string(),
+      slug: zod.string(),
+    }),
+  ),
+  createdAt: zod.string(),
+  updatedAt: zod.string(),
+});
+
+/**
+ * @summary Reject pending event submission
+ */
+export const RejectEventParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const RejectEventResponse = zod.object({
+  id: zod.number(),
+  title: zod.string(),
+  slug: zod.string(),
+  description: zod.string(),
+  previewImage: zod.string().nullish(),
+  location: zod.string(),
+  startDate: zod.string(),
+  endDate: zod.string().nullish(),
+  organizerLink: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
+  status: zod.string(),
+  eventFormat: zod.string(),
   featured: zod.boolean(),
   countryId: zod.number(),
   countryName: zod.string(),
@@ -500,7 +744,7 @@ export const ListTagsResponse = zod.array(ListTagsResponseItem);
  * @summary Search events
  */
 export const SearchEventsQueryParams = zod.object({
-  q: zod.coerce.string().describe("Search query"),
+  q: zod.coerce.string(),
 });
 
 export const SearchEventsResponseItem = zod.object({
@@ -513,7 +757,9 @@ export const SearchEventsResponseItem = zod.object({
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
   status: zod.string(),
+  eventFormat: zod.string(),
   featured: zod.boolean(),
   countryId: zod.number(),
   countryName: zod.string(),

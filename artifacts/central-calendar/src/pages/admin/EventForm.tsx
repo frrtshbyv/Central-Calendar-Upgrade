@@ -58,7 +58,9 @@ const formSchema = z.object({
   startDate: z.string().min(1, "Start date is required"),
   endDate: z.string().optional().or(z.literal("")),
   organizerLink: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-  status: z.enum(["draft", "published", "archived"]),
+  contactEmail: z.string().email("Must be a valid email").optional().or(z.literal("")),
+  eventFormat: z.enum(["offline", "online", "hybrid"]),
+  status: z.enum(["draft", "published", "archived", "pending_review", "rejected"]),
   featured: z.boolean(),
   countryId: z.coerce.number().min(1, "Country is required"),
   tagIds: z.array(z.number()),
@@ -75,7 +77,7 @@ export default function AdminEventForm() {
 
   const { data: countries } = useListCountries();
   const { data: tags } = useListTags();
-  const { data: allEvents, isLoading: isLoadingEvent } = useAdminListEvents({}, { query: { enabled: isEditing }});
+  const { data: allEvents, isLoading: isLoadingEvent } = useAdminListEvents({}, { query: { enabled: isEditing, queryKey: getAdminListEventsQueryKey({}) }});
   
   const existingEvent = isEditing ? allEvents?.find(e => e.id === eventId) : null;
 
@@ -93,6 +95,8 @@ export default function AdminEventForm() {
       startDate: format(new Date(), "yyyy-MM-dd"),
       endDate: "",
       organizerLink: "",
+      contactEmail: "",
+      eventFormat: "offline",
       status: "draft",
       featured: false,
       countryId: 0,
@@ -112,6 +116,8 @@ export default function AdminEventForm() {
         startDate: existingEvent.startDate.split('T')[0], // Extract YYYY-MM-DD
         endDate: existingEvent.endDate ? existingEvent.endDate.split('T')[0] : "",
         organizerLink: existingEvent.organizerLink || "",
+        contactEmail: (existingEvent as any).contactEmail || "",
+        eventFormat: ((existingEvent as any).eventFormat as any) || "offline",
         status: existingEvent.status as any,
         featured: existingEvent.featured,
         countryId: existingEvent.countryId,
@@ -153,6 +159,7 @@ export default function AdminEventForm() {
       previewImage: values.previewImage || null,
       endDate: values.endDate || null,
       organizerLink: values.organizerLink || null,
+      contactEmail: values.contactEmail || null,
     };
 
     if (isEditing && eventId) {
@@ -164,7 +171,7 @@ export default function AdminEventForm() {
             queryClient.invalidateQueries({ queryKey: getAdminListEventsQueryKey() });
             setLocation("/control-room-7f92x/events");
           },
-          onError: (err) => {
+          onError: (err: any) => {
             toast({ variant: "destructive", title: "Update failed", description: err?.error || "Unknown error" });
           }
         }
@@ -178,7 +185,7 @@ export default function AdminEventForm() {
             queryClient.invalidateQueries({ queryKey: getAdminListEventsQueryKey() });
             setLocation("/control-room-7f92x/events");
           },
-          onError: (err) => {
+          onError: (err: any) => {
             toast({ variant: "destructive", title: "Creation failed", description: err?.error || "Unknown error" });
           }
         }
@@ -248,6 +255,8 @@ export default function AdminEventForm() {
                   <SelectContent>
                     <SelectItem value="draft">Draft (Hidden)</SelectItem>
                     <SelectItem value="published">Published (Visible)</SelectItem>
+                    <SelectItem value="pending_review">Pending Review</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
                     <SelectItem value="archived">Archived (Hidden from main feeds)</SelectItem>
                   </SelectContent>
                 </Select>
@@ -330,10 +339,34 @@ export default function AdminEventForm() {
             )} />
 
             <FormField control={form.control} name="organizerLink" render={({ field }) => (
-              <FormItem className="md:col-span-2">
+              <FormItem>
                 <FormLabel>Official Website URL</FormLabel>
                 <FormControl><Input placeholder="https://..." {...field} /></FormControl>
                 <FormDescription>Where users should go to register or learn more.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )} />
+
+            <FormField control={form.control} name="contactEmail" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Contact Email</FormLabel>
+                <FormControl><Input type="email" placeholder="organizer@example.com" {...field} /></FormControl>
+                <FormDescription>Internal — not shown publicly.</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )} />
+
+            <FormField control={form.control} name="eventFormat" render={({ field }) => (
+              <FormItem>
+                <FormLabel>Format</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value} value={field.value}>
+                  <FormControl><SelectTrigger><SelectValue /></SelectTrigger></FormControl>
+                  <SelectContent>
+                    <SelectItem value="offline">In-person</SelectItem>
+                    <SelectItem value="online">Online</SelectItem>
+                    <SelectItem value="hybrid">Hybrid</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )} />

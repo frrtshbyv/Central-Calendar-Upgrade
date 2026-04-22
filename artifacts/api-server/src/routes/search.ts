@@ -27,6 +27,7 @@ router.get("/search", async (req, res): Promise<void> => {
       endDate: eventsTable.endDate,
       organizerLink: eventsTable.organizerLink,
       status: eventsTable.status,
+      eventFormat: eventsTable.eventFormat,
       featured: eventsTable.featured,
       countryId: eventsTable.countryId,
       countryName: countriesTable.name,

@@ -30,6 +30,7 @@ async function getEventsWithTags(whereConditions?: Parameters<typeof db.select>[
       endDate: eventsTable.endDate,
       organizerLink: eventsTable.organizerLink,
       status: eventsTable.status,
+      eventFormat: eventsTable.eventFormat,
       featured: eventsTable.featured,
       countryId: eventsTable.countryId,
       countryName: countriesTable.name,
@@ -80,15 +81,12 @@ router.get("/events", async (req, res): Promise<void> => {
     return;
   }
 
-  const { country, tag, status, featured, limit, offset } = parsed.data;
+  const { country, tag, featured, limit, offset } = parsed.data;
+  const format = (req.query.format as string | undefined) ?? undefined;
 
   const conditions: any[] = [];
 
-  if (status) {
-    conditions.push(eq(eventsTable.status, status));
-  } else {
-    conditions.push(eq(eventsTable.status, "published"));
-  }
+  conditions.push(eq(eventsTable.status, "published"));
 
   if (country) {
     conditions.push(eq(countriesTable.slug, country));
@@ -96,6 +94,10 @@ router.get("/events", async (req, res): Promise<void> => {
 
   if (featured === "true") {
     conditions.push(eq(eventsTable.featured, true));
+  }
+
+  if (format) {
+    conditions.push(eq(eventsTable.eventFormat, format));
   }
 
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
@@ -235,6 +237,7 @@ router.get("/events/:slug", async (req, res): Promise<void> => {
       endDate: eventsTable.endDate,
       organizerLink: eventsTable.organizerLink,
       status: eventsTable.status,
+      eventFormat: eventsTable.eventFormat,
       featured: eventsTable.featured,
       countryId: eventsTable.countryId,
       countryName: countriesTable.name,

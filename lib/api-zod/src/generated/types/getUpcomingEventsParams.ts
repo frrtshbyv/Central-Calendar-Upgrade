@@ -7,8 +7,5 @@
  */
 
 export type GetUpcomingEventsParams = {
-  /**
-   * Limit results
-   */
   limit?: number;
 };

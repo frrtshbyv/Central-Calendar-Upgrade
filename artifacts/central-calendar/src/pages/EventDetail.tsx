@@ -1,4 +1,4 @@
-import { useGetEventBySlug, getGetEventBySlugQueryKey, useGetRelatedEvents } from "@workspace/api-client-react";
+import { useGetEventBySlug, getGetEventBySlugQueryKey, useGetRelatedEvents, getGetRelatedEventsQueryKey } from "@workspace/api-client-react";
 import { format } from "date-fns";
 import { MapPin, Calendar, ExternalLink, ArrowLeft, Tag as TagIcon, Globe } from "lucide-react";
 import { Link } from "wouter";
@@ -13,7 +13,7 @@ export default function EventDetail({ params }: { params: { slug: string } }) {
   });
 
   const { data: relatedEvents } = useGetRelatedEvents(params.slug, {
-    query: { enabled: !!params.slug }
+    query: { enabled: !!params.slug, queryKey: getGetRelatedEventsQueryKey(params.slug) }
   });
 
   if (isLoading) {

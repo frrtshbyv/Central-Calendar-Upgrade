@@ -7,7 +7,7 @@ export default function About() {
         <div className="container mx-auto max-w-4xl text-center">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 font-serif">PLAN THE REGION.</h1>
           <p className="text-xl md:text-2xl text-primary-foreground/80 max-w-2xl mx-auto leading-relaxed">
-            Central Calendar is the definitive strategic coordination platform for Central Asia and the Caspian region.
+            Central Calendar is the definitive strategic coordination platform for Central Asia and the Caucasus.
           </p>
         </div>
       </section>
@@ -36,7 +36,7 @@ export default function About() {
               <Map className="w-8 h-8 text-primary" />
             </div>
             <h3 className="font-bold text-lg mb-2">Regional Scope</h3>
-            <p className="text-sm text-muted-foreground">Comprehensive coverage across Uzbekistan, Kazakhstan, Kyrgyzstan, Turkmenistan, and the Caspian basin.</p>
+            <p className="text-sm text-muted-foreground">Comprehensive coverage across Uzbekistan, Kazakhstan, Kyrgyzstan, Turkmenistan, and the Caucasus.</p>
           </div>
           
           <div className="flex flex-col items-center text-center">

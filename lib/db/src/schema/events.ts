@@ -14,6 +14,8 @@ export const eventsTable = pgTable("events", {
   endDate: timestamp("end_date", { withTimezone: true }),
   organizerLink: text("organizer_link"),
   status: text("status").notNull().default("draft"),
+  eventFormat: text("event_format").notNull().default("offline"),
+  contactEmail: text("contact_email"),
   featured: boolean("featured").notNull().default(false),
   countryId: integer("country_id").notNull().references(() => countriesTable.id),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),

@@ -20,13 +20,18 @@ tags:
     description: Admin operations
   - name: search
     description: Search operations
+  - name: articles
+    description: Article operations
+  - name: settings
+    description: Site settings
+  - name: submissions
+    description: Public event submissions
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -40,38 +45,36 @@ paths:
       operationId: listEvents
       tags: [events]
       summary: List events
-      description: Returns published events with optional filters
       parameters:
         - name: country
           in: query
           schema:
             type: string
-          description: Filter by country slug
         - name: tag
           in: query
           schema:
             type: string
-          description: Filter by tag slug
         - name: status
           in: query
           schema:
             type: string
-          description: Filter by status (published, draft, archived)
+        - name: format
+          in: query
+          schema:
+            type: string
+          description: Filter by event format (offline, online, hybrid)
         - name: featured
           in: query
           schema:
             type: string
-          description: Filter featured events (true/false)
         - name: limit
           in: query
           schema:
             type: integer
-          description: Limit results
         - name: offset
           in: query
           schema:
             type: integer
-          description: Offset for pagination
       responses:
         "200":
           description: List of events
@@ -85,7 +88,6 @@ paths:
       operationId: getFeaturedEvents
       tags: [events]
       summary: Get featured events
-      description: Returns featured published events for homepage hero
       responses:
         "200":
           description: Featured events
@@ -99,13 +101,11 @@ paths:
       operationId: getUpcomingEvents
       tags: [events]
       summary: Get upcoming events
-      description: Returns upcoming published events sorted by start date
       parameters:
         - name: limit
           in: query
           schema:
             type: integer
-          description: Limit results
       responses:
         "200":
           description: Upcoming events
@@ -119,7 +119,6 @@ paths:
       operationId: getCrossBorderEvents
       tags: [events]
       summary: Get cross-border events
-      description: Returns cross-border published events
       responses:
         "200":
           description: Cross-border events
@@ -133,7 +132,6 @@ paths:
       operationId: getEventStats
       tags: [events]
       summary: Get event statistics
-      description: Returns aggregate statistics for the platform
       responses:
         "200":
           description: Event statistics
@@ -186,12 +184,230 @@ paths:
               schema:
                 $ref: "#/components/schemas/ListEventsResponse"
 
+  /submit-event:
+    post:
+      operationId: submitEvent
+      tags: [submissions]
+      summary: Public event submission
+      description: Submits an event for admin approval. Stored with status pending_review.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitEventBody"
+      responses:
+        "201":
+          description: Submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /articles:
+    get:
+      operationId: listArticles
+      tags: [articles]
+      summary: List published articles
+      parameters:
+        - name: country
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListArticlesResponse"
+
+  /articles/{slug}:
+    get:
+      operationId: getArticleBySlug
+      tags: [articles]
+      summary: Get article by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /site-settings:
+    get:
+      operationId: getSiteSettings
+      tags: [settings]
+      summary: Get public site settings (banner image)
+      responses:
+        "200":
+          description: Settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+
+  /admin/site-settings:
+    put:
+      operationId: updateSiteSettings
+      tags: [admin]
+      summary: Update site settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSiteSettingsBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/articles:
+    get:
+      operationId: adminListArticles
+      tags: [admin]
+      summary: Admin list all articles
+      responses:
+        "200":
+          description: All articles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListArticlesResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      operationId: createArticle
+      tags: [admin]
+      summary: Create article
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateArticleBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/articles/{id}:
+    patch:
+      operationId: updateArticle
+      tags: [admin]
+      summary: Update article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateArticleBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteArticle
+      tags: [admin]
+      summary: Delete article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
   /admin/events:
     get:
       operationId: adminListEvents
       tags: [admin]
       summary: Admin list all events
-      description: Returns all events including drafts and archived (admin only)
       parameters:
         - name: status
           in: query
@@ -218,7 +434,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
     post:
       operationId: createEvent
       tags: [admin]
@@ -285,7 +500,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-
     delete:
       operationId: deleteEvent
       tags: [admin]
@@ -330,12 +544,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Event"
-        "404":
-          description: Not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
         "401":
           description: Unauthorized
           content:
@@ -361,12 +569,31 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Event"
-        "404":
-          description: Not found
+        "401":
+          description: Unauthorized
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/events/{id}/reject:
+    post:
+      operationId: rejectEvent
+      tags: [admin]
+      summary: Reject pending event submission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Rejected event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
         "401":
           description: Unauthorized
           content:
@@ -492,7 +719,6 @@ paths:
           required: true
           schema:
             type: string
-          description: Search query
       responses:
         "200":
           description: Search results
@@ -508,92 +734,67 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
     ErrorResponse:
       type: object
       properties:
         error:
           type: string
-      required:
-        - error
+      required: [error]
 
     SuccessResponse:
       type: object
       properties:
         success:
           type: boolean
-      required:
-        - success
+      required: [success]
 
     Country:
       type: object
       properties:
-        id:
-          type: integer
-        name:
-          type: string
-        slug:
-          type: string
-      required:
-        - id
-        - name
-        - slug
+        id: { type: integer }
+        name: { type: string }
+        slug: { type: string }
+      required: [id, name, slug]
 
     Tag:
       type: object
       properties:
-        id:
-          type: integer
-        name:
-          type: string
-        slug:
-          type: string
-      required:
-        - id
-        - name
-        - slug
+        id: { type: integer }
+        name: { type: string }
+        slug: { type: string }
+      required: [id, name, slug]
 
     Event:
       type: object
       properties:
-        id:
-          type: integer
-        title:
-          type: string
-        slug:
-          type: string
-        description:
-          type: string
+        id: { type: integer }
+        title: { type: string }
+        slug: { type: string }
+        description: { type: string }
         previewImage:
           type: ["string", "null"]
-        location:
-          type: string
-        startDate:
-          type: string
+        location: { type: string }
+        startDate: { type: string }
         endDate:
           type: ["string", "null"]
         organizerLink:
           type: ["string", "null"]
-        status:
-          type: string
-        featured:
-          type: boolean
-        countryId:
-          type: integer
-        countryName:
-          type: string
-        countrySlug:
-          type: string
+        contactEmail:
+          type: ["string", "null"]
+        status: { type: string }
+        eventFormat: { type: string }
+        featured: { type: boolean }
+        countryId: { type: integer }
+        countryName: { type: string }
+        countrySlug: { type: string }
         tags:
           type: array
           items:
             $ref: "#/components/schemas/Tag"
-        createdAt:
-          type: string
-        updatedAt:
-          type: string
+        createdAt: { type: string }
+        updatedAt: { type: string }
       required:
         - id
         - title
@@ -602,6 +803,7 @@ components:
         - location
         - startDate
         - status
+        - eventFormat
         - featured
         - countryId
         - countryName
@@ -613,168 +815,211 @@ components:
     AdminLog:
       type: object
       properties:
-        id:
-          type: integer
-        action:
-          type: string
+        id: { type: integer }
+        action: { type: string }
         eventId:
           type: ["integer", "null"]
         eventTitle:
           type: ["string", "null"]
-        timestamp:
-          type: string
-      required:
-        - id
-        - action
-        - timestamp
+        timestamp: { type: string }
+      required: [id, action, timestamp]
 
     EventStats:
       type: object
       properties:
-        totalPublished:
-          type: integer
-        totalDraft:
-          type: integer
-        totalArchived:
-          type: integer
+        totalPublished: { type: integer }
+        totalDraft: { type: integer }
+        totalArchived: { type: integer }
         byCountry:
           type: array
           items:
             type: object
             properties:
-              countryName:
-                type: string
-              countrySlug:
-                type: string
-              count:
-                type: integer
-            required:
-              - countryName
-              - countrySlug
-              - count
+              countryName: { type: string }
+              countrySlug: { type: string }
+              count: { type: integer }
+            required: [countryName, countrySlug, count]
         byTag:
           type: array
           items:
             type: object
             properties:
-              tagName:
-                type: string
-              tagSlug:
-                type: string
-              count:
-                type: integer
-            required:
-              - tagName
-              - tagSlug
-              - count
-        upcomingThisMonth:
-          type: integer
-      required:
-        - totalPublished
-        - totalDraft
-        - totalArchived
-        - byCountry
-        - byTag
-        - upcomingThisMonth
+              tagName: { type: string }
+              tagSlug: { type: string }
+              count: { type: integer }
+            required: [tagName, tagSlug, count]
+        upcomingThisMonth: { type: integer }
+      required: [totalPublished, totalDraft, totalArchived, byCountry, byTag, upcomingThisMonth]
 
     CreateEventBody:
       type: object
       properties:
-        title:
-          type: string
-        slug:
-          type: string
-        description:
-          type: string
+        title: { type: string }
+        slug: { type: string }
+        description: { type: string }
         previewImage:
           type: ["string", "null"]
-        location:
-          type: string
-        startDate:
-          type: string
+        location: { type: string }
+        startDate: { type: string }
         endDate:
           type: ["string", "null"]
         organizerLink:
           type: ["string", "null"]
-        status:
-          type: string
-        featured:
-          type: boolean
-        countryId:
-          type: integer
+        contactEmail:
+          type: ["string", "null"]
+        status: { type: string }
+        eventFormat: { type: string }
+        featured: { type: boolean }
+        countryId: { type: integer }
         tagIds:
           type: array
-          items:
-            type: integer
-      required:
-        - title
-        - slug
-        - description
-        - location
-        - startDate
-        - countryId
+          items: { type: integer }
+      required: [title, slug, description, location, startDate, countryId]
 
     UpdateEventBody:
       type: object
       properties:
-        title:
-          type: string
-        slug:
-          type: string
-        description:
-          type: string
+        title: { type: string }
+        slug: { type: string }
+        description: { type: string }
         previewImage:
           type: ["string", "null"]
-        location:
-          type: string
-        startDate:
-          type: string
+        location: { type: string }
+        startDate: { type: string }
         endDate:
           type: ["string", "null"]
         organizerLink:
           type: ["string", "null"]
-        status:
-          type: string
-        featured:
-          type: boolean
-        countryId:
-          type: integer
+        contactEmail:
+          type: ["string", "null"]
+        status: { type: string }
+        eventFormat: { type: string }
+        featured: { type: boolean }
+        countryId: { type: integer }
         tagIds:
           type: array
-          items:
-            type: integer
+          items: { type: integer }
+
+    SubmitEventBody:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        countryId: { type: integer }
+        tagIds:
+          type: array
+          items: { type: integer }
+        startDate: { type: string }
+        endDate:
+          type: ["string", "null"]
+        location: { type: string }
+        organizerLink:
+          type: ["string", "null"]
+        contactEmail: { type: string }
+        previewImage:
+          type: ["string", "null"]
+        eventFormat: { type: string }
+      required: [title, description, countryId, startDate, location, contactEmail]
 
     AdminLoginBody:
       type: object
       properties:
-        email:
-          type: string
-        password:
-          type: string
-      required:
-        - email
-        - password
+        email: { type: string }
+        password: { type: string }
+      required: [email, password]
 
     AdminLoginResponse:
       type: object
       properties:
-        success:
-          type: boolean
-        message:
-          type: string
-      required:
-        - success
-        - message
+        success: { type: boolean }
+        message: { type: string }
+      required: [success, message]
 
     AdminSession:
       type: object
       properties:
-        authenticated:
-          type: boolean
+        authenticated: { type: boolean }
         email:
           type: ["string", "null"]
-      required:
-        - authenticated
+      required: [authenticated]
+
+    SiteSettings:
+      type: object
+      properties:
+        id: { type: integer }
+        homepageBannerUrl:
+          type: ["string", "null"]
+        updatedAt: { type: string }
+      required: [id, updatedAt]
+
+    UpdateSiteSettingsBody:
+      type: object
+      properties:
+        homepageBannerUrl:
+          type: ["string", "null"]
+
+    Article:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        slug: { type: string }
+        coverImage:
+          type: ["string", "null"]
+        content: { type: string }
+        countryId:
+          type: ["integer", "null"]
+        countryName:
+          type: ["string", "null"]
+        countrySlug:
+          type: ["string", "null"]
+        author:
+          type: ["string", "null"]
+        status: { type: string }
+        publishedAt:
+          type: ["string", "null"]
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        createdAt: { type: string }
+        updatedAt: { type: string }
+      required: [id, title, slug, content, status, tags, createdAt, updatedAt]
+
+    CreateArticleBody:
+      type: object
+      properties:
+        title: { type: string }
+        slug: { type: string }
+        coverImage:
+          type: ["string", "null"]
+        content: { type: string }
+        countryId:
+          type: ["integer", "null"]
+        author:
+          type: ["string", "null"]
+        status: { type: string }
+        tagIds:
+          type: array
+          items: { type: integer }
+      required: [title, slug, content]
+
+    UpdateArticleBody:
+      type: object
+      properties:
+        title: { type: string }
+        slug: { type: string }
+        coverImage:
+          type: ["string", "null"]
+        content: { type: string }
+        countryId:
+          type: ["integer", "null"]
+        author:
+          type: ["string", "null"]
+        status: { type: string }
+        tagIds:
+          type: array
+          items: { type: integer }
 
     ListEventsResponse:
       type: array
@@ -795,3 +1040,8 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/AdminLog"
+
+    ListArticlesResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Article"

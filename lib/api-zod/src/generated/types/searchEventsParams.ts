@@ -7,8 +7,5 @@
  */
 
 export type SearchEventsParams = {
-  /**
-   * Search query
-   */
   q: string;
 };

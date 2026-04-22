@@ -1,0 +1,245 @@
+Upgrade Central Calendar project with the following feature refinements.
+
+Do NOT rebuild the UI.
+Extend the current architecture.
+
+-------------------------------------
+
+LOGO UPDATE
+
+Replace existing logo with:
+
+/public/logo.svg
+
+Use in:
+
+header
+footer
+mobile header
+
+Keep aspect ratio
+
+Sizes:
+
+desktop height = 40px
+mobile height = 28px
+
+-------------------------------------
+
+HOMEPAGE HERO UPDATE
+
+Change homepage title:
+
+Central Calendar
+
+Add subtitle below:
+
+Plan the region
+
+Subtitle styling:
+
+lighter font weight
+slightly increased letter spacing
+center aligned
+
+-------------------------------------
+
+HOMEPAGE BANNER IMAGE (ADMIN EDITABLE)
+
+Add hero background banner image.
+
+Banner must be editable via admin panel.
+
+Create table:
+
+site_settings
+
+fields:
+
+id
+homepage_banner_url
+updated_at
+
+Admin route:
+
+/control-room-centralcalendar-9xA2m/settings
+
+Allow:
+
+upload banner
+replace banner
+preview banner
+
+-------------------------------------
+
+SUBMIT EVENT FEATURE
+
+Add homepage section:
+
+Submit your event
+
+Button:
+
+Submit event
+
+Route:
+
+/submit-event
+
+Form fields:
+
+title
+description
+country
+tags
+date
+location
+organizer link
+contact email
+image upload
+
+Submitted events must be saved as:
+
+status = pending_review
+
+Do NOT publish automatically.
+
+Admin panel route:
+
+/control-room-centralcalendar-9xA2m/pending
+
+Admin can:
+
+approve
+reject
+edit
+
+-------------------------------------
+
+RENAME REGION
+
+Replace:
+
+Caspian Region
+
+with:
+
+Caucasus
+
+Update:
+
+routes
+filters
+database seed
+navigation
+
+New route:
+
+/caucasus
+
+-------------------------------------
+
+ONLINE EVENTS SUPPORT
+
+Add event format field:
+
+event_format
+
+values:
+
+offline
+online
+hybrid
+
+Add filter:
+
+Online events
+
+Create route:
+
+/online-events
+
+-------------------------------------
+
+ARTICLES SECTION
+
+Create route:
+
+/articles
+
+Create table:
+
+articles
+
+fields:
+
+id
+title
+slug
+cover_image
+content
+country
+tags
+author
+status
+published_at
+created_at
+
+Admin must be able to:
+
+create article
+edit article
+delete article
+publish article
+archive article
+
+-------------------------------------
+
+TAG STRUCTURE UPDATE
+
+Replace compound tags:
+
+Economy & Finance
+Marketing & Media
+
+with separated tags:
+
+economy
+finance
+marketing
+media
+
+Final tag list:
+
+investment
+energy
+economy
+finance
+technology
+sustainability
+esg
+marketing
+media
+retail
+heavy
+industry
+
+Update filtering logic accordingly.
+
+-------------------------------------
+
+FINAL RESULT REQUIRED
+
+Homepage banner editable from admin panel
+
+Event submission workflow with approval queue
+
+Caucasus region replacing Caspian
+
+Online events filter working
+
+Articles section working
+
+Updated tag structure implemented
+
+SVG logo integrated

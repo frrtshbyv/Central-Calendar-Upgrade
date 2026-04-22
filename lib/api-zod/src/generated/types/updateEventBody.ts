@@ -18,7 +18,10 @@ export interface UpdateEventBody {
   endDate?: string | null;
   /** @nullable */
   organizerLink?: string | null;
+  /** @nullable */
+  contactEmail?: string | null;
   status?: string;
+  eventFormat?: string;
   featured?: boolean;
   countryId?: number;
   tagIds?: number[];
