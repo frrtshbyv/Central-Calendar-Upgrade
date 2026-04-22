@@ -2,8 +2,8 @@ modules = ["nodejs-24", "postgresql-16"]
 
 [deployment]
 deploymentTarget = "autoscale"
-build = ["sh", "-c", "pnpm -r --filter @workspace/api-server... --filter @workspace/central-calendar... run build"]
-run = ["sh", "-c", "node artifacts/api-server/dist/index.mjs"]
+build = ["pnpm", "run", "build"]
+run = ["node", "artifacts/api-server/dist/index.mjs"]
 
 [deployment.postBuild]
 args = ["pnpm", "store", "prune"]
@@ -23,6 +23,14 @@ timeoutMs = 20000
 [[ports]]
 localPort = 8080
 externalPort = 80
+
+[[ports]]
+localPort = 8081
+externalPort = 8081
+
+[[ports]]
+localPort = 25018
+externalPort = 3000
 
 [nix]
 channel = "stable-25_05"
