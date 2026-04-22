@@ -339,8 +339,9 @@ router.delete("/admin/events/:id", requireAdmin, async (req, res): Promise<void>
     return;
   }
 
-  await db.delete(eventsTable).where(eq(eventsTable.id, params.data.id));
+  // Log before deleting so the FK reference still resolves
   await logAdminAction("delete_event", event.id, event.title);
+  await db.delete(eventsTable).where(eq(eventsTable.id, params.data.id));
 
   res.sendStatus(204);
 });
