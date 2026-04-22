@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
 import { useAdminLogout, useAdminMe } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, Archive, PlusCircle, LayoutDashboard, LogOut, Inbox, Newspaper, Settings as SettingsIcon } from "lucide-react";
+import { CalendarDays, Archive, PlusCircle, LayoutDashboard, LogOut, Inbox, Newspaper, Settings as SettingsIcon, Image as ImageIcon, Languages } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export function AdminShell({ children }: { children: ReactNode }) {
@@ -29,6 +29,8 @@ export function AdminShell({ children }: { children: ReactNode }) {
     { href: "/control-room-7f92x/pending", label: "Pending Submissions", icon: Inbox },
     { href: "/control-room-7f92x/archive", label: "Archive", icon: Archive },
     { href: "/control-room-7f92x/articles", label: "Articles", icon: Newspaper },
+    { href: "/control-room-7f92x/banners", label: "Hero Banners", icon: ImageIcon },
+    { href: "/control-room-7f92x/translations", label: "Translations", icon: Languages },
     { href: "/control-room-7f92x/settings", label: "Site Settings", icon: SettingsIcon },
   ];
 

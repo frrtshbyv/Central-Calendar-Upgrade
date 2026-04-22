@@ -33,10 +33,13 @@ export const ListEventsQueryParams = zod.object({
 export const ListEventsResponseItem = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   description: zod.string(),
+  descriptionRu: zod.string().nullish(),
   previewImage: zod.string().nullish(),
   location: zod.string(),
+  locationRu: zod.string().nullish(),
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
@@ -65,10 +68,13 @@ export const ListEventsResponse = zod.array(ListEventsResponseItem);
 export const GetFeaturedEventsResponseItem = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   description: zod.string(),
+  descriptionRu: zod.string().nullish(),
   previewImage: zod.string().nullish(),
   location: zod.string(),
+  locationRu: zod.string().nullish(),
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
@@ -103,10 +109,13 @@ export const GetUpcomingEventsQueryParams = zod.object({
 export const GetUpcomingEventsResponseItem = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   description: zod.string(),
+  descriptionRu: zod.string().nullish(),
   previewImage: zod.string().nullish(),
   location: zod.string(),
+  locationRu: zod.string().nullish(),
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
@@ -137,10 +146,13 @@ export const GetUpcomingEventsResponse = zod.array(
 export const GetCrossBorderEventsResponseItem = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   description: zod.string(),
+  descriptionRu: zod.string().nullish(),
   previewImage: zod.string().nullish(),
   location: zod.string(),
+  locationRu: zod.string().nullish(),
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
@@ -199,10 +211,13 @@ export const GetEventBySlugParams = zod.object({
 export const GetEventBySlugResponse = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   description: zod.string(),
+  descriptionRu: zod.string().nullish(),
   previewImage: zod.string().nullish(),
   location: zod.string(),
+  locationRu: zod.string().nullish(),
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
@@ -234,10 +249,13 @@ export const GetRelatedEventsParams = zod.object({
 export const GetRelatedEventsResponseItem = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   description: zod.string(),
+  descriptionRu: zod.string().nullish(),
   previewImage: zod.string().nullish(),
   location: zod.string(),
+  locationRu: zod.string().nullish(),
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
@@ -290,9 +308,11 @@ export const ListArticlesQueryParams = zod.object({
 export const ListArticlesResponseItem = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   coverImage: zod.string().nullish(),
   content: zod.string(),
+  contentRu: zod.string().nullish(),
   countryId: zod.number().nullish(),
   countryName: zod.string().nullish(),
   countrySlug: zod.string().nullish(),
@@ -321,9 +341,11 @@ export const GetArticleBySlugParams = zod.object({
 export const GetArticleBySlugResponse = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   coverImage: zod.string().nullish(),
   content: zod.string(),
+  contentRu: zod.string().nullish(),
   countryId: zod.number().nullish(),
   countryName: zod.string().nullish(),
   countrySlug: zod.string().nullish(),
@@ -364,14 +386,127 @@ export const UpdateSiteSettingsResponse = zod.object({
 });
 
 /**
+ * @summary List active site banners
+ */
+export const ListBannersResponseItem = zod.object({
+  id: zod.number(),
+  imageUrl: zod.string(),
+  title: zod.string().nullish(),
+  titleRu: zod.string().nullish(),
+  subtitle: zod.string().nullish(),
+  subtitleRu: zod.string().nullish(),
+  linkUrl: zod.string().nullish(),
+  sortOrder: zod.number(),
+  isActive: zod.boolean(),
+  updatedAt: zod.string(),
+});
+export const ListBannersResponse = zod.array(ListBannersResponseItem);
+
+/**
+ * @summary Admin list all banners
+ */
+export const AdminListBannersResponseItem = zod.object({
+  id: zod.number(),
+  imageUrl: zod.string(),
+  title: zod.string().nullish(),
+  titleRu: zod.string().nullish(),
+  subtitle: zod.string().nullish(),
+  subtitleRu: zod.string().nullish(),
+  linkUrl: zod.string().nullish(),
+  sortOrder: zod.number(),
+  isActive: zod.boolean(),
+  updatedAt: zod.string(),
+});
+export const AdminListBannersResponse = zod.array(AdminListBannersResponseItem);
+
+/**
+ * @summary Create banner
+ */
+export const CreateBannerBody = zod.object({
+  imageUrl: zod.string(),
+  title: zod.string().nullish(),
+  titleRu: zod.string().nullish(),
+  subtitle: zod.string().nullish(),
+  subtitleRu: zod.string().nullish(),
+  linkUrl: zod.string().nullish(),
+  sortOrder: zod.number().optional(),
+  isActive: zod.boolean().optional(),
+});
+
+/**
+ * @summary Update banner
+ */
+export const UpdateBannerParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UpdateBannerBody = zod.object({
+  imageUrl: zod.string().optional(),
+  title: zod.string().nullish(),
+  titleRu: zod.string().nullish(),
+  subtitle: zod.string().nullish(),
+  subtitleRu: zod.string().nullish(),
+  linkUrl: zod.string().nullish(),
+  sortOrder: zod.number().optional(),
+  isActive: zod.boolean().optional(),
+});
+
+export const UpdateBannerResponse = zod.object({
+  id: zod.number(),
+  imageUrl: zod.string(),
+  title: zod.string().nullish(),
+  titleRu: zod.string().nullish(),
+  subtitle: zod.string().nullish(),
+  subtitleRu: zod.string().nullish(),
+  linkUrl: zod.string().nullish(),
+  sortOrder: zod.number(),
+  isActive: zod.boolean(),
+  updatedAt: zod.string(),
+});
+
+/**
+ * @summary Delete banner
+ */
+export const DeleteBannerParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+/**
+ * @summary List all UI translation overrides
+ */
+export const ListTranslationsResponseItem = zod.object({
+  key: zod.string(),
+  en: zod.string(),
+  ru: zod.string(),
+});
+export const ListTranslationsResponse = zod.array(ListTranslationsResponseItem);
+
+/**
+ * @summary Upsert a translation key
+ */
+export const UpsertTranslationBody = zod.object({
+  key: zod.string(),
+  en: zod.string(),
+  ru: zod.string(),
+});
+
+export const UpsertTranslationResponse = zod.object({
+  key: zod.string(),
+  en: zod.string(),
+  ru: zod.string(),
+});
+
+/**
  * @summary Admin list all articles
  */
 export const AdminListArticlesResponseItem = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   coverImage: zod.string().nullish(),
   content: zod.string(),
+  contentRu: zod.string().nullish(),
   countryId: zod.number().nullish(),
   countryName: zod.string().nullish(),
   countrySlug: zod.string().nullish(),
@@ -397,9 +532,11 @@ export const AdminListArticlesResponse = zod.array(
  */
 export const CreateArticleBody = zod.object({
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   coverImage: zod.string().nullish(),
   content: zod.string(),
+  contentRu: zod.string().nullish(),
   countryId: zod.number().nullish(),
   author: zod.string().nullish(),
   status: zod.string().optional(),
@@ -415,9 +552,11 @@ export const UpdateArticleParams = zod.object({
 
 export const UpdateArticleBody = zod.object({
   title: zod.string().optional(),
+  titleRu: zod.string().nullish(),
   slug: zod.string().optional(),
   coverImage: zod.string().nullish(),
   content: zod.string().optional(),
+  contentRu: zod.string().nullish(),
   countryId: zod.number().nullish(),
   author: zod.string().nullish(),
   status: zod.string().optional(),
@@ -427,9 +566,11 @@ export const UpdateArticleBody = zod.object({
 export const UpdateArticleResponse = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   coverImage: zod.string().nullish(),
   content: zod.string(),
+  contentRu: zod.string().nullish(),
   countryId: zod.number().nullish(),
   countryName: zod.string().nullish(),
   countrySlug: zod.string().nullish(),
@@ -466,10 +607,13 @@ export const AdminListEventsQueryParams = zod.object({
 export const AdminListEventsResponseItem = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   description: zod.string(),
+  descriptionRu: zod.string().nullish(),
   previewImage: zod.string().nullish(),
   location: zod.string(),
+  locationRu: zod.string().nullish(),
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
@@ -497,10 +641,13 @@ export const AdminListEventsResponse = zod.array(AdminListEventsResponseItem);
  */
 export const CreateEventBody = zod.object({
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   description: zod.string(),
+  descriptionRu: zod.string().nullish(),
   previewImage: zod.string().nullish(),
   location: zod.string(),
+  locationRu: zod.string().nullish(),
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
@@ -521,10 +668,13 @@ export const UpdateEventParams = zod.object({
 
 export const UpdateEventBody = zod.object({
   title: zod.string().optional(),
+  titleRu: zod.string().nullish(),
   slug: zod.string().optional(),
   description: zod.string().optional(),
+  descriptionRu: zod.string().nullish(),
   previewImage: zod.string().nullish(),
   location: zod.string().optional(),
+  locationRu: zod.string().nullish(),
   startDate: zod.string().optional(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
@@ -539,10 +689,13 @@ export const UpdateEventBody = zod.object({
 export const UpdateEventResponse = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   description: zod.string(),
+  descriptionRu: zod.string().nullish(),
   previewImage: zod.string().nullish(),
   location: zod.string(),
+  locationRu: zod.string().nullish(),
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
@@ -581,10 +734,13 @@ export const PublishEventParams = zod.object({
 export const PublishEventResponse = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   description: zod.string(),
+  descriptionRu: zod.string().nullish(),
   previewImage: zod.string().nullish(),
   location: zod.string(),
+  locationRu: zod.string().nullish(),
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
@@ -616,10 +772,13 @@ export const ArchiveEventParams = zod.object({
 export const ArchiveEventResponse = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   description: zod.string(),
+  descriptionRu: zod.string().nullish(),
   previewImage: zod.string().nullish(),
   location: zod.string(),
+  locationRu: zod.string().nullish(),
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
@@ -651,10 +810,13 @@ export const RejectEventParams = zod.object({
 export const RejectEventResponse = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   description: zod.string(),
+  descriptionRu: zod.string().nullish(),
   previewImage: zod.string().nullish(),
   location: zod.string(),
+  locationRu: zod.string().nullish(),
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),
@@ -750,10 +912,13 @@ export const SearchEventsQueryParams = zod.object({
 export const SearchEventsResponseItem = zod.object({
   id: zod.number(),
   title: zod.string(),
+  titleRu: zod.string().nullish(),
   slug: zod.string(),
   description: zod.string(),
+  descriptionRu: zod.string().nullish(),
   previewImage: zod.string().nullish(),
   location: zod.string(),
+  locationRu: zod.string().nullish(),
   startDate: zod.string(),
   endDate: zod.string().nullish(),
   organizerLink: zod.string().nullish(),

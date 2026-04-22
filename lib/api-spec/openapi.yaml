@@ -299,6 +299,147 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /banners:
+    get:
+      operationId: listBanners
+      tags: [banners]
+      summary: List active site banners
+      responses:
+        "200":
+          description: Banners
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListBannersResponse"
+
+  /admin/banners:
+    get:
+      operationId: adminListBanners
+      tags: [admin]
+      summary: Admin list all banners
+      responses:
+        "200":
+          description: All banners
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListBannersResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      operationId: createBanner
+      tags: [admin]
+      summary: Create banner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBannerBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Banner"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/banners/{id}:
+    patch:
+      operationId: updateBanner
+      tags: [admin]
+      summary: Update banner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBannerBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Banner"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteBanner
+      tags: [admin]
+      summary: Delete banner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /translations:
+    get:
+      operationId: listTranslations
+      tags: [translations]
+      summary: List all UI translation overrides
+      responses:
+        "200":
+          description: Translations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListTranslationsResponse"
+
+  /admin/translations:
+    put:
+      operationId: upsertTranslation
+      tags: [admin]
+      summary: Upsert a translation key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpsertTranslationBody"
+      responses:
+        "200":
+          description: Upserted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Translation"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
   /admin/articles:
     get:
       operationId: adminListArticles
@@ -771,11 +912,17 @@ components:
       properties:
         id: { type: integer }
         title: { type: string }
+        titleRu:
+          type: ["string", "null"]
         slug: { type: string }
         description: { type: string }
+        descriptionRu:
+          type: ["string", "null"]
         previewImage:
           type: ["string", "null"]
         location: { type: string }
+        locationRu:
+          type: ["string", "null"]
         startDate: { type: string }
         endDate:
           type: ["string", "null"]
@@ -855,11 +1002,17 @@ components:
       type: object
       properties:
         title: { type: string }
+        titleRu:
+          type: ["string", "null"]
         slug: { type: string }
         description: { type: string }
+        descriptionRu:
+          type: ["string", "null"]
         previewImage:
           type: ["string", "null"]
         location: { type: string }
+        locationRu:
+          type: ["string", "null"]
         startDate: { type: string }
         endDate:
           type: ["string", "null"]
@@ -880,11 +1033,17 @@ components:
       type: object
       properties:
         title: { type: string }
+        titleRu:
+          type: ["string", "null"]
         slug: { type: string }
         description: { type: string }
+        descriptionRu:
+          type: ["string", "null"]
         previewImage:
           type: ["string", "null"]
         location: { type: string }
+        locationRu:
+          type: ["string", "null"]
         startDate: { type: string }
         endDate:
           type: ["string", "null"]
@@ -963,10 +1122,14 @@ components:
       properties:
         id: { type: integer }
         title: { type: string }
+        titleRu:
+          type: ["string", "null"]
         slug: { type: string }
         coverImage:
           type: ["string", "null"]
         content: { type: string }
+        contentRu:
+          type: ["string", "null"]
         countryId:
           type: ["integer", "null"]
         countryName:
@@ -990,10 +1153,14 @@ components:
       type: object
       properties:
         title: { type: string }
+        titleRu:
+          type: ["string", "null"]
         slug: { type: string }
         coverImage:
           type: ["string", "null"]
         content: { type: string }
+        contentRu:
+          type: ["string", "null"]
         countryId:
           type: ["integer", "null"]
         author:
@@ -1008,10 +1175,14 @@ components:
       type: object
       properties:
         title: { type: string }
+        titleRu:
+          type: ["string", "null"]
         slug: { type: string }
         coverImage:
           type: ["string", "null"]
         content: { type: string }
+        contentRu:
+          type: ["string", "null"]
         countryId:
           type: ["integer", "null"]
         author:
@@ -1045,3 +1216,84 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/Article"
+
+    Banner:
+      type: object
+      properties:
+        id: { type: integer }
+        imageUrl: { type: string }
+        title:
+          type: ["string", "null"]
+        titleRu:
+          type: ["string", "null"]
+        subtitle:
+          type: ["string", "null"]
+        subtitleRu:
+          type: ["string", "null"]
+        linkUrl:
+          type: ["string", "null"]
+        sortOrder: { type: integer }
+        isActive: { type: boolean }
+        updatedAt: { type: string }
+      required: [id, imageUrl, sortOrder, isActive, updatedAt]
+
+    ListBannersResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Banner"
+
+    CreateBannerBody:
+      type: object
+      properties:
+        imageUrl: { type: string }
+        title:
+          type: ["string", "null"]
+        titleRu:
+          type: ["string", "null"]
+        subtitle:
+          type: ["string", "null"]
+        subtitleRu:
+          type: ["string", "null"]
+        linkUrl:
+          type: ["string", "null"]
+        sortOrder: { type: integer }
+        isActive: { type: boolean }
+      required: [imageUrl]
+
+    UpdateBannerBody:
+      type: object
+      properties:
+        imageUrl: { type: string }
+        title:
+          type: ["string", "null"]
+        titleRu:
+          type: ["string", "null"]
+        subtitle:
+          type: ["string", "null"]
+        subtitleRu:
+          type: ["string", "null"]
+        linkUrl:
+          type: ["string", "null"]
+        sortOrder: { type: integer }
+        isActive: { type: boolean }
+
+    Translation:
+      type: object
+      properties:
+        key: { type: string }
+        en: { type: string }
+        ru: { type: string }
+      required: [key, en, ru]
+
+    ListTranslationsResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Translation"
+
+    UpsertTranslationBody:
+      type: object
+      properties:
+        key: { type: string }
+        en: { type: string }
+        ru: { type: string }
+      required: [key, en, ru]

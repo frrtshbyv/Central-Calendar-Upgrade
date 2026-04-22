@@ -26,9 +26,11 @@ async function fetchArticles(whereConditions?: any) {
     .select({
       id: articlesTable.id,
       title: articlesTable.title,
+      titleRu: articlesTable.titleRu,
       slug: articlesTable.slug,
       coverImage: articlesTable.coverImage,
       content: articlesTable.content,
+      contentRu: articlesTable.contentRu,
       countryId: articlesTable.countryId,
       countryName: countriesTable.name,
       countrySlug: countriesTable.slug,
@@ -113,9 +115,11 @@ router.post("/admin/articles", requireAdmin, async (req, res): Promise<void> => 
     .insert(articlesTable)
     .values({
       title: data.title,
+      titleRu: data.titleRu ?? null,
       slug: data.slug,
       coverImage: data.coverImage ?? null,
       content: data.content,
+      contentRu: data.contentRu ?? null,
       countryId: data.countryId ?? null,
       author: data.author ?? null,
       status,

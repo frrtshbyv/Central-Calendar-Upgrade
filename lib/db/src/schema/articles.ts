@@ -6,9 +6,11 @@ import { countriesTable } from "./countries";
 export const articlesTable = pgTable("articles", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
+  titleRu: text("title_ru"),
   slug: text("slug").notNull().unique(),
   coverImage: text("cover_image"),
   content: text("content").notNull(),
+  contentRu: text("content_ru"),
   countryId: integer("country_id").references(() => countriesTable.id),
   author: text("author"),
   status: text("status").notNull().default("draft"),

@@ -6,33 +6,49 @@ import { Logo } from "@/components/Logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { X, ArrowRight, Send } from "lucide-react";
+import { HeroSlider } from "@/components/HeroSlider";
+import { useI18n } from "@/i18n";
 
-const COUNTRIES = [
-  { slug: "uzbekistan", name: "Uzbekistan" },
-  { slug: "kazakhstan", name: "Kazakhstan" },
-  { slug: "kyrgyzstan", name: "Kyrgyzstan" },
-  { slug: "turkmenistan", name: "Turkmenistan" },
-  { slug: "caucasus", name: "Caucasus" },
-  { slug: "cross-border", name: "Cross-Border" },
+const COUNTRIES: { slug: string; key: string }[] = [
+  { slug: "uzbekistan", key: "nav.uzbekistan" },
+  { slug: "kazakhstan", key: "nav.kazakhstan" },
+  { slug: "kyrgyzstan", key: "nav.kyrgyzstan" },
+  { slug: "turkmenistan", key: "nav.turkmenistan" },
+  { slug: "caucasus", key: "nav.caucasus" },
+  { slug: "cross-border", key: "nav.crossBorder" },
+];
+
+const FORMATS: { value: string; key: string }[] = [
+  { value: "offline", key: "filter.format.offline" },
+  { value: "online", key: "filter.format.online" },
+  { value: "hybrid", key: "filter.format.hybrid" },
 ];
 
 export default function Home() {
+  const { t, pickLocalized } = useI18n();
   const { data: stats } = useGetEventStats();
   const { data: settings } = useGetSiteSettings();
   const { data: articles } = useListArticles({ limit: 3 });
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [selectedFormat, setSelectedFormat] = useState<string>("");
 
   const { data: events, isLoading } = useListEvents({
     ...(selectedCountry ? { country: selectedCountry } : {}),
     ...(selectedTags.length === 1 ? { tag: selectedTags[0] } : {}),
   });
 
-  const filteredEvents = events
-    ? selectedTags.length > 1
-      ? events.filter((ev) => selectedTags.every((t) => ev.tags?.some((tag) => tag.slug === t)))
-      : events
-    : undefined;
+  const filteredEvents = (() => {
+    if (!events) return undefined;
+    let list = events;
+    if (selectedTags.length > 1) {
+      list = list.filter((ev) => selectedTags.every((tg) => ev.tags?.some((tag) => tag.slug === tg)));
+    }
+    if (selectedFormat) {
+      list = list.filter((ev) => ev.eventFormat === selectedFormat);
+    }
+    return list;
+  })();
 
   const toggleTag = useCallback((slug: string) => {
     setSelectedTags((prev) => (prev.includes(slug) ? prev.filter((t) => t !== slug) : [...prev, slug]));
@@ -41,94 +57,97 @@ export default function Home() {
   const clearFilters = () => {
     setSelectedTags([]);
     setSelectedCountry("");
+    setSelectedFormat("");
   };
 
-  const hasFilters = selectedTags.length > 0 || selectedCountry !== "";
-  const banner = settings?.homepageBannerUrl;
+  const hasFilters = selectedTags.length > 0 || selectedCountry !== "" || selectedFormat !== "";
 
   return (
     <div className="w-full">
       <section className="relative bg-primary text-primary-foreground border-b border-border overflow-hidden">
-        {banner && (
-          <div className="absolute inset-0">
-            <img src={banner} alt="" className="w-full h-full object-cover opacity-25" />
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/60 via-primary/80 to-primary" />
-          </div>
-        )}
-        <div className="relative container mx-auto max-w-5xl text-center py-20 md:py-32 px-4">
+        <HeroSlider fallbackUrl={settings?.homepageBannerUrl ?? null} />
+        <div className="relative container mx-auto max-w-5xl text-center py-16 sm:py-20 md:py-32 px-4">
           <div className="inline-block mb-6 px-3 py-1 border border-primary-foreground/20 rounded-full text-xs font-medium uppercase tracking-[0.2em] text-primary-foreground/70">
-            Central Asia · Caucasus
+            {t("hero.eyebrow")}
           </div>
           <div className="flex justify-center mb-6">
-            <Logo size={320} variant="stacked" className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.25)]" />
+            <Logo size={200} variant="stacked" className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.25)] max-w-[60vw] h-auto" />
           </div>
           <h1 className="sr-only">Central Calendar</h1>
-          <p className="text-xl md:text-2xl text-primary-foreground/80 font-mono uppercase tracking-[0.2em] mb-8">
-            Plan the region.
+          <p className="text-lg sm:text-xl md:text-2xl text-primary-foreground/80 font-mono uppercase tracking-[0.2em] mb-8">
+            {t("hero.tagline")}
           </p>
-          <p className="text-base md:text-lg text-primary-foreground/70 max-w-2xl mx-auto mb-10 leading-relaxed">
-            The strategic coordination intelligence platform for high-level government, corporate, and institutional events across the region.
+          <p className="text-sm sm:text-base md:text-lg text-primary-foreground/70 max-w-2xl mx-auto mb-10 leading-relaxed">
+            {t("hero.subtitle")}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Button asChild size="lg" variant="secondary">
-              <Link href="/calendar">Browse Calendar <ArrowRight className="ml-2 h-4 w-4" /></Link>
+              <Link href="/calendar">{t("hero.browse")} <ArrowRight className="ml-2 h-4 w-4" /></Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground hover:text-primary">
-              <Link href="/submit-event"><Send className="mr-2 h-4 w-4" /> Submit Event</Link>
+              <Link href="/submit-event"><Send className="mr-2 h-4 w-4" /> {t("hero.submit")}</Link>
             </Button>
           </div>
           <div className="mt-12 flex flex-wrap justify-center gap-4 md:gap-8 text-sm md:text-base font-mono opacity-80">
             <div className="flex flex-col items-center">
               <span className="text-3xl font-bold mb-1">{stats?.totalPublished ?? 0}</span>
-              <span className="uppercase tracking-wider text-xs">Total Events</span>
+              <span className="uppercase tracking-wider text-xs">{t("hero.totalEvents", "Total Events")}</span>
             </div>
             <div className="w-px h-12 bg-primary-foreground/20 hidden md:block" />
             <div className="flex flex-col items-center">
               <span className="text-3xl font-bold mb-1">{stats?.upcomingThisMonth ?? 0}</span>
-              <span className="uppercase tracking-wider text-xs">This Month</span>
+              <span className="uppercase tracking-wider text-xs">{t("hero.thisMonth", "This Month")}</span>
             </div>
             <div className="w-px h-12 bg-primary-foreground/20 hidden md:block" />
             <div className="flex flex-col items-center">
               <span className="text-3xl font-bold mb-1">{stats?.byCountry?.length ?? 0}</span>
-              <span className="uppercase tracking-wider text-xs">Nations</span>
+              <span className="uppercase tracking-wider text-xs">{t("hero.nations", "Nations")}</span>
             </div>
           </div>
         </div>
       </section>
 
-      <div className="container mx-auto px-4 py-12 md:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-10">
+      <div className="container mx-auto px-4 py-10 md:py-16">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+          <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-10 order-2 lg:order-1">
             {hasFilters && (
               <div className="flex flex-wrap items-center gap-2 p-3 bg-muted/60 rounded-lg border border-border">
-                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Filtering:</span>
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{t("filter.title")}:</span>
                 {selectedCountry && (
                   <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-full">
-                    {COUNTRIES.find((c) => c.slug === selectedCountry)?.name}
+                    {t(COUNTRIES.find((c) => c.slug === selectedCountry)?.key ?? "")}
                     <button onClick={() => setSelectedCountry("")} aria-label="Remove country filter">
                       <X className="h-3 w-3" />
                     </button>
                   </span>
                 )}
-                {selectedTags.map((t) => (
-                  <span key={t} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/80 text-primary-foreground text-xs font-medium rounded-full">
-                    #{stats?.byTag?.find((tg) => tg.tagSlug === t)?.tagName ?? t}
-                    <button onClick={() => toggleTag(t)} aria-label={`Remove tag ${t}`}>
+                {selectedFormat && (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary text-primary-foreground text-xs font-medium rounded-full">
+                    {t(FORMATS.find((f) => f.value === selectedFormat)?.key ?? "")}
+                    <button onClick={() => setSelectedFormat("")} aria-label="Remove format filter">
+                      <X className="h-3 w-3" />
+                    </button>
+                  </span>
+                )}
+                {selectedTags.map((tg) => (
+                  <span key={tg} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/80 text-primary-foreground text-xs font-medium rounded-full">
+                    #{stats?.byTag?.find((tag) => tag.tagSlug === tg)?.tagName ?? tg}
+                    <button onClick={() => toggleTag(tg)} aria-label={`Remove tag ${tg}`}>
                       <X className="h-3 w-3" />
                     </button>
                   </span>
                 ))}
                 <button onClick={clearFilters} className="ml-auto text-xs text-muted-foreground hover:text-foreground transition-colors duration-150">
-                  Clear all
+                  {t("filter.clear")}
                 </button>
               </div>
             )}
 
             <div>
               <div className="flex items-center justify-between border-b border-border pb-4 mb-6">
-                <h2 className="text-2xl font-bold">{hasFilters ? "Filtered Events" : "All Events"}</h2>
+                <h2 className="text-2xl font-bold">{hasFilters ? t("events.upcoming") : t("events.upcoming")}</h2>
                 <span className="text-xs text-muted-foreground font-mono uppercase tracking-wider">
-                  {filteredEvents ? `${filteredEvents.length} records` : "Loading…"}
+                  {filteredEvents ? `${filteredEvents.length}` : "…"}
                 </span>
               </div>
               {isLoading ? (
@@ -141,7 +160,7 @@ export default function Home() {
                 </div>
               ) : (
                 <div className="text-muted-foreground p-10 text-center border border-dashed border-border rounded-lg">
-                  {hasFilters ? "No events match the current filters." : "No events currently listed."}
+                  {t("events.none")}
                 </div>
               )}
             </div>
@@ -149,10 +168,10 @@ export default function Home() {
             {articles && articles.length > 0 && (
               <div>
                 <div className="flex items-center justify-between border-b border-border pb-4 mb-6">
-                  <h2 className="text-2xl font-bold">Latest Articles</h2>
-                  <Link href="/articles" className="text-sm text-primary hover:underline">View all →</Link>
+                  <h2 className="text-2xl font-bold">{t("articles.latest", "Latest Articles")}</h2>
+                  <Link href="/articles" className="text-sm text-primary hover:underline">{t("articles.viewAll", "View all")} →</Link>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {articles.map((a) => (
                     <Link key={a.id} href={`/articles/${a.slug}`} className="block group bg-card border border-border rounded-lg overflow-hidden hover-elevate transition-all">
                       {a.coverImage && (
@@ -161,7 +180,9 @@ export default function Home() {
                         </div>
                       )}
                       <div className="p-4">
-                        <h3 className="font-semibold mb-1 line-clamp-2 group-hover:text-primary transition-colors">{a.title}</h3>
+                        <h3 className="font-semibold mb-1 line-clamp-2 group-hover:text-primary transition-colors">
+                          {pickLocalized(a.title, (a as any).titleRu)}
+                        </h3>
                         <p className="text-xs text-muted-foreground">{a.publishedAt ? new Date(a.publishedAt).toLocaleDateString() : ""}{a.author ? ` · ${a.author}` : ""}</p>
                       </div>
                     </Link>
@@ -171,10 +192,10 @@ export default function Home() {
             )}
           </div>
 
-          <aside className="lg:col-span-4 xl:col-span-3">
-            <div className="sticky top-24 flex flex-col gap-6">
+          <aside className="lg:col-span-4 xl:col-span-3 order-1 lg:order-2">
+            <div className="lg:sticky lg:top-24 flex flex-col gap-6">
               <div className="bg-card border border-border rounded-lg p-5 shadow-sm">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Filter by Country</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">{t("filter.country")}</h3>
                 <div className="flex flex-col gap-1">
                   {COUNTRIES.map((c) => (
                     <button
@@ -184,7 +205,7 @@ export default function Home() {
                         selectedCountry === c.slug ? "bg-primary text-primary-foreground font-medium" : "hover:bg-muted text-foreground"
                       }`}
                     >
-                      <span>{c.name}</span>
+                      <span>{t(c.key)}</span>
                       {stats?.byCountry?.find((s) => s.countrySlug === c.slug) && (
                         <span className={`text-xs px-1.5 py-0.5 rounded-full ${selectedCountry === c.slug ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
                           {stats.byCountry.find((s) => s.countrySlug === c.slug)?.count}
@@ -196,7 +217,32 @@ export default function Home() {
               </div>
 
               <div className="bg-card border border-border rounded-lg p-5 shadow-sm">
-                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">Filter by Sector</h3>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">{t("filter.format")}</h3>
+                <div className="flex flex-col gap-1">
+                  <button
+                    onClick={() => setSelectedFormat("")}
+                    className={`w-full text-left px-3 py-2 rounded-md text-sm transition-all duration-150 ${
+                      selectedFormat === "" ? "bg-primary text-primary-foreground font-medium" : "hover:bg-muted text-foreground"
+                    }`}
+                  >
+                    {t("filter.format.all")}
+                  </button>
+                  {FORMATS.map((f) => (
+                    <button
+                      key={f.value}
+                      onClick={() => setSelectedFormat((prev) => (prev === f.value ? "" : f.value))}
+                      className={`w-full text-left px-3 py-2 rounded-md text-sm transition-all duration-150 ${
+                        selectedFormat === f.value ? "bg-primary text-primary-foreground font-medium" : "hover:bg-muted text-foreground"
+                      }`}
+                    >
+                      {t(f.key)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-card border border-border rounded-lg p-5 shadow-sm">
+                <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">{t("filter.tag")}</h3>
                 <div className="flex flex-wrap gap-2">
                   {stats?.byTag?.map((tag) => {
                     const active = selectedTags.includes(tag.tagSlug);

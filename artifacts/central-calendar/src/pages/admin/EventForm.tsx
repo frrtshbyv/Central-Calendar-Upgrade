@@ -19,6 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
 import { format } from "date-fns";
@@ -51,10 +52,13 @@ function slugify(title: string): string {
 
 const formSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
+  titleRu: z.string().optional().or(z.literal("")),
   slug: z.string().min(3, "Slug is required").regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens"),
   description: z.string().min(10, "Description required"),
+  descriptionRu: z.string().optional().or(z.literal("")),
   previewImage: z.string().url("Must be a valid URL").optional().or(z.literal("")),
   location: z.string().min(2, "Location is required"),
+  locationRu: z.string().optional().or(z.literal("")),
   startDate: z.string().min(1, "Start date is required"),
   endDate: z.string().optional().or(z.literal("")),
   organizerLink: z.string().url("Must be a valid URL").optional().or(z.literal("")),
@@ -88,10 +92,13 @@ export default function AdminEventForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
+      titleRu: "",
       slug: "",
       description: "",
+      descriptionRu: "",
       previewImage: "",
       location: "",
+      locationRu: "",
       startDate: format(new Date(), "yyyy-MM-dd"),
       endDate: "",
       organizerLink: "",
@@ -109,10 +116,13 @@ export default function AdminEventForm() {
     if (isEditing && existingEvent) {
       form.reset({
         title: existingEvent.title,
+        titleRu: (existingEvent as any).titleRu || "",
         slug: existingEvent.slug,
         description: existingEvent.description,
+        descriptionRu: (existingEvent as any).descriptionRu || "",
         previewImage: existingEvent.previewImage || "",
         location: existingEvent.location,
+        locationRu: (existingEvent as any).locationRu || "",
         startDate: existingEvent.startDate.split('T')[0], // Extract YYYY-MM-DD
         endDate: existingEvent.endDate ? existingEvent.endDate.split('T')[0] : "",
         organizerLink: existingEvent.organizerLink || "",
@@ -156,6 +166,9 @@ export default function AdminEventForm() {
     // Format payload
     const payload = {
       ...values,
+      titleRu: values.titleRu || null,
+      descriptionRu: values.descriptionRu || null,
+      locationRu: values.locationRu || null,
       previewImage: values.previewImage || null,
       endDate: values.endDate || null,
       organizerLink: values.organizerLink || null,
@@ -228,13 +241,34 @@ export default function AdminEventForm() {
               <h2 className="text-lg font-semibold border-b border-border pb-2">Core Information</h2>
             </div>
 
-            <FormField control={form.control} name="title" render={({ field }) => (
-              <FormItem className="md:col-span-2">
-                <FormLabel>Event Title</FormLabel>
-                <FormControl><Input placeholder="e.g. Central Asia Investment Forum 2025" {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
-            )} />
+            <div className="md:col-span-2">
+              <Tabs defaultValue="en" className="w-full">
+                <div className="flex items-center justify-between mb-2">
+                  <FormLabel>Event Title</FormLabel>
+                  <TabsList className="h-8">
+                    <TabsTrigger value="en" className="text-xs h-6 px-3">EN</TabsTrigger>
+                    <TabsTrigger value="ru" className="text-xs h-6 px-3">RU</TabsTrigger>
+                  </TabsList>
+                </div>
+                <TabsContent value="en" className="mt-0">
+                  <FormField control={form.control} name="title" render={({ field }) => (
+                    <FormItem>
+                      <FormControl><Input placeholder="e.g. Central Asia Investment Forum 2025" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </TabsContent>
+                <TabsContent value="ru" className="mt-0">
+                  <FormField control={form.control} name="titleRu" render={({ field }) => (
+                    <FormItem>
+                      <FormControl><Input placeholder="например: Центральноазиатский инвестиционный форум 2025" {...field} /></FormControl>
+                      <FormDescription>Optional Russian translation. Falls back to English if empty.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </TabsContent>
+              </Tabs>
+            </div>
 
             <FormField control={form.control} name="slug" render={({ field }) => (
               <FormItem>
@@ -264,13 +298,34 @@ export default function AdminEventForm() {
               </FormItem>
             )} />
 
-            <FormField control={form.control} name="description" render={({ field }) => (
-              <FormItem className="md:col-span-2">
-                <FormLabel>Description</FormLabel>
-                <FormControl><Textarea placeholder="Detailed information about the event..." className="min-h-32" {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
-            )} />
+            <div className="md:col-span-2">
+              <Tabs defaultValue="en" className="w-full">
+                <div className="flex items-center justify-between mb-2">
+                  <FormLabel>Description</FormLabel>
+                  <TabsList className="h-8">
+                    <TabsTrigger value="en" className="text-xs h-6 px-3">EN</TabsTrigger>
+                    <TabsTrigger value="ru" className="text-xs h-6 px-3">RU</TabsTrigger>
+                  </TabsList>
+                </div>
+                <TabsContent value="en" className="mt-0">
+                  <FormField control={form.control} name="description" render={({ field }) => (
+                    <FormItem>
+                      <FormControl><Textarea placeholder="Detailed information about the event..." className="min-h-32" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </TabsContent>
+                <TabsContent value="ru" className="mt-0">
+                  <FormField control={form.control} name="descriptionRu" render={({ field }) => (
+                    <FormItem>
+                      <FormControl><Textarea placeholder="Подробная информация о мероприятии..." className="min-h-32" {...field} /></FormControl>
+                      <FormDescription>Optional Russian translation.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-card p-6 rounded-lg border border-border shadow-sm">
@@ -299,13 +354,33 @@ export default function AdminEventForm() {
               </FormItem>
             )} />
 
-            <FormField control={form.control} name="location" render={({ field }) => (
-              <FormItem>
-                <FormLabel>City / Venue</FormLabel>
-                <FormControl><Input placeholder="e.g. Tashkent, Congress Hall" {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
-            )} />
+            <div>
+              <Tabs defaultValue="en" className="w-full">
+                <div className="flex items-center justify-between mb-2">
+                  <FormLabel>City / Venue</FormLabel>
+                  <TabsList className="h-7">
+                    <TabsTrigger value="en" className="text-xs h-5 px-2">EN</TabsTrigger>
+                    <TabsTrigger value="ru" className="text-xs h-5 px-2">RU</TabsTrigger>
+                  </TabsList>
+                </div>
+                <TabsContent value="en" className="mt-0">
+                  <FormField control={form.control} name="location" render={({ field }) => (
+                    <FormItem>
+                      <FormControl><Input placeholder="e.g. Tashkent, Congress Hall" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </TabsContent>
+                <TabsContent value="ru" className="mt-0">
+                  <FormField control={form.control} name="locationRu" render={({ field }) => (
+                    <FormItem>
+                      <FormControl><Input placeholder="например: Ташкент, Конгресс-холл" {...field} /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </TabsContent>
+              </Tabs>
+            </div>
 
             <FormField control={form.control} name="startDate" render={({ field }) => (
               <FormItem>

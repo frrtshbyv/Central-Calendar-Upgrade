@@ -67,10 +67,13 @@ async function getEventsWithTagsAdmin(whereConditions?: any) {
     .select({
       id: eventsTable.id,
       title: eventsTable.title,
+      titleRu: eventsTable.titleRu,
       slug: eventsTable.slug,
       description: eventsTable.description,
+      descriptionRu: eventsTable.descriptionRu,
       previewImage: eventsTable.previewImage,
       location: eventsTable.location,
+      locationRu: eventsTable.locationRu,
       startDate: eventsTable.startDate,
       endDate: eventsTable.endDate,
       organizerLink: eventsTable.organizerLink,

@@ -10,11 +10,17 @@ import type { Tag } from "./tag";
 export interface Event {
   id: number;
   title: string;
+  /** @nullable */
+  titleRu?: string | null;
   slug: string;
   description: string;
   /** @nullable */
+  descriptionRu?: string | null;
+  /** @nullable */
   previewImage?: string | null;
   location: string;
+  /** @nullable */
+  locationRu?: string | null;
   startDate: string;
   /** @nullable */
   endDate?: string | null;

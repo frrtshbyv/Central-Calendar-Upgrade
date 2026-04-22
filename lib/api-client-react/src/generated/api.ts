@@ -22,7 +22,9 @@ import type {
   AdminLoginResponse,
   AdminSession,
   Article,
+  Banner,
   CreateArticleBody,
+  CreateBannerBody,
   CreateEventBody,
   ErrorResponse,
   Event,
@@ -33,17 +35,22 @@ import type {
   ListAdminLogsResponse,
   ListArticlesParams,
   ListArticlesResponse,
+  ListBannersResponse,
   ListCountriesResponse,
   ListEventsParams,
   ListEventsResponse,
   ListTagsResponse,
+  ListTranslationsResponse,
   SearchEventsParams,
   SiteSettings,
   SubmitEventBody,
   SuccessResponse,
+  Translation,
   UpdateArticleBody,
+  UpdateBannerBody,
   UpdateEventBody,
   UpdateSiteSettingsBody,
+  UpsertTranslationBody,
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
@@ -1147,6 +1154,574 @@ export const useUpdateSiteSettings = <
   TContext
 > => {
   return useMutation(getUpdateSiteSettingsMutationOptions(options));
+};
+
+/**
+ * @summary List active site banners
+ */
+export const getListBannersUrl = () => {
+  return `/api/banners`;
+};
+
+export const listBanners = async (
+  options?: RequestInit,
+): Promise<ListBannersResponse> => {
+  return customFetch<ListBannersResponse>(getListBannersUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListBannersQueryKey = () => {
+  return [`/api/banners`] as const;
+};
+
+export const getListBannersQueryOptions = <
+  TData = Awaited<ReturnType<typeof listBanners>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listBanners>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListBannersQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listBanners>>> = ({
+    signal,
+  }) => listBanners({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listBanners>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListBannersQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listBanners>>
+>;
+export type ListBannersQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List active site banners
+ */
+
+export function useListBanners<
+  TData = Awaited<ReturnType<typeof listBanners>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listBanners>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListBannersQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Admin list all banners
+ */
+export const getAdminListBannersUrl = () => {
+  return `/api/admin/banners`;
+};
+
+export const adminListBanners = async (
+  options?: RequestInit,
+): Promise<ListBannersResponse> => {
+  return customFetch<ListBannersResponse>(getAdminListBannersUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getAdminListBannersQueryKey = () => {
+  return [`/api/admin/banners`] as const;
+};
+
+export const getAdminListBannersQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminListBanners>>,
+  TError = ErrorType<ErrorResponse>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminListBanners>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getAdminListBannersQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof adminListBanners>>
+  > = ({ signal }) => adminListBanners({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminListBanners>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type AdminListBannersQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminListBanners>>
+>;
+export type AdminListBannersQueryError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Admin list all banners
+ */
+
+export function useAdminListBanners<
+  TData = Awaited<ReturnType<typeof adminListBanners>>,
+  TError = ErrorType<ErrorResponse>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminListBanners>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getAdminListBannersQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Create banner
+ */
+export const getCreateBannerUrl = () => {
+  return `/api/admin/banners`;
+};
+
+export const createBanner = async (
+  createBannerBody: CreateBannerBody,
+  options?: RequestInit,
+): Promise<Banner> => {
+  return customFetch<Banner>(getCreateBannerUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createBannerBody),
+  });
+};
+
+export const getCreateBannerMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createBanner>>,
+    TError,
+    { data: BodyType<CreateBannerBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createBanner>>,
+  TError,
+  { data: BodyType<CreateBannerBody> },
+  TContext
+> => {
+  const mutationKey = ["createBanner"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createBanner>>,
+    { data: BodyType<CreateBannerBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createBanner(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateBannerMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createBanner>>
+>;
+export type CreateBannerMutationBody = BodyType<CreateBannerBody>;
+export type CreateBannerMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Create banner
+ */
+export const useCreateBanner = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createBanner>>,
+    TError,
+    { data: BodyType<CreateBannerBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createBanner>>,
+  TError,
+  { data: BodyType<CreateBannerBody> },
+  TContext
+> => {
+  return useMutation(getCreateBannerMutationOptions(options));
+};
+
+/**
+ * @summary Update banner
+ */
+export const getUpdateBannerUrl = (id: number) => {
+  return `/api/admin/banners/${id}`;
+};
+
+export const updateBanner = async (
+  id: number,
+  updateBannerBody: UpdateBannerBody,
+  options?: RequestInit,
+): Promise<Banner> => {
+  return customFetch<Banner>(getUpdateBannerUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updateBannerBody),
+  });
+};
+
+export const getUpdateBannerMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateBanner>>,
+    TError,
+    { id: number; data: BodyType<UpdateBannerBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateBanner>>,
+  TError,
+  { id: number; data: BodyType<UpdateBannerBody> },
+  TContext
+> => {
+  const mutationKey = ["updateBanner"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateBanner>>,
+    { id: number; data: BodyType<UpdateBannerBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateBanner(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateBannerMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateBanner>>
+>;
+export type UpdateBannerMutationBody = BodyType<UpdateBannerBody>;
+export type UpdateBannerMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Update banner
+ */
+export const useUpdateBanner = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateBanner>>,
+    TError,
+    { id: number; data: BodyType<UpdateBannerBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateBanner>>,
+  TError,
+  { id: number; data: BodyType<UpdateBannerBody> },
+  TContext
+> => {
+  return useMutation(getUpdateBannerMutationOptions(options));
+};
+
+/**
+ * @summary Delete banner
+ */
+export const getDeleteBannerUrl = (id: number) => {
+  return `/api/admin/banners/${id}`;
+};
+
+export const deleteBanner = async (
+  id: number,
+  options?: RequestInit,
+): Promise<void> => {
+  return customFetch<void>(getDeleteBannerUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteBannerMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteBanner>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteBanner>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["deleteBanner"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteBanner>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deleteBanner(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteBannerMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteBanner>>
+>;
+
+export type DeleteBannerMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Delete banner
+ */
+export const useDeleteBanner = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteBanner>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteBanner>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getDeleteBannerMutationOptions(options));
+};
+
+/**
+ * @summary List all UI translation overrides
+ */
+export const getListTranslationsUrl = () => {
+  return `/api/translations`;
+};
+
+export const listTranslations = async (
+  options?: RequestInit,
+): Promise<ListTranslationsResponse> => {
+  return customFetch<ListTranslationsResponse>(getListTranslationsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListTranslationsQueryKey = () => {
+  return [`/api/translations`] as const;
+};
+
+export const getListTranslationsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listTranslations>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listTranslations>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListTranslationsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listTranslations>>
+  > = ({ signal }) => listTranslations({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listTranslations>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListTranslationsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listTranslations>>
+>;
+export type ListTranslationsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List all UI translation overrides
+ */
+
+export function useListTranslations<
+  TData = Awaited<ReturnType<typeof listTranslations>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listTranslations>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListTranslationsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Upsert a translation key
+ */
+export const getUpsertTranslationUrl = () => {
+  return `/api/admin/translations`;
+};
+
+export const upsertTranslation = async (
+  upsertTranslationBody: UpsertTranslationBody,
+  options?: RequestInit,
+): Promise<Translation> => {
+  return customFetch<Translation>(getUpsertTranslationUrl(), {
+    ...options,
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(upsertTranslationBody),
+  });
+};
+
+export const getUpsertTranslationMutationOptions = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof upsertTranslation>>,
+    TError,
+    { data: BodyType<UpsertTranslationBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof upsertTranslation>>,
+  TError,
+  { data: BodyType<UpsertTranslationBody> },
+  TContext
+> => {
+  const mutationKey = ["upsertTranslation"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof upsertTranslation>>,
+    { data: BodyType<UpsertTranslationBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return upsertTranslation(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpsertTranslationMutationResult = NonNullable<
+  Awaited<ReturnType<typeof upsertTranslation>>
+>;
+export type UpsertTranslationMutationBody = BodyType<UpsertTranslationBody>;
+export type UpsertTranslationMutationError = ErrorType<ErrorResponse>;
+
+/**
+ * @summary Upsert a translation key
+ */
+export const useUpsertTranslation = <
+  TError = ErrorType<ErrorResponse>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof upsertTranslation>>,
+    TError,
+    { data: BodyType<UpsertTranslationBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof upsertTranslation>>,
+  TError,
+  { data: BodyType<UpsertTranslationBody> },
+  TContext
+> => {
+  return useMutation(getUpsertTranslationMutationOptions(options));
 };
 
 /**

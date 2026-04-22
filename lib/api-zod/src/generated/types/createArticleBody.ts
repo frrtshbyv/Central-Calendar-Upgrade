@@ -8,10 +8,14 @@
 
 export interface CreateArticleBody {
   title: string;
+  /** @nullable */
+  titleRu?: string | null;
   slug: string;
   /** @nullable */
   coverImage?: string | null;
   content: string;
+  /** @nullable */
+  contentRu?: string | null;
   /** @nullable */
   countryId?: number | null;
   /** @nullable */

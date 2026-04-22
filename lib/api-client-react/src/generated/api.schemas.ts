@@ -32,11 +32,17 @@ export interface Tag {
 export interface Event {
   id: number;
   title: string;
+  /** @nullable */
+  titleRu?: string | null;
   slug: string;
   description: string;
   /** @nullable */
+  descriptionRu?: string | null;
+  /** @nullable */
   previewImage?: string | null;
   location: string;
+  /** @nullable */
+  locationRu?: string | null;
   startDate: string;
   /** @nullable */
   endDate?: string | null;
@@ -88,11 +94,17 @@ export interface EventStats {
 
 export interface CreateEventBody {
   title: string;
+  /** @nullable */
+  titleRu?: string | null;
   slug: string;
   description: string;
   /** @nullable */
+  descriptionRu?: string | null;
+  /** @nullable */
   previewImage?: string | null;
   location: string;
+  /** @nullable */
+  locationRu?: string | null;
   startDate: string;
   /** @nullable */
   endDate?: string | null;
@@ -109,11 +121,17 @@ export interface CreateEventBody {
 
 export interface UpdateEventBody {
   title?: string;
+  /** @nullable */
+  titleRu?: string | null;
   slug?: string;
   description?: string;
   /** @nullable */
+  descriptionRu?: string | null;
+  /** @nullable */
   previewImage?: string | null;
   location?: string;
+  /** @nullable */
+  locationRu?: string | null;
   startDate?: string;
   /** @nullable */
   endDate?: string | null;
@@ -176,10 +194,14 @@ export interface UpdateSiteSettingsBody {
 export interface Article {
   id: number;
   title: string;
+  /** @nullable */
+  titleRu?: string | null;
   slug: string;
   /** @nullable */
   coverImage?: string | null;
   content: string;
+  /** @nullable */
+  contentRu?: string | null;
   /** @nullable */
   countryId?: number | null;
   /** @nullable */
@@ -198,10 +220,14 @@ export interface Article {
 
 export interface CreateArticleBody {
   title: string;
+  /** @nullable */
+  titleRu?: string | null;
   slug: string;
   /** @nullable */
   coverImage?: string | null;
   content: string;
+  /** @nullable */
+  contentRu?: string | null;
   /** @nullable */
   countryId?: number | null;
   /** @nullable */
@@ -212,10 +238,14 @@ export interface CreateArticleBody {
 
 export interface UpdateArticleBody {
   title?: string;
+  /** @nullable */
+  titleRu?: string | null;
   slug?: string;
   /** @nullable */
   coverImage?: string | null;
   content?: string;
+  /** @nullable */
+  contentRu?: string | null;
   /** @nullable */
   countryId?: number | null;
   /** @nullable */
@@ -233,6 +263,72 @@ export type ListTagsResponse = Tag[];
 export type ListAdminLogsResponse = AdminLog[];
 
 export type ListArticlesResponse = Article[];
+
+export interface Banner {
+  id: number;
+  imageUrl: string;
+  /** @nullable */
+  title?: string | null;
+  /** @nullable */
+  titleRu?: string | null;
+  /** @nullable */
+  subtitle?: string | null;
+  /** @nullable */
+  subtitleRu?: string | null;
+  /** @nullable */
+  linkUrl?: string | null;
+  sortOrder: number;
+  isActive: boolean;
+  updatedAt: string;
+}
+
+export type ListBannersResponse = Banner[];
+
+export interface CreateBannerBody {
+  imageUrl: string;
+  /** @nullable */
+  title?: string | null;
+  /** @nullable */
+  titleRu?: string | null;
+  /** @nullable */
+  subtitle?: string | null;
+  /** @nullable */
+  subtitleRu?: string | null;
+  /** @nullable */
+  linkUrl?: string | null;
+  sortOrder?: number;
+  isActive?: boolean;
+}
+
+export interface UpdateBannerBody {
+  imageUrl?: string;
+  /** @nullable */
+  title?: string | null;
+  /** @nullable */
+  titleRu?: string | null;
+  /** @nullable */
+  subtitle?: string | null;
+  /** @nullable */
+  subtitleRu?: string | null;
+  /** @nullable */
+  linkUrl?: string | null;
+  sortOrder?: number;
+  isActive?: boolean;
+}
+
+export interface Translation {
+  key: string;
+  en: string;
+  ru: string;
+}
+
+export type ListTranslationsResponse = Translation[];
+
+export interface UpsertTranslationBody {
+  key: string;
+  en: string;
+  ru: string;
+}
 
 export type ListEventsParams = {
   country?: string;

@@ -8,11 +8,17 @@
 
 export interface CreateEventBody {
   title: string;
+  /** @nullable */
+  titleRu?: string | null;
   slug: string;
   description: string;
   /** @nullable */
+  descriptionRu?: string | null;
+  /** @nullable */
   previewImage?: string | null;
   location: string;
+  /** @nullable */
+  locationRu?: string | null;
   startDate: string;
   /** @nullable */
   endDate?: string | null;

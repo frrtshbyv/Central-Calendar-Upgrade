@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
 
@@ -29,9 +30,11 @@ function slugify(s: string) {
 
 const schema = z.object({
   title: z.string().min(3),
+  titleRu: z.string().optional().or(z.literal("")),
   slug: z.string().min(3).regex(/^[a-z0-9-]+$/),
   coverImage: z.string().url().optional().or(z.literal("")),
   content: z.string().min(20),
+  contentRu: z.string().optional().or(z.literal("")),
   countryId: z.coerce.number().optional(),
   author: z.string().optional().or(z.literal("")),
   status: z.enum(["draft", "published"]),
@@ -57,7 +60,7 @@ export default function AdminArticleForm() {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
-      title: "", slug: "", coverImage: "", content: "",
+      title: "", titleRu: "", slug: "", coverImage: "", content: "", contentRu: "",
       countryId: undefined, author: "", status: "draft", tagIds: [],
     },
   });
@@ -66,9 +69,11 @@ export default function AdminArticleForm() {
     if (isEditing && existing) {
       form.reset({
         title: existing.title,
+        titleRu: (existing as any).titleRu ?? "",
         slug: existing.slug,
         coverImage: existing.coverImage ?? "",
         content: existing.content,
+        contentRu: (existing as any).contentRu ?? "",
         countryId: existing.countryId ?? undefined,
         author: existing.author ?? "",
         status: (existing.status as any) ?? "draft",
@@ -98,6 +103,8 @@ export default function AdminArticleForm() {
   const onSubmit = (values: z.infer<typeof schema>) => {
     const payload = {
       ...values,
+      titleRu: values.titleRu || null,
+      contentRu: values.contentRu || null,
       coverImage: values.coverImage || null,
       author: values.author || null,
       countryId: values.countryId ? values.countryId : null,
@@ -146,13 +153,31 @@ export default function AdminArticleForm() {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <div className="bg-card border border-border rounded-lg p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormField control={form.control} name="title" render={({ field }) => (
-              <FormItem className="md:col-span-2">
-                <FormLabel>Title</FormLabel>
-                <FormControl><Input {...field} /></FormControl>
-                <FormMessage />
-              </FormItem>
-            )} />
+            <div className="md:col-span-2">
+              <Tabs defaultValue="en" className="w-full">
+                <div className="flex items-center justify-between mb-2">
+                  <FormLabel>Title</FormLabel>
+                  <TabsList className="h-8">
+                    <TabsTrigger value="en" className="text-xs h-6 px-3">EN</TabsTrigger>
+                    <TabsTrigger value="ru" className="text-xs h-6 px-3">RU</TabsTrigger>
+                  </TabsList>
+                </div>
+                <TabsContent value="en" className="mt-0">
+                  <FormField control={form.control} name="title" render={({ field }) => (
+                    <FormItem><FormControl><Input {...field} /></FormControl><FormMessage /></FormItem>
+                  )} />
+                </TabsContent>
+                <TabsContent value="ru" className="mt-0">
+                  <FormField control={form.control} name="titleRu" render={({ field }) => (
+                    <FormItem>
+                      <FormControl><Input placeholder="Заголовок (необязательно)" {...field} /></FormControl>
+                      <FormDescription>Optional — falls back to English when empty.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </TabsContent>
+              </Tabs>
+            </div>
             <FormField control={form.control} name="slug" render={({ field }) => (
               <FormItem>
                 <FormLabel>Slug</FormLabel>
@@ -201,14 +226,35 @@ export default function AdminArticleForm() {
                 <FormMessage />
               </FormItem>
             )} />
-            <FormField control={form.control} name="content" render={({ field }) => (
-              <FormItem className="md:col-span-2">
-                <FormLabel>Content</FormLabel>
-                <FormControl><Textarea className="min-h-[300px] font-mono text-sm" {...field} /></FormControl>
-                <FormDescription>Plain text. Line breaks preserved.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )} />
+            <div className="md:col-span-2">
+              <Tabs defaultValue="en" className="w-full">
+                <div className="flex items-center justify-between mb-2">
+                  <FormLabel>Content</FormLabel>
+                  <TabsList className="h-8">
+                    <TabsTrigger value="en" className="text-xs h-6 px-3">EN</TabsTrigger>
+                    <TabsTrigger value="ru" className="text-xs h-6 px-3">RU</TabsTrigger>
+                  </TabsList>
+                </div>
+                <TabsContent value="en" className="mt-0">
+                  <FormField control={form.control} name="content" render={({ field }) => (
+                    <FormItem>
+                      <FormControl><Textarea className="min-h-[300px] font-mono text-sm" {...field} /></FormControl>
+                      <FormDescription>Plain text. Line breaks preserved.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </TabsContent>
+                <TabsContent value="ru" className="mt-0">
+                  <FormField control={form.control} name="contentRu" render={({ field }) => (
+                    <FormItem>
+                      <FormControl><Textarea className="min-h-[300px] font-mono text-sm" placeholder="Текст статьи (необязательно)" {...field} /></FormControl>
+                      <FormDescription>Optional Russian translation.</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                </TabsContent>
+              </Tabs>
+            </div>
             <div className="md:col-span-2 space-y-2">
               <label className="text-sm font-medium">Tags</label>
               <div className="flex flex-wrap gap-2">

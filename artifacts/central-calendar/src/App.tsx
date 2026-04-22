@@ -27,6 +27,10 @@ import AdminPending from "@/pages/admin/Pending";
 import AdminArticles from "@/pages/admin/Articles";
 import AdminArticleForm from "@/pages/admin/ArticleForm";
 import AdminSettings from "@/pages/admin/Settings";
+import AdminBanners from "@/pages/admin/Banners";
+import AdminTranslations from "@/pages/admin/Translations";
+
+import { I18nProvider } from "@/i18n";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -59,6 +63,8 @@ function AppRouter() {
             <Route path="/control-room-7f92x/articles/new"><ProtectedAdminRoute component={AdminArticleForm} /></Route>
             <Route path="/control-room-7f92x/articles/edit/:id"><ProtectedAdminRoute component={AdminArticleForm} /></Route>
             <Route path="/control-room-7f92x/settings"><ProtectedAdminRoute component={AdminSettings} /></Route>
+            <Route path="/control-room-7f92x/banners"><ProtectedAdminRoute component={AdminBanners} /></Route>
+            <Route path="/control-room-7f92x/translations"><ProtectedAdminRoute component={AdminTranslations} /></Route>
             <Route component={NotFound} />
           </Switch>
         </AdminShell>
@@ -93,12 +99,14 @@ function AppRouter() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <AppRouter />
-        </WouterRouter>
-        <Toaster />
-      </TooltipProvider>
+      <I18nProvider>
+        <TooltipProvider>
+          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+            <AppRouter />
+          </WouterRouter>
+          <Toaster />
+        </TooltipProvider>
+      </I18nProvider>
     </QueryClientProvider>
   );
 }

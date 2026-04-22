@@ -10,10 +10,14 @@ import type { Tag } from "./tag";
 export interface Article {
   id: number;
   title: string;
+  /** @nullable */
+  titleRu?: string | null;
   slug: string;
   /** @nullable */
   coverImage?: string | null;
   content: string;
+  /** @nullable */
+  contentRu?: string | null;
   /** @nullable */
   countryId?: number | null;
   /** @nullable */

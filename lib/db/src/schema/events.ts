@@ -6,10 +6,13 @@ import { countriesTable } from "./countries";
 export const eventsTable = pgTable("events", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
+  titleRu: text("title_ru"),
   slug: text("slug").notNull().unique(),
   description: text("description").notNull(),
+  descriptionRu: text("description_ru"),
   previewImage: text("preview_image"),
   location: text("location").notNull(),
+  locationRu: text("location_ru"),
   startDate: timestamp("start_date", { withTimezone: true }).notNull(),
   endDate: timestamp("end_date", { withTimezone: true }),
   organizerLink: text("organizer_link"),
