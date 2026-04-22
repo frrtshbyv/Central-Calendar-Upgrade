@@ -1,5 +1,7 @@
 import express, { type Express, type Request, type Response, type NextFunction } from "express";
 import cors from "cors";
+import path from "path";
+import fs from "fs";
 import pinoHttp from "pino-http";
 import session from "express-session";
 import PgSession from "connect-pg-simple";
@@ -101,5 +103,25 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
 });
 
 app.use("/api", router);
+
+// Serve the built SPA in production from a single Node process
+if (isProduction) {
+  const candidates = [
+    path.resolve(process.cwd(), "artifacts/central-calendar/dist/public"),
+    path.resolve(process.cwd(), "../central-calendar/dist/public"),
+    path.resolve(process.cwd(), "dist/public"),
+  ];
+  const spaDir = candidates.find((p) => fs.existsSync(path.join(p, "index.html")));
+
+  if (spaDir) {
+    logger.info({ spaDir }, "Serving SPA from disk");
+    app.use(express.static(spaDir, { index: false, maxAge: "1h" }));
+    app.get(/^(?!\/api\/).*/, (_req: Request, res: Response) => {
+      res.sendFile(path.join(spaDir, "index.html"));
+    });
+  } else {
+    logger.warn({ candidates }, "SPA build directory not found; static serving disabled");
+  }
+}
 
 export default app;
