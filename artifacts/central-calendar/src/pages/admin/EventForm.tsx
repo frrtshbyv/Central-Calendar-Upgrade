@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -244,7 +245,7 @@ export default function AdminEventForm() {
             <div className="md:col-span-2">
               <Tabs defaultValue="en" className="w-full">
                 <div className="flex items-center justify-between mb-2">
-                  <FormLabel>Event Title</FormLabel>
+                  <Label>Event Title</Label>
                   <TabsList className="h-8">
                     <TabsTrigger value="en" className="text-xs h-6 px-3">EN</TabsTrigger>
                     <TabsTrigger value="ru" className="text-xs h-6 px-3">RU</TabsTrigger>
@@ -301,7 +302,7 @@ export default function AdminEventForm() {
             <div className="md:col-span-2">
               <Tabs defaultValue="en" className="w-full">
                 <div className="flex items-center justify-between mb-2">
-                  <FormLabel>Description</FormLabel>
+                  <Label>Description</Label>
                   <TabsList className="h-8">
                     <TabsTrigger value="en" className="text-xs h-6 px-3">EN</TabsTrigger>
                     <TabsTrigger value="ru" className="text-xs h-6 px-3">RU</TabsTrigger>
@@ -357,7 +358,7 @@ export default function AdminEventForm() {
             <div>
               <Tabs defaultValue="en" className="w-full">
                 <div className="flex items-center justify-between mb-2">
-                  <FormLabel>City / Venue</FormLabel>
+                  <Label>City / Venue</Label>
                   <TabsList className="h-7">
                     <TabsTrigger value="en" className="text-xs h-5 px-2">EN</TabsTrigger>
                     <TabsTrigger value="ru" className="text-xs h-5 px-2">RU</TabsTrigger>

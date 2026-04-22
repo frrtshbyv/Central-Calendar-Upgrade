@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -156,7 +157,7 @@ export default function AdminArticleForm() {
             <div className="md:col-span-2">
               <Tabs defaultValue="en" className="w-full">
                 <div className="flex items-center justify-between mb-2">
-                  <FormLabel>Title</FormLabel>
+                  <Label>Title</Label>
                   <TabsList className="h-8">
                     <TabsTrigger value="en" className="text-xs h-6 px-3">EN</TabsTrigger>
                     <TabsTrigger value="ru" className="text-xs h-6 px-3">RU</TabsTrigger>
@@ -229,7 +230,7 @@ export default function AdminArticleForm() {
             <div className="md:col-span-2">
               <Tabs defaultValue="en" className="w-full">
                 <div className="flex items-center justify-between mb-2">
-                  <FormLabel>Content</FormLabel>
+                  <Label>Content</Label>
                   <TabsList className="h-8">
                     <TabsTrigger value="en" className="text-xs h-6 px-3">EN</TabsTrigger>
                     <TabsTrigger value="ru" className="text-xs h-6 px-3">RU</TabsTrigger>
