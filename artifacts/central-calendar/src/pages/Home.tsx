@@ -64,9 +64,9 @@ export default function Home() {
 
   return (
     <div className="w-full">
-      <section className="relative bg-primary text-primary-foreground border-b border-border overflow-hidden">
+      <section className="relative bg-primary text-primary-foreground border-b border-border overflow-hidden min-h-[70vh] md:min-h-[80vh] flex items-center">
         <HeroSlider fallbackUrl={settings?.homepageBannerUrl ?? null} />
-        <div className="relative container mx-auto max-w-5xl text-center py-16 sm:py-20 md:py-32 px-4">
+        <div className="relative container mx-auto max-w-5xl text-center py-20 sm:py-24 md:py-36 px-4 w-full">
           <div className="inline-block mb-6 px-3 py-1 border border-primary-foreground/20 rounded-full text-xs font-medium uppercase tracking-[0.2em] text-primary-foreground/70">
             {t("hero.eyebrow")}
           </div>
