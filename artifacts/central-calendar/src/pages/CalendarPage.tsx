@@ -78,6 +78,23 @@ export default function CalendarPage() {
       );
   }, [events, selectedDate, selectedCountryId, selectedTagId]);
 
+  const datesWithEvents = useMemo(() => {
+    const set = new Set<string>();
+    if (!events) return set;
+    for (const event of events) {
+      const start = startOfDay(parseISO(event.startDate));
+      const end = event.endDate ? startOfDay(parseISO(event.endDate)) : start;
+      let d = start;
+      let guard = 0;
+      while (d.getTime() <= end.getTime() && guard < 366) {
+        set.add(format(d, "yyyy-MM-dd"));
+        d = addDays(d, 1);
+        guard += 1;
+      }
+    }
+    return set;
+  }, [events]);
+
   const groupedDates = useMemo(() => {
     const groups: { monthLabel: string; dates: Date[] }[] = [];
     let currentMonthKey = "";
@@ -119,13 +136,14 @@ export default function CalendarPage() {
               {group.dates.map((d) => {
                 const isSelected = isSameDay(d, selectedDate);
                 const isToday = isSameDay(d, today);
+                const hasEvent = datesWithEvents.has(format(d, "yyyy-MM-dd"));
                 return (
                   <button
                     key={d.toISOString()}
                     ref={isSelected ? selectedRef : undefined}
                     onClick={() => setSelectedDate(d)}
                     data-testid={`date-${format(d, "yyyy-MM-dd")}`}
-                    className={`flex flex-col items-center justify-center min-w-[44px] py-2 px-1 rounded-md transition-colors shrink-0 ${
+                    className={`relative flex flex-col items-center justify-center min-w-[44px] py-2 px-1 rounded-md transition-colors shrink-0 ${
                       isSelected
                         ? "bg-foreground text-background"
                         : isToday
@@ -133,7 +151,17 @@ export default function CalendarPage() {
                         : "text-foreground hover:bg-muted"
                     }`}
                   >
-                    <span className="text-[10px] uppercase tracking-wide opacity-80">
+                    <span
+                      aria-hidden="true"
+                      className={`absolute top-1 h-1.5 w-1.5 rounded-full transition-opacity ${
+                        hasEvent
+                          ? isSelected
+                            ? "bg-background"
+                            : "bg-primary"
+                          : "opacity-0"
+                      }`}
+                    />
+                    <span className="text-[10px] uppercase tracking-wide opacity-80 mt-1">
                       {format(d, "EEE", { locale: dfnsLocale })}
                     </span>
                     <span className="text-base font-semibold leading-tight">
