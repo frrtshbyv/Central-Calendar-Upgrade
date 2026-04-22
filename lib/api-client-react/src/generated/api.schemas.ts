@@ -171,6 +171,7 @@ export interface AdminLoginBody {
 export interface AdminLoginResponse {
   success: boolean;
   message: string;
+  token?: string;
 }
 
 export interface AdminSession {

@@ -849,6 +849,7 @@ export const AdminLoginBody = zod.object({
 export const AdminLoginResponse = zod.object({
   success: zod.boolean(),
   message: zod.string(),
+  token: zod.string().optional(),
 });
 
 /**

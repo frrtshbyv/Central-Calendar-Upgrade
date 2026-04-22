@@ -56,6 +56,9 @@ export default function AdminLogin() {
     login.mutate({ data: values }, {
       onSuccess: (res) => {
         if (res.success) {
+          if (res.token) {
+            try { localStorage.setItem("cc_admin_token", res.token); } catch {}
+          }
           toast({ title: "Authentication successful", description: "Accessing control room..." });
           // Update the cache immediately so ProtectedAdminRoute sees authenticated=true
           // before the background refetch completes, preventing a stale-cache bounce

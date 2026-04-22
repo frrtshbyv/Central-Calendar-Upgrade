@@ -6,6 +6,7 @@ import PgSession from "connect-pg-simple";
 import { pool } from "@workspace/db";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { verifyAdminToken } from "./lib/admin-token";
 
 const app: Express = express();
 
@@ -82,6 +83,22 @@ app.use(
     },
   })
 );
+
+// Bearer token fallback for admin auth — used when third-party cookies are
+// blocked (e.g. when the app is embedded in an iframe like Replit's preview).
+// If a valid Bearer token is presented, mark the session as admin-authenticated
+// for the duration of this request so existing requireAdmin checks succeed.
+app.use((req: Request, _res: Response, next: NextFunction) => {
+  const auth = req.headers.authorization;
+  if (auth?.startsWith("Bearer ")) {
+    const email = verifyAdminToken(auth.slice(7).trim());
+    if (email) {
+      (req.session as any).adminAuthenticated = true;
+      (req.session as any).adminEmail = email;
+    }
+  }
+  next();
+});
 
 app.use("/api", router);
 

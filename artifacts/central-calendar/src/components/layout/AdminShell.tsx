@@ -14,6 +14,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const handleLogout = () => {
     logout.mutate(undefined, {
       onSuccess: () => {
+        try { localStorage.removeItem("cc_admin_token"); } catch {}
         toast({ title: "Logged out successfully" });
         setLocation("/control-room-7f92x/login");
       },

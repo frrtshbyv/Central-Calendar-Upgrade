@@ -21,6 +21,7 @@ import {
 } from "@workspace/api-zod";
 import { eq, and, sql, asc, desc } from "drizzle-orm";
 import { logger } from "../lib/logger";
+import { makeAdminToken } from "../lib/admin-token";
 
 const router: IRouter = Router();
 
@@ -159,7 +160,8 @@ router.post("/admin/login", async (req, res): Promise<void> => {
   (req.session as any).adminEmail = email;
 
   req.log.info({ ip }, "Admin logged in");
-  res.json(AdminLoginResponse.parse({ success: true, message: "Logged in successfully" }));
+  const token = makeAdminToken(email);
+  res.json(AdminLoginResponse.parse({ success: true, message: "Logged in successfully", token }));
 });
 
 router.post("/admin/logout", async (req, res): Promise<void> => {

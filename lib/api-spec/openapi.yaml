@@ -1092,6 +1092,7 @@ components:
       properties:
         success: { type: boolean }
         message: { type: string }
+        token: { type: string }
       required: [success, message]
 
     AdminSession:
