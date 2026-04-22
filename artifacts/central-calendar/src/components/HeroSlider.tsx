@@ -28,7 +28,8 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${fallbackUrl})` }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/90 via-primary/85 to-primary/95" />
+        <div className="absolute inset-0 bg-primary/95" />
+        <div className="absolute inset-0 bg-black/20" />
       </>
     );
   }
@@ -47,7 +48,8 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
             aria-hidden={i !== idx}
           />
         ))}
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/90 via-primary/85 to-primary/95" />
+        <div className="absolute inset-0 bg-primary/95" />
+        <div className="absolute inset-0 bg-black/20" />
       </div>
 
       {(() => {
