@@ -2,10 +2,12 @@ import { useListEvents } from "@workspace/api-client-react";
 import { EventCard } from "@/components/EventCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Globe } from "lucide-react";
+import { useI18n } from "@/i18n";
 
 export default function OnlineEventsPage() {
   const { data: events, isLoading } = useListEvents({ format: "online" });
   const { data: hybrid } = useListEvents({ format: "hybrid" });
+  const { t } = useI18n();
 
   const all = [...(events ?? []), ...(hybrid ?? [])];
 
@@ -14,11 +16,9 @@ export default function OnlineEventsPage() {
       <div className="mb-10 border-b border-border pb-6">
         <div className="flex items-center gap-3 mb-3">
           <Globe className="h-7 w-7 text-primary" />
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">Online Events</h1>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{t("online.title")}</h1>
         </div>
-        <p className="text-muted-foreground max-w-2xl">
-          Webinars, virtual summits, and hybrid sessions you can join from anywhere in the region.
-        </p>
+        <p className="text-muted-foreground max-w-2xl">{t("online.subtitle")}</p>
       </div>
 
       {isLoading ? (
@@ -31,7 +31,7 @@ export default function OnlineEventsPage() {
         </div>
       ) : (
         <div className="p-12 text-center border border-dashed border-border rounded-lg text-muted-foreground">
-          No online events scheduled at the moment.
+          {t("online.empty")}
         </div>
       )}
     </div>

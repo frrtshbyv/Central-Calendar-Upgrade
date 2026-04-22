@@ -15,11 +15,16 @@ import {
 } from "date-fns";
 import { Link } from "wouter";
 import { Calendar as CalendarIcon, MapPin } from "lucide-react";
+import type { Locale } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useI18n } from "@/i18n";
+import { ru as ruLocale, enUS as enLocale } from "date-fns/locale";
 
 const DATE_STRIP_DAYS = 120;
 
 export default function CalendarPage() {
+  const { t, lang, pickLocalized } = useI18n();
+  const dfnsLocale = lang === "ru" ? ruLocale : enLocale;
   const today = useMemo(() => startOfDay(new Date()), []);
   const [selectedDate, setSelectedDate] = useState<Date>(today);
   const [selectedCountryId, setSelectedCountryId] = useState<number | null>(null);
@@ -79,13 +84,13 @@ export default function CalendarPage() {
     for (const d of dateStrip) {
       const key = format(d, "yyyy-MM");
       if (key !== currentMonthKey) {
-        groups.push({ monthLabel: format(startOfMonth(d), "MMM").toUpperCase(), dates: [] });
+        groups.push({ monthLabel: format(startOfMonth(d), "MMM", { locale: dfnsLocale }).toUpperCase(), dates: [] });
         currentMonthKey = key;
       }
       groups[groups.length - 1].dates.push(d);
     }
     return groups;
-  }, [dateStrip]);
+  }, [dateStrip, dfnsLocale]);
 
   return (
     <div className="bg-background min-h-screen">
@@ -93,10 +98,10 @@ export default function CalendarPage() {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl md:text-4xl font-bold font-serif tracking-tight">
-            Events on {format(selectedDate, "MMMM d, yyyy")}
+            {t("calendar.title").replace("{date}", format(selectedDate, "MMMM d, yyyy", { locale: dfnsLocale }))}
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Strategic events across Central Asia and the Caucasus
+            {t("calendar.subtitle")}
           </p>
         </div>
 
@@ -129,7 +134,7 @@ export default function CalendarPage() {
                     }`}
                   >
                     <span className="text-[10px] uppercase tracking-wide opacity-80">
-                      {format(d, "EEE")}
+                      {format(d, "EEE", { locale: dfnsLocale })}
                     </span>
                     <span className="text-base font-semibold leading-tight">
                       {format(d, "d")}
@@ -146,7 +151,7 @@ export default function CalendarPage() {
           <FilterPill
             active={selectedCountryId === null}
             onClick={() => setSelectedCountryId(null)}
-            label="All Regions"
+            label={t("calendar.allRegions")}
           />
           {countries?.map((c) => (
             <FilterPill
@@ -155,7 +160,7 @@ export default function CalendarPage() {
               onClick={() =>
                 setSelectedCountryId(selectedCountryId === c.id ? null : c.id)
               }
-              label={c.name}
+              label={pickLocalized(c.name, (c as any).nameRu) || c.name}
             />
           ))}
           {tags && tags.length > 0 && (
@@ -164,17 +169,17 @@ export default function CalendarPage() {
               <FilterPill
                 active={selectedTagId === null}
                 onClick={() => setSelectedTagId(null)}
-                label="All Topics"
+                label={t("calendar.allTopics")}
                 muted
               />
-              {tags.slice(0, 8).map((t) => (
+              {tags.slice(0, 8).map((tag) => (
                 <FilterPill
-                  key={t.id}
-                  active={selectedTagId === t.id}
+                  key={tag.id}
+                  active={selectedTagId === tag.id}
                   onClick={() =>
-                    setSelectedTagId(selectedTagId === t.id ? null : t.id)
+                    setSelectedTagId(selectedTagId === tag.id ? null : tag.id)
                   }
-                  label={t.name}
+                  label={pickLocalized(tag.name, (tag as any).nameRu) || tag.name}
                   muted
                 />
               ))}
@@ -192,15 +197,15 @@ export default function CalendarPage() {
         ) : filteredEvents.length === 0 ? (
           <div className="text-center py-20 bg-card border border-border rounded-lg">
             <CalendarIcon className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold">No events on this date</h3>
+            <h3 className="text-lg font-semibold">{t("calendar.empty.title")}</h3>
             <p className="text-muted-foreground text-sm mt-1">
-              Try selecting another day or clearing your filters.
+              {t("calendar.empty.body")}
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredEvents.map((event) => (
-              <AfishaCard key={event.id} event={event} />
+              <AfishaCard key={event.id} event={event} dfnsLocale={dfnsLocale} featuredLabel={t("calendar.featured")} />
             ))}
           </div>
         )}
@@ -238,15 +243,19 @@ function FilterPill({
 
 function AfishaCard({
   event,
+  dfnsLocale,
+  featuredLabel,
 }: {
   event: import("@workspace/api-client-react").Event;
+  dfnsLocale: Locale;
+  featuredLabel: string;
 }) {
   const start = parseISO(event.startDate);
   const end = event.endDate ? parseISO(event.endDate) : null;
   const dateLabel =
     end && !isSameDay(start, end)
-      ? `${format(start, "MMM d")} – ${format(end, "MMM d")}`
-      : format(start, "MMM d, yyyy");
+      ? `${format(start, "MMM d", { locale: dfnsLocale })} – ${format(end, "MMM d", { locale: dfnsLocale })}`
+      : format(start, "MMM d, yyyy", { locale: dfnsLocale });
 
   const primaryTag = event.tags?.[0]?.name;
 
@@ -274,7 +283,7 @@ function AfishaCard({
         </div>
         {event.featured && (
           <div className="absolute top-3 right-3 px-2 py-0.5 bg-primary text-primary-foreground text-[10px] font-semibold uppercase tracking-wider rounded">
-            Featured
+            {featuredLabel}
           </div>
         )}
       </div>
