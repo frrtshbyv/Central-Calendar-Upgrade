@@ -2,30 +2,29 @@ import { useEffect, useState } from "react";
 
 interface LogoProps {
   size?: number;
-  showWordmark?: boolean;
-  variant?: "light" | "dark";
+  variant?: "horizontal" | "stacked";
+  tone?: "light" | "dark";
   className?: string;
 }
 
-export function Logo({ size = 36, showWordmark = true, variant = "light", className = "" }: LogoProps) {
+export function Logo({ size = 40, variant = "horizontal", tone = "light", className = "" }: LogoProps) {
   const [base, setBase] = useState("/");
   useEffect(() => {
     setBase(import.meta.env.BASE_URL || "/");
   }, []);
-  const src = base.replace(/\/$/, "") + "/logo.svg";
-  const wordmarkColor = variant === "light" ? "text-primary-foreground" : "text-foreground";
-  const taglineColor = variant === "light" ? "text-primary-foreground/60" : "text-muted-foreground";
+  const file = variant === "stacked" ? "/logo-stacked.png" : "/logo-horizontal.png";
+  const src = base.replace(/\/$/, "") + file;
+  const height = size;
+  const filter =
+    tone === "light"
+      ? "brightness(0) saturate(100%) invert(100%)"
+      : undefined;
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
-      <img src={src} width={size} height={size} alt="Central Calendar" style={{ flexShrink: 0 }} />
-      {showWordmark && (
-        <div className="flex flex-col leading-tight">
-          <span className={`font-bold tracking-tight ${wordmarkColor}`} style={{ fontSize: Math.round(size * 0.42) }}>
-            Central Calendar
-          </span>
-          <span className={`text-[10px] uppercase tracking-[0.18em] ${taglineColor}`}>Plan the region</span>
-        </div>
-      )}
-    </div>
+    <img
+      src={src}
+      alt="Central Calendar"
+      style={{ height, width: "auto", flexShrink: 0, filter }}
+      className={className}
+    />
   );
 }

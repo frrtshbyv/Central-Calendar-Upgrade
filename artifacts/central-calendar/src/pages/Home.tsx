@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { Link } from "wouter";
 import { useGetEventStats, useListEvents, useGetSiteSettings, useListArticles } from "@workspace/api-client-react";
 import { EventCard } from "@/components/EventCard";
+import { Logo } from "@/components/Logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { X, ArrowRight, Send } from "lucide-react";
@@ -55,10 +56,13 @@ export default function Home() {
           </div>
         )}
         <div className="relative container mx-auto max-w-5xl text-center py-20 md:py-32 px-4">
-          <div className="inline-block mb-4 px-3 py-1 border border-primary-foreground/20 rounded-full text-xs font-medium uppercase tracking-[0.2em] text-primary-foreground/70">
+          <div className="inline-block mb-6 px-3 py-1 border border-primary-foreground/20 rounded-full text-xs font-medium uppercase tracking-[0.2em] text-primary-foreground/70">
             Central Asia · Caucasus
           </div>
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-4 font-serif">Central Calendar</h1>
+          <div className="flex justify-center mb-6">
+            <Logo size={320} variant="stacked" className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.25)]" />
+          </div>
+          <h1 className="sr-only">Central Calendar</h1>
           <p className="text-xl md:text-2xl text-primary-foreground/80 font-mono uppercase tracking-[0.2em] mb-8">
             Plan the region.
           </p>

@@ -72,7 +72,7 @@ export function Shell({ children }: { children: ReactNode }) {
           }`}
         >
           <Link href="/" className="shrink-0 mr-4" aria-label="Central Calendar home">
-            <Logo size={scrolled ? 32 : 40} variant="light" />
+            <Logo size={scrolled ? 56 : 80} variant="horizontal" />
           </Link>
 
           <nav className="hidden lg:flex items-center gap-5 text-sm font-medium text-primary-foreground/70 mr-auto">
@@ -219,7 +219,7 @@ export function Shell({ children }: { children: ReactNode }) {
         <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-10">
           <div className="max-w-xs text-center md:text-left">
             <Link href="/" aria-label="Central Calendar home" className="inline-block">
-              <Logo size={56} variant="light" />
+              <Logo size={96} variant="horizontal" />
             </Link>
             <p className="text-sm text-primary-foreground/50 mt-3">
               Strategic coordination intelligence for Central Asia and the Caucasus.
