@@ -99,10 +99,10 @@
   /* Brand accent used by SVG logo + accents in light mode */
   --brand-accent: #3b4f43;
 
-  /* Light theme shell — warm parchment surface, brand green text/logo.
-     Header/footer match the body; hero adds its own image + vignette. */
-  --shell: 38 20% 92%;
-  --shell-foreground: 145 14% 27%;
+  /* Light theme shell — institutional dark-green bar (header / hero / footer)
+     with white text + logo, sitting on the warm parchment body. */
+  --shell: 145 14% 27%;
+  --shell-foreground: 40 30% 97%;
 }
 
 .dark {

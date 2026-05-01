@@ -87,7 +87,7 @@ export function Shell({ children }: { children: ReactNode }) {
           }`}
         >
           <Link href="/" className="shrink-0 mr-4 text-shell-foreground" aria-label="Central Calendar home">
-            <Logo size={scrolled ? 24 : 32} variant="horizontal" priority />
+            <Logo size={scrolled ? 24 : 32} variant="horizontal" tone="light" priority />
           </Link>
 
           <nav className="hidden lg:flex items-center gap-5 text-sm font-medium text-shell-foreground/70 mr-auto">
@@ -256,7 +256,7 @@ export function Shell({ children }: { children: ReactNode }) {
         <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-10">
           <div className="max-w-xs text-center md:text-left text-shell-foreground">
             <Link href="/" aria-label="Central Calendar home" className="inline-block">
-              <Logo size={36} variant="horizontal" />
+              <Logo size={36} variant="horizontal" tone="light" />
             </Link>
             <p className="text-sm text-shell-foreground/50 mt-3">
               {t("footer.tagline")}

@@ -39,15 +39,15 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
           decoding="async"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        {/* Layered hero wash: base tint + radial vignette. Lets the city
-            image breathe through the center while keeping edges and text
-            zone legible against the brand-coloured copy. */}
-        <div className="absolute inset-0 bg-shell/55" />
+        {/* Layered hero wash: heavy brand-tinted base + soft radial vignette
+            that darkens the corners. The image stays a faint texture beneath
+            the institutional colour without competing with the copy. */}
+        <div className="absolute inset-0 bg-shell/85" />
         <div
           className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 75% 65% at 50% 55%, transparent 0%, hsl(var(--shell) / 0.35) 55%, hsl(var(--shell) / 0.8) 100%)",
+              "radial-gradient(ellipse 80% 70% at 50% 55%, transparent 0%, hsl(var(--shell) / 0.25) 60%, hsl(var(--shell) / 0.55) 100%)",
           }}
         />
       </>
@@ -74,15 +74,15 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${i === idx ? "opacity-100" : "opacity-0"}`}
           />
         ))}
-        {/* Layered hero wash: base tint + radial vignette. Lets the city
-            image breathe through the center while keeping edges and text
-            zone legible against the brand-coloured copy. */}
-        <div className="absolute inset-0 bg-shell/55" />
+        {/* Layered hero wash: heavy brand-tinted base + soft radial vignette
+            that darkens the corners. The image stays a faint texture beneath
+            the institutional colour without competing with the copy. */}
+        <div className="absolute inset-0 bg-shell/85" />
         <div
           className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 75% 65% at 50% 55%, transparent 0%, hsl(var(--shell) / 0.35) 55%, hsl(var(--shell) / 0.8) 100%)",
+              "radial-gradient(ellipse 80% 70% at 50% 55%, transparent 0%, hsl(var(--shell) / 0.25) 60%, hsl(var(--shell) / 0.55) 100%)",
           }}
         />
       </div>
