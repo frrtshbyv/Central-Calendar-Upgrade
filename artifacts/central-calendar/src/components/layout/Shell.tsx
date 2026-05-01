@@ -199,8 +199,36 @@ export function Shell({ children }: { children: ReactNode }) {
                   className="pl-9 bg-shell-foreground/10 border-shell-foreground/20 text-shell-foreground placeholder:text-shell-foreground/40 h-9 text-sm w-full"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
+                  aria-label="Search events"
                 />
               </div>
+              {debouncedSearch.length > 2 && (
+                <div className="mb-3 -mt-1 bg-popover text-popover-foreground border border-border rounded-md shadow-lg p-2 max-h-72 overflow-y-auto">
+                  {isSearching ? (
+                    <div className="p-4 text-center text-sm text-muted-foreground">{t("common.loading")}</div>
+                  ) : searchResults && searchResults.length > 0 ? (
+                    <div className="flex flex-col gap-0.5">
+                      {searchResults.map((event) => (
+                        <Link
+                          key={event.id}
+                          href={`/event/${event.slug}`}
+                          className="p-2 hover:bg-muted rounded-md cursor-pointer block transition-colors duration-150"
+                          onClick={() => { setSearch(""); setMobileOpen(false); }}
+                        >
+                          <div className="font-medium text-sm truncate">{pickLocalized(event.title, (event as any).titleRu)}</div>
+                          <div className="text-xs text-muted-foreground flex gap-2 mt-0.5">
+                            <span>{new Date(event.startDate).toLocaleDateString()}</span>
+                            <span>·</span>
+                            <span>{event.countryName}</span>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-4 text-center text-sm text-muted-foreground">{t("events.none", "No results found")}</div>
+                  )}
+                </div>
+              )}
               {NAV_LINKS.map((l) => (
                 <Link
                   key={l.href}
