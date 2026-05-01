@@ -92,39 +92,40 @@
 }
 
 .dark {
-  /* Page surfaces flip to dark, but the institutional brand color
-     (--primary used by header / hero / footer) stays the same green
-     as the light theme so the brand wrapper does not invert. */
-  --background: 145 13% 10%;
-  --foreground: 40 24% 96%;
+  /* Original dark theme — true dark navy. The branded wrapper
+     (--primary used by header / hero / footer) is set to the SAME
+     dark navy as the page background so the institutional bar
+     blends into the page instead of standing out as a stripe. */
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
 
-  --card: 145 13% 13%;
-  --card-foreground: 40 24% 96%;
-  --card-border: 145 10% 22%;
+  --card: 222 47% 13%;
+  --card-foreground: 210 40% 98%;
+  --card-border: 217 32% 20%;
 
-  --popover: 145 13% 13%;
-  --popover-foreground: 40 24% 96%;
-  --popover-border: 145 10% 22%;
+  --popover: 222 47% 13%;
+  --popover-foreground: 210 40% 98%;
+  --popover-border: 217 32% 20%;
 
-  /* KEEP institutional brand color in dark mode (do NOT invert). */
-  --primary: 145 13% 26%;
-  --primary-foreground: 40 30% 96%;
+  /* Header / hero / footer (bg-primary) blend into the dark page. */
+  --primary: 222 47% 11%;
+  --primary-foreground: 210 40% 98%;
 
-  --secondary: 145 10% 18%;
-  --secondary-foreground: 40 24% 96%;
+  --secondary: 217 32% 17%;
+  --secondary-foreground: 210 40% 98%;
 
-  --muted: 145 10% 18%;
-  --muted-foreground: 145 8% 65%;
+  --muted: 217 32% 17%;
+  --muted-foreground: 215 20% 65%;
 
-  --accent: 145 10% 18%;
-  --accent-foreground: 40 24% 96%;
+  --accent: 217 32% 17%;
+  --accent-foreground: 210 40% 98%;
 
   --destructive: 0 62% 40%;
-  --destructive-foreground: 40 24% 96%;
+  --destructive-foreground: 210 40% 98%;
 
-  --border: 145 10% 22%;
-  --input: 145 10% 22%;
-  --ring: 145 13% 60%;
+  --border: 217 32% 20%;
+  --input: 217 32% 20%;
+  --ring: 212.7 26.8% 83.9%;
 }
 
 @layer base {

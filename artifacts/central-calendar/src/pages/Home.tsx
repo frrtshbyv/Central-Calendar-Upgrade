@@ -73,7 +73,7 @@ export default function Home() {
             {t("hero.eyebrow")}
           </div>
           <div className="flex justify-center mb-6">
-            <Logo size={200} variant="stacked" className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.25)] max-w-[60vw] h-auto" />
+            <Logo size={200} variant="stacked" tone="light" className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.25)] max-w-[60vw] h-auto" />
           </div>
           <h1 className="sr-only">Central Calendar</h1>
           <p className="text-lg sm:text-xl md:text-2xl text-primary-foreground/80 font-mono uppercase tracking-[0.2em] mb-8">
