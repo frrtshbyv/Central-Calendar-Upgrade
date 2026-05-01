@@ -12,13 +12,15 @@ interface LogoProps {
   priority?: boolean;
 }
 
-/**
- * Inline mirror of `/public/logo.svg`. The SVG uses `fill="currentColor"` /
- * `stroke="currentColor"` so the brand mark is theme-aware via plain CSS.
- * Path structure is identical to the file on disk — only fill/stroke colors
- * are driven by CSS. For horizontal / stacked variants the wordmark is
- * rendered as HTML text alongside the icon (also inheriting currentColor).
- */
+// Original brand artwork — these PNGs are the canonical source of the logo.
+// We project them through a CSS mask so `currentColor` (driven by the theme
+// rules in index.css) becomes the visible color. The PNG paths/shapes are
+// never modified.
+const HORIZONTAL_SRC = "/logo-horizontal.png";
+const HORIZONTAL_ASPECT = 1112 / 224; // ≈ 4.96
+const STACKED_SRC = "/logo-stacked.png";
+const STACKED_ASPECT = 540 / 594; // ≈ 0.91
+
 export function Logo({
   size = 40,
   variant = "horizontal",
@@ -26,104 +28,70 @@ export function Logo({
   className = "",
   priority = false,
 }: LogoProps) {
+  // `priority` was used by the legacy <img>-based logo; CSS-mask logos don't
+  // need a fetchPriority hint (the image loads as a background asset).
+  void priority;
+
   const colorStyle =
     tone === "light"
-      ? { color: "#ffffff" }
+      ? "#ffffff"
       : tone === "dark"
-        ? { color: "#3b4f43" }
+        ? "#3b4f43"
         : undefined;
 
-  // `priority` is preserved on the props API for compatibility with prior
-  // <img>-based logo, but inline SVGs don't go through the network so there's
-  // nothing to prioritize for the icon itself.
-  void priority;
-  const icon = (
-    <svg
-      role="img"
-      aria-label="Central Calendar"
-      width={size}
-      height={size}
-      viewBox="0 0 64 64"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="shrink-0"
-    >
-      <rect
-        x="2"
-        y="2"
-        width="60"
-        height="60"
-        rx="14"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      />
-      <g transform="translate(32 33)">
-        <circle r="3.2" fill="currentColor" />
-        <path
-          d="M0,-12 a12,12 0 1,1 -8.485,3.515"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          fill="none"
-        />
-        <path
-          d="M0,-19 a19,19 0 1,1 -13.435,5.565"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeOpacity="0.55"
-          fill="none"
-        />
-      </g>
-      <rect x="11" y="11" width="6" height="2" fill="currentColor" />
-      <rect x="47" y="51" width="6" height="2" fill="currentColor" />
-    </svg>
-  );
+  const src = variant === "stacked" ? STACKED_SRC : HORIZONTAL_SRC;
+  const aspect = variant === "stacked" ? STACKED_ASPECT : HORIZONTAL_ASPECT;
 
+  // For "icon" variant we render a square crop of the horizontal logo's icon
+  // portion. The horizontal artwork has the spiral icon in roughly the first
+  // ~22% of its width. We crop with a wider mask + offset so only the icon
+  // shows in a square box.
   if (variant === "icon") {
     return (
       <span
-        className={`site-logo cc-logo inline-flex items-center ${className}`}
-        style={colorStyle}
-      >
-        {icon}
-      </span>
+        role="img"
+        aria-label="Central Calendar"
+        className={`site-logo cc-logo inline-block align-middle ${className}`}
+        style={{
+          width: size,
+          height: size,
+          backgroundColor: colorStyle ?? "currentColor",
+          color: colorStyle,
+          WebkitMaskImage: `url(${src})`,
+          maskImage: `url(${src})`,
+          WebkitMaskRepeat: "no-repeat",
+          maskRepeat: "no-repeat",
+          WebkitMaskSize: `${HORIZONTAL_ASPECT * 100}% auto`,
+          maskSize: `${HORIZONTAL_ASPECT * 100}% auto`,
+          WebkitMaskPosition: "left center",
+          maskPosition: "left center",
+        }}
+      />
     );
   }
 
-  if (variant === "stacked") {
-    return (
-      <span
-        className={`site-logo cc-logo inline-flex flex-col items-center gap-2 ${className}`}
-        style={colorStyle}
-      >
-        {icon}
-        <span
-          className="font-bold tracking-[0.2em] uppercase leading-tight text-center"
-          style={{ fontSize: Math.round(size * 0.22) }}
-        >
-          Central
-          <br />
-          Calendar
-        </span>
-      </span>
-    );
-  }
+  const width = variant === "stacked" ? size * STACKED_ASPECT : size * aspect;
+  const height = size;
 
-  // horizontal
   return (
     <span
-      className={`site-logo cc-logo inline-flex items-center gap-2.5 ${className}`}
-      style={colorStyle}
-    >
-      {icon}
-      <span
-        className="font-bold tracking-[0.18em] uppercase whitespace-nowrap"
-        style={{ fontSize: Math.round(size * 0.42) }}
-      >
-        Central Calendar
-      </span>
-    </span>
+      role="img"
+      aria-label="Central Calendar"
+      className={`site-logo cc-logo inline-block align-middle shrink-0 ${className}`}
+      style={{
+        width,
+        height,
+        backgroundColor: colorStyle ?? "currentColor",
+        color: colorStyle,
+        WebkitMaskImage: `url(${src})`,
+        maskImage: `url(${src})`,
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+        WebkitMaskSize: "contain",
+        maskSize: "contain",
+        WebkitMaskPosition: "center",
+        maskPosition: "center",
+      }}
+    />
   );
 }
