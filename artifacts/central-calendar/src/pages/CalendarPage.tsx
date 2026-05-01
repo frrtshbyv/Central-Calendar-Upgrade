@@ -200,7 +200,7 @@ export default function CalendarPage() {
                 label={t("calendar.allTopics")}
                 muted
               />
-              {tags.slice(0, 8).map((tag) => (
+              {tags.map((tag) => (
                 <FilterPill
                   key={tag.id}
                   active={selectedTagId === tag.id}
