@@ -13,7 +13,7 @@ paths = ["/api"]
 run = "pnpm --filter @workspace/api-server run dev"
 
 [services.production]
-paths = ["/"]
+paths = ["/api"]
 
 [services.production.build]
 args = ["pnpm", "-r", "--filter", "@workspace/api-server...", "--filter", "@workspace/central-calendar...", "run", "build"]
