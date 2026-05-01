@@ -31,7 +31,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
         aria-label="Toggle theme"
         aria-haspopup="menu"
         aria-expanded={open}
-        className="h-9 w-9 inline-flex items-center justify-center rounded-md text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10 transition-colors duration-150"
+        className="h-9 w-9 inline-flex items-center justify-center rounded-md text-shell-foreground/70 hover:text-shell-foreground hover:bg-shell-foreground/10 transition-colors duration-150"
       >
         <Active className="h-4 w-4" />
       </button>

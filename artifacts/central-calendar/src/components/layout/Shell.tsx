@@ -77,7 +77,7 @@ export function Shell({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans">
       <header
-        className={`sticky top-0 z-50 w-full bg-primary border-b border-primary-foreground/10 transition-shadow duration-200 ${
+        className={`sticky top-0 z-50 w-full bg-shell border-b border-shell-foreground/10 transition-shadow duration-200 ${
           scrolled ? "shadow-lg shadow-black/20" : ""
         }`}
       >
@@ -86,12 +86,12 @@ export function Shell({ children }: { children: ReactNode }) {
             scrolled ? "h-14" : "h-20"
           }`}
         >
-          <Link href="/" className="shrink-0 mr-4 text-primary-foreground" aria-label="Central Calendar home">
-            <Logo size={scrolled ? 24 : 32} variant="horizontal" tone="light" priority />
+          <Link href="/" className="shrink-0 mr-4 text-shell-foreground" aria-label="Central Calendar home">
+            <Logo size={scrolled ? 24 : 32} variant="horizontal" priority />
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-5 text-sm font-medium text-primary-foreground/70 mr-auto">
-            <Link href="/" className={`transition-colors hover:text-primary-foreground duration-150 ${location === "/" ? "text-primary-foreground" : ""}`}>
+          <nav className="hidden lg:flex items-center gap-5 text-sm font-medium text-shell-foreground/70 mr-auto">
+            <Link href="/" className={`transition-colors hover:text-shell-foreground duration-150 ${location === "/" ? "text-shell-foreground" : ""}`}>
               {t("nav.home")}
             </Link>
 
@@ -100,7 +100,7 @@ export function Shell({ children }: { children: ReactNode }) {
               onMouseEnter={() => setCountriesOpen(true)}
               onMouseLeave={() => setCountriesOpen(false)}
             >
-              <button className="cursor-pointer hover:text-primary-foreground flex items-center gap-1 transition-colors duration-150">
+              <button className="cursor-pointer hover:text-shell-foreground flex items-center gap-1 transition-colors duration-150">
                 {t("nav.countries")} <ChevronDown className="h-3 w-3" />
               </button>
               <div
@@ -114,7 +114,7 @@ export function Shell({ children }: { children: ReactNode }) {
                       key={c.href}
                       href={c.href}
                       className={`p-2 hover:bg-muted rounded text-sm transition-colors duration-150 ${
-                        c.accent ? "font-medium text-primary border-t border-border mt-1 pt-3" : "text-foreground"
+                        c.accent ? "font-medium text-foreground border-t border-border mt-1 pt-3" : "text-foreground"
                       }`}
                     >
                       {t(c.key)}
@@ -124,19 +124,19 @@ export function Shell({ children }: { children: ReactNode }) {
               </div>
             </div>
 
-            <Link href="/calendar" className={`hover:text-primary-foreground duration-150 ${location === "/calendar" ? "text-primary-foreground" : ""}`}>{t("nav.calendar")}</Link>
-            <Link href="/online" className={`hover:text-primary-foreground duration-150 ${location === "/online" ? "text-primary-foreground" : ""}`}>{t("nav.online")}</Link>
-            <Link href="/articles" className={`hover:text-primary-foreground duration-150 ${location.startsWith("/articles") ? "text-primary-foreground" : ""}`}>{t("nav.articles")}</Link>
-            <Link href="/submit-event" className={`hover:text-primary-foreground duration-150 ${location === "/submit-event" ? "text-primary-foreground" : ""}`}>{t("nav.submit")}</Link>
-            <Link href="/about" className={`hover:text-primary-foreground duration-150 ${location === "/about" ? "text-primary-foreground" : ""}`}>{t("nav.about")}</Link>
+            <Link href="/calendar" className={`hover:text-shell-foreground duration-150 ${location === "/calendar" ? "text-shell-foreground" : ""}`}>{t("nav.calendar")}</Link>
+            <Link href="/online" className={`hover:text-shell-foreground duration-150 ${location === "/online" ? "text-shell-foreground" : ""}`}>{t("nav.online")}</Link>
+            <Link href="/articles" className={`hover:text-shell-foreground duration-150 ${location.startsWith("/articles") ? "text-shell-foreground" : ""}`}>{t("nav.articles")}</Link>
+            <Link href="/submit-event" className={`hover:text-shell-foreground duration-150 ${location === "/submit-event" ? "text-shell-foreground" : ""}`}>{t("nav.submit")}</Link>
+            <Link href="/about" className={`hover:text-shell-foreground duration-150 ${location === "/about" ? "text-shell-foreground" : ""}`}>{t("nav.about")}</Link>
           </nav>
 
           <div ref={searchRef} className="hidden md:flex relative items-center w-56 ml-auto">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-primary-foreground/50 pointer-events-none" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-shell-foreground/50 pointer-events-none" />
             <Input
               type="search"
               placeholder={t("nav.search")}
-              className="pl-9 bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/40 h-9 text-sm focus-visible:ring-primary-foreground/30"
+              className="pl-9 bg-shell-foreground/10 border-shell-foreground/20 text-shell-foreground placeholder:text-shell-foreground/40 h-9 text-sm focus-visible:ring-shell-foreground/30"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               aria-label="Search events"
@@ -171,7 +171,7 @@ export function Shell({ children }: { children: ReactNode }) {
           </div>
 
           <button
-            className="ml-auto lg:hidden p-2 rounded-md text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10 transition-colors duration-150"
+            className="ml-auto lg:hidden p-2 rounded-md text-shell-foreground/70 hover:text-shell-foreground hover:bg-shell-foreground/10 transition-colors duration-150"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
@@ -187,14 +187,14 @@ export function Shell({ children }: { children: ReactNode }) {
             role="dialog"
             aria-modal="true"
             aria-label="Site navigation"
-            className="lg:hidden border-t border-primary-foreground/10 bg-primary animate-in slide-in-from-top-2 duration-200 max-h-[calc(100vh-3.5rem)] overflow-y-auto overscroll-contain">
+            className="lg:hidden border-t border-shell-foreground/10 bg-shell animate-in slide-in-from-top-2 duration-200 max-h-[calc(100vh-3.5rem)] overflow-y-auto overscroll-contain">
             <div className="container mx-auto px-4 py-4 flex flex-col gap-1">
               <div className="relative mb-3">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-primary-foreground/50 pointer-events-none" />
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-shell-foreground/50 pointer-events-none" />
                 <Input
                   type="search"
                   placeholder={t("nav.search")}
-                  className="pl-9 bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/40 h-9 text-sm w-full"
+                  className="pl-9 bg-shell-foreground/10 border-shell-foreground/20 text-shell-foreground placeholder:text-shell-foreground/40 h-9 text-sm w-full"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -205,18 +205,18 @@ export function Shell({ children }: { children: ReactNode }) {
                   href={l.href}
                   className={`py-2.5 px-3 rounded-md text-sm font-medium transition-colors duration-150 ${
                     location === l.href
-                      ? "bg-primary-foreground/15 text-primary-foreground"
-                      : "text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                      ? "bg-shell-foreground/15 text-shell-foreground"
+                      : "text-shell-foreground/70 hover:bg-shell-foreground/10 hover:text-shell-foreground"
                   }`}
                 >
                   {t(l.key)}
                 </Link>
               ))}
-              <div className="mt-2 pt-2 border-t border-primary-foreground/10">
+              <div className="mt-2 pt-2 border-t border-shell-foreground/10">
                 <button
                   type="button"
                   onClick={() => setMobileCountriesOpen((v) => !v)}
-                  className="w-full flex items-center justify-between py-2 px-3 text-xs font-semibold uppercase tracking-wider text-primary-foreground/40 hover:text-primary-foreground/70"
+                  className="w-full flex items-center justify-between py-2 px-3 text-xs font-semibold uppercase tracking-wider text-shell-foreground/40 hover:text-shell-foreground/70"
                   aria-expanded={mobileCountriesOpen}
                 >
                   <span>{t("nav.countries")}</span>
@@ -229,7 +229,7 @@ export function Shell({ children }: { children: ReactNode }) {
                         key={c.href}
                         href={c.href}
                         className={`py-2 px-3 rounded-md text-sm transition-colors duration-150 block ${
-                          c.accent ? "text-primary-foreground/90 font-medium" : "text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                          c.accent ? "text-shell-foreground/90 font-medium" : "text-shell-foreground/70 hover:bg-shell-foreground/10 hover:text-shell-foreground"
                         }`}
                       >
                         {t(c.key)}
@@ -238,8 +238,8 @@ export function Shell({ children }: { children: ReactNode }) {
                   </div>
                 )}
               </div>
-              <div className="mt-2 pt-3 border-t border-primary-foreground/10 flex items-center justify-between px-1">
-                <span className="text-xs uppercase tracking-wider text-primary-foreground/40">{t("common.language")}</span>
+              <div className="mt-2 pt-3 border-t border-shell-foreground/10 flex items-center justify-between px-1">
+                <span className="text-xs uppercase tracking-wider text-shell-foreground/40">{t("common.language")}</span>
                 <div className="flex items-center gap-1">
                   <ThemeToggle />
                   <LanguageSwitcher />
@@ -252,38 +252,38 @@ export function Shell({ children }: { children: ReactNode }) {
 
       <main className="flex-1">{children}</main>
 
-      <footer className="bg-primary border-t border-primary-foreground/10 py-12 mt-12">
+      <footer className="bg-shell border-t border-shell-foreground/10 py-12 mt-12">
         <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-10">
-          <div className="max-w-xs text-center md:text-left text-primary-foreground">
+          <div className="max-w-xs text-center md:text-left text-shell-foreground">
             <Link href="/" aria-label="Central Calendar home" className="inline-block">
-              <Logo size={36} variant="horizontal" tone="light" />
+              <Logo size={36} variant="horizontal" />
             </Link>
-            <p className="text-sm text-primary-foreground/50 mt-3">
+            <p className="text-sm text-shell-foreground/50 mt-3">
               {t("footer.tagline")}
             </p>
           </div>
           <div className="flex flex-wrap gap-12 text-sm">
             <div className="flex flex-col gap-2">
-              <span className="font-medium text-primary-foreground mb-1">{t("footer.explore")}</span>
-              <Link href="/" className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">{t("nav.home")}</Link>
-              <Link href="/calendar" className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">{t("nav.calendar")}</Link>
-              <Link href="/online" className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">{t("nav.online")}</Link>
-              <Link href="/articles" className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">{t("nav.articles")}</Link>
-              <Link href="/cross-border" className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">{t("nav.crossBorder")}</Link>
-              <Link href="/submit-event" className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">{t("nav.submit")}</Link>
-              <Link href="/about" className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">{t("nav.about")}</Link>
+              <span className="font-medium text-shell-foreground mb-1">{t("footer.explore")}</span>
+              <Link href="/" className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">{t("nav.home")}</Link>
+              <Link href="/calendar" className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">{t("nav.calendar")}</Link>
+              <Link href="/online" className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">{t("nav.online")}</Link>
+              <Link href="/articles" className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">{t("nav.articles")}</Link>
+              <Link href="/cross-border" className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">{t("nav.crossBorder")}</Link>
+              <Link href="/submit-event" className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">{t("nav.submit")}</Link>
+              <Link href="/about" className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">{t("nav.about")}</Link>
             </div>
             <div className="flex flex-col gap-2">
-              <span className="font-medium text-primary-foreground mb-1">{t("footer.region")}</span>
+              <span className="font-medium text-shell-foreground mb-1">{t("footer.region")}</span>
               {COUNTRIES.slice(0, 5).map((c) => (
-                <Link key={c.href} href={c.href} className="text-primary-foreground/50 hover:text-primary-foreground transition-colors duration-150">
+                <Link key={c.href} href={c.href} className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">
                   {t(c.key)}
                 </Link>
               ))}
             </div>
           </div>
         </div>
-        <div className="container mx-auto px-4 md:px-8 mt-10 pt-6 border-t border-primary-foreground/10 text-center text-xs text-primary-foreground/30">
+        <div className="container mx-auto px-4 md:px-8 mt-10 pt-6 border-t border-shell-foreground/10 text-center text-xs text-shell-foreground/30">
           &copy; {new Date().getFullYear()} {t("footer.copyright")}
         </div>
       </footer>

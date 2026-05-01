@@ -14,7 +14,7 @@ export function LanguageSwitcher({ variant = "header" }: { variant?: "header" | 
           variant="ghost"
           className={
             variant === "header"
-              ? "h-8 px-2 text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10 gap-1"
+              ? "h-8 px-2 text-shell-foreground/70 hover:text-shell-foreground hover:bg-shell-foreground/10 gap-1"
               : "h-8 px-2 gap-1"
           }
           aria-label="Change language"

@@ -39,8 +39,7 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
           decoding="async"
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-primary/95" />
-        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 bg-shell/90" />
       </>
     );
   }
@@ -65,8 +64,7 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${i === idx ? "opacity-100" : "opacity-0"}`}
           />
         ))}
-        <div className="absolute inset-0 bg-primary/95" />
-        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 bg-shell/90" />
       </div>
 
       {(() => {
@@ -75,9 +73,9 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
         const subtitle = pickLocalized(cur.subtitle, cur.subtitleRu);
         if (!title && !subtitle && !cur.linkUrl) return null;
         const inner = (
-          <div className="bg-primary/80 backdrop-blur-md border border-primary-foreground/15 rounded-lg px-5 py-3 text-left max-w-md transition-opacity">
-            {title && <div className="text-sm font-semibold text-primary-foreground">{title}</div>}
-            {subtitle && <div className="text-xs text-primary-foreground/70 mt-0.5">{subtitle}</div>}
+          <div className="bg-shell/80 backdrop-blur-md border border-shell-foreground/15 rounded-lg px-5 py-3 text-left max-w-md transition-opacity">
+            {title && <div className="text-sm font-semibold text-shell-foreground">{title}</div>}
+            {subtitle && <div className="text-xs text-shell-foreground/70 mt-0.5">{subtitle}</div>}
           </div>
         );
         return (
@@ -97,7 +95,7 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
             type="button"
             onClick={goPrev}
             aria-label="Previous slide"
-            className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-primary/40 hover:bg-primary/70 text-primary-foreground border border-primary-foreground/20"
+            className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-shell/60 hover:bg-shell/85 text-shell-foreground border border-shell-foreground/20"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -105,7 +103,7 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
             type="button"
             onClick={goNext}
             aria-label="Next slide"
-            className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-primary/40 hover:bg-primary/70 text-primary-foreground border border-primary-foreground/20"
+            className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-shell/60 hover:bg-shell/85 text-shell-foreground border border-shell-foreground/20"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
@@ -116,7 +114,7 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
                 type="button"
                 aria-label={`Go to slide ${i + 1}`}
                 onClick={() => setIdx(i)}
-                className={`h-1.5 rounded-full transition-all ${i === idx ? "w-6 bg-primary-foreground" : "w-1.5 bg-primary-foreground/40 hover:bg-primary-foreground/70"}`}
+                className={`h-1.5 rounded-full transition-all ${i === idx ? "w-6 bg-shell-foreground" : "w-1.5 bg-shell-foreground/40 hover:bg-shell-foreground/70"}`}
               />
             ))}
           </div>
