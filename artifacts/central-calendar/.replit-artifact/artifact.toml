@@ -24,6 +24,9 @@ BASE_PATH = "/"
 [services.production]
 serve = "static"
 publicDir = "artifacts/central-calendar/dist/public"
+rewrites = [
+  { from = "/*", to = "/index.html" },
+]
 
 [services.production.build]
 args = ["pnpm", "--filter", "@workspace/central-calendar", "run", "build"]
