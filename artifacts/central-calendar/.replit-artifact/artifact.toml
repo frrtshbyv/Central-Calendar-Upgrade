@@ -23,7 +23,7 @@ BASE_PATH = "/"
 
 [services.production]
 serve = "static"
-publicDir = "dist/public"
+publicDir = "artifacts/central-calendar/dist/public"
 
 [services.production.build]
 args = ["pnpm", "--filter", "@workspace/central-calendar", "run", "build"]
