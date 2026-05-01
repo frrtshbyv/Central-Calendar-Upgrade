@@ -322,7 +322,7 @@ function AfishaCard({
             {primaryTag}
           </span>
         )}
-        <h3 className="font-semibold text-base leading-snug mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 className="font-semibold text-base leading-snug mb-2 line-clamp-2 group-hover:text-hover-accent transition-colors">
           {event.title}
         </h3>
         <div className="mt-auto pt-2 text-xs text-muted-foreground space-y-1">

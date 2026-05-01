@@ -35,6 +35,11 @@
   --color-hero: hsl(var(--hero));
   --color-hero-foreground: hsl(var(--hero-foreground));
 
+  /* Hover accent for interactive titles / links inside cards. Brand-aligned
+     dark green in light theme, lighter sage in dark theme so it stays
+     legible against the dark card surface (where --primary blends in). */
+  --color-hover-accent: hsl(var(--hover-accent));
+
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
   --color-secondary-border: var(--secondary-border);
@@ -114,6 +119,9 @@
      #3b4f43 logo and dark text read with editorial contrast. */
   --hero: 40 32% 88%;
   --hero-foreground: 145 18% 15%;
+
+  /* Light theme hover accent — institutional brand green */
+  --hover-accent: 145 14% 27%;
 }
 
 .dark {
@@ -160,6 +168,10 @@
   /* Dark theme hero — keep navy so the white logo and copy stay legible. */
   --hero: 222 47% 11%;
   --hero-foreground: 210 40% 98%;
+
+  /* Dark theme hover accent — soft sage green that pops against the navy
+     card surface (where --primary would blend into the background). */
+  --hover-accent: 145 32% 68%;
 }
 
 @layer base {

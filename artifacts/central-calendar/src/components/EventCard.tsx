@@ -60,7 +60,7 @@ export function EventCard({ event, index = 0 }: { event: Event; index?: number }
 
         <Link
           href={`/event/${event.slug}`}
-          className="text-xl font-bold mb-2 group-hover:text-primary transition-colors duration-150 line-clamp-2"
+          className="text-xl font-bold mb-2 group-hover:text-hover-accent transition-colors duration-150 line-clamp-2"
         >
           {title}
         </Link>

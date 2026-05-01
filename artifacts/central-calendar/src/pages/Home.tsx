@@ -76,12 +76,17 @@ export default function Home() {
             <Logo size={200} variant="stacked" className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.18)] max-w-[60vw] h-auto" />
           </div>
           <h1 className="sr-only">Central Calendar</h1>
-          <p className="text-lg sm:text-xl md:text-2xl text-hero-foreground/85 font-mono uppercase tracking-[0.2em] mb-8">
-            {t("hero.tagline")}
-          </p>
-          <p className="text-sm sm:text-base md:text-lg text-hero-foreground/75 max-w-2xl mx-auto mb-10 leading-relaxed">
-            {t("hero.subtitle")}
-          </p>
+          {/* Frosted glass panel — softens the busy city image behind the
+              copy and gives the title + description a unified, editorial
+              container that reads in both themes. */}
+          <div className="inline-block mb-10 max-w-3xl backdrop-blur-xl bg-hero-foreground/[0.06] border border-hero-foreground/15 rounded-3xl px-6 sm:px-12 py-7 sm:py-9 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.25)]">
+            <p className="text-lg sm:text-xl md:text-2xl text-hero-foreground/90 font-mono uppercase tracking-[0.2em] mb-5">
+              {t("hero.tagline")}
+            </p>
+            <p className="text-sm sm:text-base md:text-lg text-hero-foreground/80 leading-relaxed">
+              {t("hero.subtitle")}
+            </p>
+          </div>
           <div className="flex flex-wrap justify-center gap-3">
             <Button asChild size="lg" className="bg-hero-foreground text-hero hover:bg-hero-foreground/90">
               <Link href="/calendar">{t("hero.browse")} <ArrowRight className="ml-2 h-4 w-4" /></Link>
@@ -193,7 +198,7 @@ export default function Home() {
                         </div>
                       )}
                       <div className="p-4">
-                        <h3 className="font-semibold mb-1 line-clamp-2 group-hover:text-primary transition-colors">
+                        <h3 className="font-semibold mb-1 line-clamp-2 group-hover:text-hover-accent transition-colors">
                           {pickLocalized(a.title, (a as any).titleRu)}
                         </h3>
                         <p className="text-xs text-muted-foreground">{a.publishedAt ? new Date(a.publishedAt).toLocaleDateString() : ""}{a.author ? ` · ${a.author}` : ""}</p>
