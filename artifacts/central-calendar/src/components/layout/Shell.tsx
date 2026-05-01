@@ -7,6 +7,7 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { Logo } from "@/components/Logo";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import { useI18n } from "@/i18n";
 
 const COUNTRIES: { href: string; key: string; accent?: boolean }[] = [
@@ -76,6 +77,7 @@ export function Shell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background font-sans">
+      <ScrollToTop />
       <header
         className={`sticky top-0 z-50 w-full bg-shell border-b border-shell-foreground/10 transition-shadow duration-200 ${
           scrolled ? "shadow-lg shadow-black/20" : ""
