@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import { useGetEventStats, useListEvents, useGetSiteSettings, useListArticles, useListTags } from "@workspace/api-client-react";
 import { EventCard } from "@/components/EventCard";
@@ -63,6 +63,24 @@ export default function Home() {
   };
 
   const hasFilters = selectedTags.length > 0 || selectedCountry !== "" || selectedFormat !== "";
+
+  // Scroll the events list into view whenever filters change so the user
+  // always sees the freshly filtered list from its top, regardless of where
+  // they were on the page when they tapped a filter.
+  const eventsListRef = useRef<HTMLDivElement>(null);
+  const isFirstFilterRender = useRef(true);
+  useEffect(() => {
+    if (isFirstFilterRender.current) {
+      isFirstFilterRender.current = false;
+      return;
+    }
+    const el = eventsListRef.current;
+    if (!el) return;
+    // Account for the sticky header (~80px) so the section heading is not
+    // hidden underneath it after the scroll.
+    const top = el.getBoundingClientRect().top + window.scrollY - 96;
+    window.scrollTo({ top, behavior: "smooth" });
+  }, [selectedTags, selectedCountry, selectedFormat]);
 
   return (
     <div className="w-full">
@@ -153,7 +171,7 @@ export default function Home() {
               </div>
             )}
 
-            <div>
+            <div ref={eventsListRef} className="scroll-mt-24">
               <div className="flex items-center justify-between border-b border-border pb-4 mb-6">
                 <h2 className="text-2xl font-bold">{hasFilters ? t("events.upcoming") : t("events.upcoming")}</h2>
                 <span className="text-xs text-muted-foreground font-mono uppercase tracking-wider">

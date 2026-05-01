@@ -41,6 +41,8 @@ export default function CalendarPage() {
 
   const stripRef = useRef<HTMLDivElement>(null);
   const selectedRef = useRef<HTMLButtonElement>(null);
+  const eventsGridRef = useRef<HTMLDivElement>(null);
+  const isFirstFilterRender = useRef(true);
 
   useEffect(() => {
     selectedRef.current?.scrollIntoView({
@@ -49,6 +51,20 @@ export default function CalendarPage() {
       inline: "center",
     });
   }, [selectedDate]);
+
+  // Whenever a filter (date / country / tag) changes, scroll the event grid
+  // into view so the user always sees the freshly filtered list from its top.
+  useEffect(() => {
+    if (isFirstFilterRender.current) {
+      isFirstFilterRender.current = false;
+      return;
+    }
+    const el = eventsGridRef.current;
+    if (!el) return;
+    // Offset for the sticky header so the grid heading isn't hidden behind it.
+    const top = el.getBoundingClientRect().top + window.scrollY - 96;
+    window.scrollTo({ top, behavior: "smooth" });
+  }, [selectedDate, selectedCountryId, selectedTagId]);
 
   const filteredEvents = useMemo(() => {
     if (!events) return [];
@@ -216,27 +232,29 @@ export default function CalendarPage() {
         </div>
 
         {/* Event grid */}
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <Skeleton key={i} className="h-80 w-full rounded-lg" />
-            ))}
-          </div>
-        ) : filteredEvents.length === 0 ? (
-          <div className="text-center py-20 bg-card border border-border rounded-lg">
-            <CalendarIcon className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold">{t("calendar.empty.title")}</h3>
-            <p className="text-muted-foreground text-sm mt-1">
-              {t("calendar.empty.body")}
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredEvents.map((event) => (
-              <AfishaCard key={event.id} event={event} dfnsLocale={dfnsLocale} featuredLabel={t("calendar.featured")} />
-            ))}
-          </div>
-        )}
+        <div ref={eventsGridRef} className="scroll-mt-24">
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} className="h-80 w-full rounded-lg" />
+              ))}
+            </div>
+          ) : filteredEvents.length === 0 ? (
+            <div className="text-center py-20 bg-card border border-border rounded-lg">
+              <CalendarIcon className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold">{t("calendar.empty.title")}</h3>
+              <p className="text-muted-foreground text-sm mt-1">
+                {t("calendar.empty.body")}
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredEvents.map((event) => (
+                <AfishaCard key={event.id} event={event} dfnsLocale={dfnsLocale} featuredLabel={t("calendar.featured")} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
