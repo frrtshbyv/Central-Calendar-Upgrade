@@ -23,11 +23,17 @@
   --color-primary-foreground: hsl(var(--primary-foreground));
   --color-primary-border: var(--primary-border);
 
-  /* Institutional shell wrapper (header / hero / footer).
+  /* Institutional shell wrapper (header / footer).
      Distinct from --primary so accent buttons keep their dark-green color
      while the shell adapts to the page surface. */
   --color-shell: hsl(var(--shell));
   --color-shell-foreground: hsl(var(--shell-foreground));
+
+  /* Hero stage — its own surface so the hero can use a different palette
+     from the header/footer (e.g. warm parchment in light theme so the
+     #3b4f43 brand mark reads against it). */
+  --color-hero: hsl(var(--hero));
+  --color-hero-foreground: hsl(var(--hero-foreground));
 
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
@@ -99,10 +105,15 @@
   /* Brand accent used by SVG logo + accents in light mode */
   --brand-accent: #3b4f43;
 
-  /* Light theme shell — institutional dark-green bar (header / hero / footer)
-     with white text + logo, sitting on the warm parchment body. */
+  /* Light theme shell — institutional dark-green bar (header / footer)
+     with white text + logo. */
   --shell: 145 14% 27%;
   --shell-foreground: 40 30% 97%;
+
+  /* Light theme hero — warm linen parchment (NOT white) so the brand-green
+     #3b4f43 logo and dark text read with editorial contrast. */
+  --hero: 40 32% 88%;
+  --hero-foreground: 145 18% 15%;
 }
 
 .dark {
@@ -145,6 +156,10 @@
      wrapper blends into the page (no white/green stripe). */
   --shell: 222 47% 11%;
   --shell-foreground: 210 40% 98%;
+
+  /* Dark theme hero — keep navy so the white logo and copy stay legible. */
+  --hero: 222 47% 11%;
+  --hero-foreground: 210 40% 98%;
 }
 
 @layer base {

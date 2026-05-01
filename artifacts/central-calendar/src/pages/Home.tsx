@@ -66,41 +66,41 @@ export default function Home() {
 
   return (
     <div className="w-full">
-      <section className="relative bg-shell text-shell-foreground border-b border-border overflow-hidden min-h-[70vh] md:min-h-[80vh] flex items-center">
+      <section className="relative bg-hero text-hero-foreground border-b border-border overflow-hidden min-h-[70vh] md:min-h-[80vh] flex items-center">
         <HeroSlider fallbackUrl={settings?.homepageBannerUrl ?? null} />
         <div className="relative container mx-auto max-w-5xl text-center py-20 sm:py-24 md:py-36 px-4 w-full">
-          <div className="inline-block mb-6 px-3 py-1 border border-shell-foreground/20 rounded-full text-xs font-medium uppercase tracking-[0.2em] text-shell-foreground/70">
+          <div className="inline-block mb-6 px-3 py-1 border border-hero-foreground/25 rounded-full text-xs font-medium uppercase tracking-[0.2em] text-hero-foreground/80">
             {t("hero.eyebrow")}
           </div>
           <div className="flex justify-center mb-6">
-            <Logo size={200} variant="stacked" tone="light" className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.25)] max-w-[60vw] h-auto" />
+            <Logo size={200} variant="stacked" className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.18)] max-w-[60vw] h-auto" />
           </div>
           <h1 className="sr-only">Central Calendar</h1>
-          <p className="text-lg sm:text-xl md:text-2xl text-shell-foreground/80 font-mono uppercase tracking-[0.2em] mb-8">
+          <p className="text-lg sm:text-xl md:text-2xl text-hero-foreground/85 font-mono uppercase tracking-[0.2em] mb-8">
             {t("hero.tagline")}
           </p>
-          <p className="text-sm sm:text-base md:text-lg text-shell-foreground/70 max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-sm sm:text-base md:text-lg text-hero-foreground/75 max-w-2xl mx-auto mb-10 leading-relaxed">
             {t("hero.subtitle")}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Button asChild size="lg" className="bg-shell-foreground text-shell hover:bg-shell-foreground/90">
+            <Button asChild size="lg" className="bg-hero-foreground text-hero hover:bg-hero-foreground/90">
               <Link href="/calendar">{t("hero.browse")} <ArrowRight className="ml-2 h-4 w-4" /></Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-shell-foreground/30 text-shell-foreground hover:bg-shell-foreground hover:text-shell">
+            <Button asChild size="lg" variant="outline" className="border-hero-foreground/30 text-hero-foreground hover:bg-hero-foreground hover:text-hero">
               <Link href="/submit-event"><Send className="mr-2 h-4 w-4" /> {t("hero.submit")}</Link>
             </Button>
           </div>
-          <div className="mt-12 flex flex-wrap justify-center gap-4 md:gap-8 text-sm md:text-base font-mono opacity-80">
+          <div className="mt-12 flex flex-wrap justify-center gap-4 md:gap-8 text-sm md:text-base font-mono opacity-90">
             <div className="flex flex-col items-center">
               <span className="text-3xl font-bold mb-1">{stats?.totalPublished ?? 0}</span>
               <span className="uppercase tracking-wider text-xs">{t("hero.totalEvents", "Total Events")}</span>
             </div>
-            <div className="w-px h-12 bg-shell-foreground/20 hidden md:block" />
+            <div className="w-px h-12 bg-hero-foreground/25 hidden md:block" />
             <div className="flex flex-col items-center">
               <span className="text-3xl font-bold mb-1">{stats?.upcomingThisMonth ?? 0}</span>
               <span className="uppercase tracking-wider text-xs">{t("hero.thisMonth", "This Month")}</span>
             </div>
-            <div className="w-px h-12 bg-shell-foreground/20 hidden md:block" />
+            <div className="w-px h-12 bg-hero-foreground/25 hidden md:block" />
             <div className="flex flex-col items-center">
               <span className="text-3xl font-bold mb-1">{stats?.byCountry?.length ?? 0}</span>
               <span className="uppercase tracking-wider text-xs">{t("hero.nations", "Nations")}</span>
