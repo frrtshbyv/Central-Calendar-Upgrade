@@ -1,5 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
+import { ensureCanonicalTags } from "./lib/seed-tags";
 
 const rawPort = process.env["PORT"] ?? "8080";
 const port = Number(rawPort);
@@ -15,4 +16,6 @@ app.listen(port, (err) => {
   }
 
   logger.info({ port }, "Server listening");
+
+  ensureCanonicalTags().catch((err) => logger.warn({ err }, "Tag seed failed"));
 });
