@@ -50,42 +50,45 @@
 }
 
 :root {
-  --background: 0 0% 100%;
-  --foreground: 222 47% 11%;
-  
+  --background: 40 24% 96%;
+  --foreground: 145 13% 18%;
+
   --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
-  --card-border: 214 32% 91%;
-  
+  --card-foreground: 145 13% 18%;
+  --card-border: 145 8% 86%;
+
   --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
-  --popover-border: 214 32% 91%;
-  
-  /* Institutional Deep Slate Blue */
-  --primary: 222 47% 11%;
-  --primary-foreground: 210 40% 98%;
-  
-  --secondary: 210 40% 96.1%;
-  --secondary-foreground: 222 47% 11.2%;
-  
-  --muted: 210 40% 96.1%;
-  --muted-foreground: 215.4 16.3% 46.9%;
-  
-  --accent: 210 40% 96.1%;
-  --accent-foreground: 222.2 47.4% 11.2%;
-  
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-  
-  --border: 214.3 31.8% 91.4%;
-  --input: 214.3 31.8% 91.4%;
-  --ring: 222.2 84% 4.9%;
-  
+  --popover-foreground: 145 13% 18%;
+  --popover-border: 145 8% 86%;
+
+  /* Institutional brand color (light theme) */
+  --primary: 145 13% 26%;
+  --primary-foreground: 40 30% 96%;
+
+  --secondary: 145 10% 92%;
+  --secondary-foreground: 145 13% 22%;
+
+  --muted: 145 10% 92%;
+  --muted-foreground: 145 8% 40%;
+
+  --accent: 145 10% 92%;
+  --accent-foreground: 145 13% 22%;
+
+  --destructive: 0 72% 45%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 145 8% 86%;
+  --input: 145 8% 86%;
+  --ring: 145 13% 26%;
+
   --radius: 0.5rem;
-  
+
   --app-font-sans: 'Inter', system-ui, sans-serif;
   --app-font-serif: 'Georgia', serif;
   --app-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Brand accent used by SVG logo + accents in light mode */
+  --brand-accent: #3b4f43;
 }
 
 .dark {
@@ -124,7 +127,45 @@
   * {
     @apply border-border;
   }
+  html {
+    color-scheme: light dark;
+  }
   body {
     @apply font-sans antialiased bg-background text-foreground;
   }
+}
+
+/* ----------------------------------------------------------------------------
+ * SVG Logo color control
+ *
+ * Logos use `currentColor` for fill/stroke. In light theme they pick up the
+ * institutional brand accent #3b4f43; in dark theme they fall back to the
+ * inherited foreground (typically white on the dark header).
+ * The header is intentionally always dark (institutional design), so logos
+ * inside the header inherit white via Tailwind's text-primary-foreground.
+ * -------------------------------------------------------------------------- */
+.light-theme .cc-logo:not([style*="color"]) {
+  color: var(--brand-accent);
+}
+.dark-theme .cc-logo:not([style*="color"]) {
+  color: currentColor;
+}
+
+/* ----------------------------------------------------------------------------
+ * Layout stability helpers — explicit aspect ratios prevent CLS
+ * -------------------------------------------------------------------------- */
+.cc-aspect-hero {
+  aspect-ratio: 21 / 9;
+}
+.cc-aspect-card {
+  aspect-ratio: 16 / 9;
+}
+
+/* Smooth font swap fallback to reduce FOIT */
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Inter"), local("Arial");
+  font-display: swap;
+  size-adjust: 100%;
+  ascent-override: 90%;
 }

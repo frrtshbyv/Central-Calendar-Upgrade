@@ -6,6 +6,7 @@ import { Search, Menu, X, ChevronDown } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { Logo } from "@/components/Logo";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { useI18n } from "@/i18n";
 
 const COUNTRIES: { href: string; key: string; accent?: boolean }[] = [
@@ -53,6 +54,16 @@ export function Shell({ children }: { children: ReactNode }) {
     setSearch("");
   }, [location]);
 
+  // Close mobile drawer on Escape for keyboard users.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [mobileOpen]);
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
@@ -75,8 +86,8 @@ export function Shell({ children }: { children: ReactNode }) {
             scrolled ? "h-14" : "h-20"
           }`}
         >
-          <Link href="/" className="shrink-0 mr-4" aria-label="Central Calendar home">
-            <Logo size={scrolled ? 28 : 40} variant="horizontal" />
+          <Link href="/" className="shrink-0 mr-4 text-primary-foreground" aria-label="Central Calendar home">
+            <Logo size={scrolled ? 24 : 32} variant="horizontal" tone="light" priority />
           </Link>
 
           <nav className="hidden lg:flex items-center gap-5 text-sm font-medium text-primary-foreground/70 mr-auto">
@@ -154,21 +165,29 @@ export function Shell({ children }: { children: ReactNode }) {
             )}
           </div>
 
-          <div className="hidden md:block ml-2">
+          <div className="hidden md:flex items-center gap-1 ml-2">
+            <ThemeToggle />
             <LanguageSwitcher />
           </div>
 
           <button
             className="ml-auto lg:hidden p-2 rounded-md text-primary-foreground/70 hover:text-primary-foreground hover:bg-primary-foreground/10 transition-colors duration-150"
             onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="cc-mobile-drawer"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
 
         {mobileOpen && (
-          <div className="lg:hidden border-t border-primary-foreground/10 bg-primary animate-in slide-in-from-top-2 duration-200 max-h-[calc(100vh-3.5rem)] overflow-y-auto overscroll-contain">
+          <div
+            id="cc-mobile-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site navigation"
+            className="lg:hidden border-t border-primary-foreground/10 bg-primary animate-in slide-in-from-top-2 duration-200 max-h-[calc(100vh-3.5rem)] overflow-y-auto overscroll-contain">
             <div className="container mx-auto px-4 py-4 flex flex-col gap-1">
               <div className="relative mb-3">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-primary-foreground/50 pointer-events-none" />
@@ -221,7 +240,10 @@ export function Shell({ children }: { children: ReactNode }) {
               </div>
               <div className="mt-2 pt-3 border-t border-primary-foreground/10 flex items-center justify-between px-1">
                 <span className="text-xs uppercase tracking-wider text-primary-foreground/40">{t("common.language")}</span>
-                <LanguageSwitcher />
+                <div className="flex items-center gap-1">
+                  <ThemeToggle />
+                  <LanguageSwitcher />
+                </div>
               </div>
             </div>
           </div>
@@ -232,9 +254,9 @@ export function Shell({ children }: { children: ReactNode }) {
 
       <footer className="bg-primary border-t border-primary-foreground/10 py-12 mt-12">
         <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-10">
-          <div className="max-w-xs text-center md:text-left">
+          <div className="max-w-xs text-center md:text-left text-primary-foreground">
             <Link href="/" aria-label="Central Calendar home" className="inline-block">
-              <Logo size={48} variant="horizontal" />
+              <Logo size={36} variant="horizontal" tone="light" />
             </Link>
             <p className="text-sm text-primary-foreground/50 mt-3">
               {t("footer.tagline")}

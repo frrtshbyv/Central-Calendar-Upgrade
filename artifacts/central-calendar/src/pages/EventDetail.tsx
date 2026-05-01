@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EventCard } from "@/components/EventCard";
 import { useI18n } from "@/i18n";
+import { splitTagName } from "@/lib/utils";
 import { ru as ruLocale, enUS as enLocale } from "date-fns/locale";
 
 export default function EventDetail({ params }: { params: { slug: string } }) {
@@ -111,7 +112,16 @@ export default function EventDetail({ params }: { params: { slug: string } }) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
           <div className="md:col-span-2">
             {event.previewImage ? (
-              <img src={event.previewImage} alt={event.title} className="w-full h-auto rounded-xl border border-border mb-8 shadow-sm" />
+              <img
+                src={event.previewImage}
+                alt={event.title}
+                width="1200"
+                height="675"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                className="w-full aspect-[16/9] object-cover rounded-xl border border-border mb-8 shadow-sm"
+              />
             ) : (
               <div className="w-full aspect-[21/9] bg-muted rounded-xl border border-border mb-8 flex items-center justify-center">
                 <Globe className="w-16 h-16 text-muted-foreground/30" />
@@ -155,13 +165,15 @@ export default function EventDetail({ params }: { params: { slug: string } }) {
                     <TagIcon className="w-4 h-4" /> {t("event.sectors")}
                   </h3>
                   <div className="flex flex-wrap gap-2">
-                    {event.tags.map(tag => (
-                      <Link key={tag.id} href={`/?tag=${tag.slug}`}>
-                        <Badge variant="secondary" className="hover:bg-primary hover:text-primary-foreground cursor-pointer transition-colors rounded-sm font-normal">
-                          #{tag.name}
-                        </Badge>
-                      </Link>
-                    ))}
+                    {event.tags.flatMap((tag) =>
+                      splitTagName(tag.name).map((token) => (
+                        <Link key={`${tag.id}-${token}`} href={`/?tag=${tag.slug}`}>
+                          <Badge variant="secondary" className="hover:bg-primary hover:text-primary-foreground cursor-pointer transition-colors rounded-sm font-normal lowercase">
+                            #{token}
+                          </Badge>
+                        </Link>
+                      )),
+                    )}
                   </div>
                 </div>
               )}

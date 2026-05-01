@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { X, ArrowRight, Send } from "lucide-react";
 import { HeroSlider } from "@/components/HeroSlider";
 import { useI18n } from "@/i18n";
+import { splitTagName } from "@/lib/utils";
 
 const COUNTRIES: { slug: string; key: string }[] = [
   { slug: "uzbekistan", key: "nav.uzbekistan" },
@@ -130,14 +131,17 @@ export default function Home() {
                     </button>
                   </span>
                 )}
-                {selectedTags.map((tg) => (
-                  <span key={tg} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/80 text-primary-foreground text-xs font-medium rounded-full">
-                    #{stats?.byTag?.find((tag) => tag.tagSlug === tg)?.tagName ?? tg}
-                    <button onClick={() => toggleTag(tg)} aria-label={`Remove tag ${tg}`}>
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                ))}
+                {selectedTags.map((tg) => {
+                  const display = stats?.byTag?.find((tag) => tag.tagSlug === tg)?.tagName ?? tg;
+                  return (
+                    <span key={tg} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/80 text-primary-foreground text-xs font-medium rounded-full lowercase">
+                      #{splitTagName(display).join(" #") || display.toLowerCase()}
+                      <button onClick={() => toggleTag(tg)} aria-label={`Remove tag ${tg}`}>
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  );
+                })}
                 <button onClick={clearFilters} className="ml-auto text-xs text-muted-foreground hover:text-foreground transition-colors duration-150">
                   {t("filter.clear")}
                 </button>
@@ -177,7 +181,15 @@ export default function Home() {
                     <Link key={a.id} href={`/articles/${a.slug}`} className="block group bg-card border border-border rounded-lg overflow-hidden hover-elevate transition-all">
                       {a.coverImage && (
                         <div className="aspect-video bg-muted overflow-hidden">
-                          <img src={a.coverImage} alt={a.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                          <img
+                            src={a.coverImage}
+                            alt={a.title}
+                            width="640"
+                            height="360"
+                            loading="lazy"
+                            decoding="async"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
                         </div>
                       )}
                       <div className="p-4">
@@ -248,15 +260,17 @@ export default function Home() {
                   {allTags?.map((tag) => {
                     const active = selectedTags.includes(tag.slug);
                     const count = stats?.byTag?.find((s) => s.tagSlug === tag.slug)?.count ?? 0;
+                    const tokens = splitTagName(tag.name);
+                    const label = tokens.length > 0 ? tokens.map((t) => `#${t}`).join(" ") : `#${tag.name.toLowerCase()}`;
                     return (
                       <button
                         key={tag.slug}
                         onClick={() => toggleTag(tag.slug)}
-                        className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-all duration-150 inline-flex items-center gap-1 ${
+                        className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-all duration-150 inline-flex items-center gap-1 lowercase ${
                           active ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-foreground border-border hover:border-primary hover:text-primary"
                         } ${count === 0 ? "opacity-60" : ""}`}
                       >
-                        #{tag.name}
+                        {label}
                         {count > 0 && <span className={`text-[10px] ${active ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{count}</span>}
                       </button>
                     );

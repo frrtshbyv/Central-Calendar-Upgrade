@@ -28,9 +28,16 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
     if (!fallbackUrl) return null;
     return (
       <>
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${fallbackUrl})` }}
+        <img
+          src={fallbackUrl}
+          alt=""
+          aria-hidden="true"
+          width="1920"
+          height="800"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-primary/95" />
         <div className="absolute inset-0 bg-black/20" />
@@ -45,11 +52,17 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
     <>
       <div className="absolute inset-0 overflow-hidden">
         {items.map((b, i) => (
-          <div
+          <img
             key={b.id}
-            className={`absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ${i === idx ? "opacity-100" : "opacity-0"}`}
-            style={{ backgroundImage: `url(${b.imageUrl})` }}
+            src={b.imageUrl}
+            alt=""
             aria-hidden={i !== idx}
+            width="1920"
+            height="800"
+            loading={i === 0 ? "eager" : "lazy"}
+            fetchPriority={i === 0 ? "high" : "low"}
+            decoding="async"
+            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${i === idx ? "opacity-100" : "opacity-0"}`}
           />
         ))}
         <div className="absolute inset-0 bg-primary/95" />

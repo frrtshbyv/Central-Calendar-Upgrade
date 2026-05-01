@@ -5,6 +5,7 @@ import { ru as ruLocale, enUS as enLocale } from "date-fns/locale";
 import { Calendar, MapPin, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useI18n } from "@/i18n";
+import { splitTagName } from "@/lib/utils";
 
 export function EventCard({ event, index = 0 }: { event: Event; index?: number }) {
   const { t, lang, pickLocalized } = useI18n();
@@ -39,15 +40,17 @@ export function EventCard({ event, index = 0 }: { event: Event; index?: number }
           <Badge variant="secondary" className="rounded-sm font-medium">
             {event.countryName}
           </Badge>
-          {event.tags?.map((tag) => (
-            <Badge
-              key={tag.id}
-              variant="outline"
-              className="rounded-sm font-normal text-muted-foreground bg-transparent"
-            >
-              {tag.name}
-            </Badge>
-          ))}
+          {event.tags?.flatMap((tag) =>
+            splitTagName(tag.name).map((token) => (
+              <Badge
+                key={`${tag.id}-${token}`}
+                variant="outline"
+                className="rounded-sm font-normal text-muted-foreground bg-transparent lowercase"
+              >
+                #{token}
+              </Badge>
+            )),
+          )}
           {event.featured && (
             <Badge variant="default" className="rounded-sm font-medium bg-primary text-primary-foreground">
               {t("calendar.featured")}

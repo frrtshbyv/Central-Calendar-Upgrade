@@ -37,13 +37,18 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - Public pages: `/` (Home), `/uzbekistan`, `/kazakhstan`, `/kyrgyzstan`, `/turkmenistan`, `/caucasus`, `/cross-border`, `/calendar`, `/online`, `/articles`, `/articles/:slug`, `/submit-event`, `/event/:slug`, `/about`
 - `/caspian-region` redirects to `/caucasus` for backward compatibility
 - Admin panel: `/control-room-7f92x/*` (hidden from nav, protected by session auth) — events dashboard, new event, pending submissions, archive, articles CRUD, site settings
-- New SVG logo at `/logo.svg` rendered via `Logo` component
+- Inline SVG `Logo` component (`src/components/Logo.tsx`) using `currentColor` with `tone` prop ("light" | "dark" | "auto"); horizontal viewBox is 0 0 560 100 to fit "CENTRAL CALENDAR" without clipping
+- Theme system: `ThemeProvider` + `ThemeToggle` (light / dark / system, localStorage key `cc-theme`); pre-paint inline bootstrap script in `index.html` resolves theme before first render (no FOUC)
+- Tag rendering helper `splitTagName()` in `src/lib/utils.ts` splits compound names on `&`, `,`, `/`, ` and `, ` и ` for UI-only `#hashtag` display — DB tag relations are unchanged
+- Image performance: hero + cover images use explicit `width`/`height`, `loading="eager"` + `fetchPriority="high"` for first/above-the-fold, `loading="lazy"` for below-the-fold to reduce CLS and LCP
+- Mobile drawer: keyboard-accessible (Esc to close, `aria-expanded`, `aria-controls`, `role="dialog"`)
 
 ### Backend (artifacts/api-server)
 - Express 5 API at `/api`
 - Session-based admin auth with brute force protection (5 attempts per 10 min)
 - Public routes: `/events` (with `format` filter), `/countries`, `/tags`, `/search`, `/articles`, `/articles/:slug`, `/site-settings`, `/submit-event` (rate-limited)
 - Admin routes: `/admin/events` (incl. publish/archive/reject), `/admin/articles` CRUD, `/admin/site-settings`
+- In production also serves the built SPA (`artifacts/central-calendar/dist/public`). Cache policy: HTML never cached (`no-cache, no-store`), hashed `/assets/*` and other long-lived static files cached `public, max-age=31536000, immutable`
 
 ### Database Schema (lib/db/src/schema/)
 - `countries` — 6 records (Uzbekistan, Kazakhstan, Kyrgyzstan, Turkmenistan, Caucasus, Cross-border)
