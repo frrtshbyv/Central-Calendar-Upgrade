@@ -1,18 +1,23 @@
 interface LogoProps {
   size?: number;
   variant?: "horizontal" | "stacked" | "icon";
+  /**
+   * Force a specific color regardless of theme. Used inside the always-dark
+   * header where the logo must remain white. When omitted the logo inherits
+   * `currentColor`, which is themed via CSS in `index.css` (white in dark
+   * theme, #3b4f43 in light theme).
+   */
   tone?: "light" | "dark" | "auto";
   className?: string;
   priority?: boolean;
 }
 
 /**
- * Inline SVG brand logo. Uses `currentColor` so theme-aware color switching
- * works via CSS. The light theme overrides currentColor to #3b4f43 (see index.css);
- * in dark theme it stays the inherited foreground (typically white on the dark header).
- *
- * `tone` lets a caller force a color (used inside the always-dark header) regardless
- * of the resolved theme. `auto` defers to currentColor.
+ * Inline mirror of `/public/logo.svg`. The SVG uses `fill="currentColor"` /
+ * `stroke="currentColor"` so the brand mark is theme-aware via plain CSS.
+ * Path structure is identical to the file on disk — only fill/stroke colors
+ * are driven by CSS. For horizontal / stacked variants the wordmark is
+ * rendered as HTML text alongside the icon (also inheriting currentColor).
  */
 export function Logo({
   size = 40,
@@ -21,108 +26,104 @@ export function Logo({
   className = "",
   priority = false,
 }: LogoProps) {
-  const colorStyle = tone === "light"
-    ? { color: "#ffffff" }
-    : tone === "dark"
-      ? { color: "#3b4f43" }
-      : undefined;
+  const colorStyle =
+    tone === "light"
+      ? { color: "#ffffff" }
+      : tone === "dark"
+        ? { color: "#3b4f43" }
+        : undefined;
 
-  const commonProps = {
-    role: "img" as const,
-    "aria-label": "Central Calendar",
-    fill: "currentColor",
-    style: colorStyle,
-    className: `cc-logo flex-shrink-0 ${className}`,
-    fetchPriority: priority ? ("high" as const) : undefined,
-  };
+  // `priority` is preserved on the props API for compatibility with prior
+  // <img>-based logo, but inline SVGs don't go through the network so there's
+  // nothing to prioritize for the icon itself.
+  void priority;
+  const icon = (
+    <svg
+      role="img"
+      aria-label="Central Calendar"
+      width={size}
+      height={size}
+      viewBox="0 0 64 64"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="shrink-0"
+    >
+      <rect
+        x="2"
+        y="2"
+        width="60"
+        height="60"
+        rx="14"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      />
+      <g transform="translate(32 33)">
+        <circle r="3.2" fill="currentColor" />
+        <path
+          d="M0,-12 a12,12 0 1,1 -8.485,3.515"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          fill="none"
+        />
+        <path
+          d="M0,-19 a19,19 0 1,1 -13.435,5.565"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeOpacity="0.55"
+          fill="none"
+        />
+      </g>
+      <rect x="11" y="11" width="6" height="2" fill="currentColor" />
+      <rect x="47" y="51" width="6" height="2" fill="currentColor" />
+    </svg>
+  );
 
   if (variant === "icon") {
     return (
-      <svg
-        {...commonProps}
-        width={size}
-        height={size}
-        viewBox="0 0 100 100"
-        xmlns="http://www.w3.org/2000/svg"
+      <span
+        className={`site-logo cc-logo inline-flex items-center ${className}`}
+        style={colorStyle}
       >
-        <SpiralIcon />
-      </svg>
+        {icon}
+      </span>
     );
   }
 
   if (variant === "stacked") {
     return (
-      <svg
-        {...commonProps}
-        width={size}
-        height={size * 1.05}
-        viewBox="0 0 200 210"
-        xmlns="http://www.w3.org/2000/svg"
+      <span
+        className={`site-logo cc-logo inline-flex flex-col items-center gap-2 ${className}`}
+        style={colorStyle}
       >
-        <g transform="translate(50 5)">
-          <SpiralIcon />
-        </g>
-        <text
-          x="100"
-          y="148"
-          textAnchor="middle"
-          fontFamily="Inter, system-ui, sans-serif"
-          fontWeight="800"
-          fontSize="26"
-          letterSpacing="2"
+        {icon}
+        <span
+          className="font-bold tracking-[0.2em] uppercase leading-tight text-center"
+          style={{ fontSize: Math.round(size * 0.22) }}
         >
-          CENTRAL
-        </text>
-        <text
-          x="100"
-          y="180"
-          textAnchor="middle"
-          fontFamily="Inter, system-ui, sans-serif"
-          fontWeight="800"
-          fontSize="26"
-          letterSpacing="2"
-        >
-          CALENDAR
-        </text>
-      </svg>
+          Central
+          <br />
+          Calendar
+        </span>
+      </span>
     );
   }
 
-  // horizontal — viewBox is sized so "CENTRAL CALENDAR" never clips.
-  const aspect = 5.6;
+  // horizontal
   return (
-    <svg
-      {...commonProps}
-      width={size * aspect}
-      height={size}
-      viewBox="0 0 560 100"
-      xmlns="http://www.w3.org/2000/svg"
+    <span
+      className={`site-logo cc-logo inline-flex items-center gap-2.5 ${className}`}
+      style={colorStyle}
     >
-      <g transform="translate(0 10)">
-        <SpiralIcon />
-      </g>
-      <text
-        x="110"
-        y="62"
-        fontFamily="Inter, system-ui, sans-serif"
-        fontWeight="800"
-        fontSize="34"
-        letterSpacing="1.5"
+      {icon}
+      <span
+        className="font-bold tracking-[0.18em] uppercase whitespace-nowrap"
+        style={{ fontSize: Math.round(size * 0.42) }}
       >
-        CENTRAL CALENDAR
-      </text>
-    </svg>
-  );
-}
-
-function SpiralIcon() {
-  // Two interlocking spirals/loops, drawn with strokes inheriting currentColor.
-  return (
-    <g transform="translate(40 40)" stroke="currentColor" strokeWidth="6" fill="none" strokeLinecap="round">
-      <circle cx="-10" cy="0" r="22" />
-      <circle cx="10" cy="0" r="22" />
-      <path d="M -10 -22 a 22 22 0 0 1 0 44" strokeWidth="6" />
-      <path d="M 10 22 a 22 22 0 0 1 0 -44" strokeWidth="6" />
-    </g>
+        Central Calendar
+      </span>
+    </span>
   );
 }

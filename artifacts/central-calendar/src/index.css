@@ -138,17 +138,21 @@
 /* ----------------------------------------------------------------------------
  * SVG Logo color control
  *
- * Logos use `currentColor` for fill/stroke. In light theme they pick up the
- * institutional brand accent #3b4f43; in dark theme they fall back to the
- * inherited foreground (typically white on the dark header).
- * The header is intentionally always dark (institutional design), so logos
- * inside the header inherit white via Tailwind's text-primary-foreground.
+ * The brand mark in /public/logo.svg uses fill/stroke="currentColor" so we
+ * can drive its color from CSS without ever touching the SVG paths.
+ *   - dark theme  → white
+ *   - light theme → #3b4f43 (institutional brand accent)
+ * An inline `style="color: ..."` on the logo (set by `tone` prop) wins over
+ * the theme rules — used by the always-dark header where the mark must stay
+ * white regardless of the page theme.
  * -------------------------------------------------------------------------- */
+.light-theme .site-logo:not([style*="color"]),
 .light-theme .cc-logo:not([style*="color"]) {
-  color: var(--brand-accent);
+  color: #3b4f43;
 }
+.dark-theme .site-logo:not([style*="color"]),
 .dark-theme .cc-logo:not([style*="color"]) {
-  color: currentColor;
+  color: #ffffff;
 }
 
 /* ----------------------------------------------------------------------------

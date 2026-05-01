@@ -1,0 +1,221 @@
+Restore Central Calendar visual layout exactly as it existed before the last UI redesign attempt.
+
+IMPORTANT GLOBAL RULES:
+
+DO NOT redesign layout
+DO NOT change typography scale
+DO NOT change spacing system
+DO NOT modify navigation structure
+DO NOT replace SVG logo
+DO NOT modify database schema
+DO NOT modify admin panel logic
+DO NOT modify authentication system
+DO NOT modify sessions storage
+DO NOT modify PostgreSQL connection logic
+DO NOT modify routes
+
+Keep backend untouched.
+
+-------------------------------------
+
+RESTORE ORIGINAL DARK THEME
+
+Use current dark theme as baseline version.
+
+Dark theme must remain visually identical to its stable version:
+
+same colors
+same spacing
+same typography
+same event cards
+same header styling
+same sidebar styling
+
+Do NOT recolor dark theme.
+
+-------------------------------------
+
+IMPLEMENT CLEAN LIGHT THEME
+
+Create a new light theme variant.
+
+Light theme must:
+
+keep identical layout structure
+keep identical typography
+keep identical spacing
+keep identical grid system
+
+Only change:
+
+background colors
+text colors
+card backgrounds
+border colors
+
+Use neutral professional palette.
+
+Avoid white overlays or transparency hacks.
+
+Use solid background colors.
+
+-------------------------------------
+
+THEME SWITCHING SYSTEM
+
+Implement:
+
+dark mode
+light mode
+system mode detection
+
+Detect system preference using:
+
+prefers-color-scheme
+
+Save selection inside:
+
+localStorage
+
+Apply theme instantly on page load.
+
+-------------------------------------
+
+LOGO HANDLING
+
+Use ONLY provided original SVG logo:
+
+/public/logo.svg
+
+Do NOT auto-generate logo.
+
+Do NOT recolor logo automatically.
+
+Do NOT replace logo paths.
+
+Use original file exactly as provided.
+
+If separate logo variants exist:
+
+/public/logo-dark.svg
+/public/logo-light.svg
+
+switch logos per theme.
+
+Otherwise:
+
+keep single original logo.
+
+-------------------------------------
+
+KEEP PERFORMANCE IMPROVEMENTS
+
+Preserve existing performance optimizations:
+
+lazy loading images
+font-display swap
+cache headers
+hero image preload
+aspect-ratio containers
+
+Do NOT modify layout styling.
+
+-------------------------------------
+
+UPDATE TAG SYSTEM DISPLAY
+
+Replace current tag labels with the following exact list:
+
+#Economy
+#Investment
+#Industry
+#Energy
+#Technology
+#Retail
+#Marketing
+#Media
+#ESG
+#Transport
+#PublicSector
+#Education
+#Healthcare
+#Women
+#Youth
+#Lifestyle
+#Food
+#Fashion
+#Hospitality
+#Culture
+#Sport
+#Online
+
+IMPORTANT:
+
+Update UI display layer only.
+
+Do NOT modify database schema.
+
+Do NOT modify tag tables.
+
+Do NOT modify event_tags relationships.
+
+Reuse existing tag IDs where possible.
+
+-------------------------------------
+
+ENSURE TAG FILTERING STILL WORKS
+
+Filtering must support:
+
+single tag filtering
+multi-tag filtering
+
+Examples:
+
+/events?tag=Energy
+
+/events?tag=Technology&tag=Investment
+
+Filtering must work without page reload.
+
+-------------------------------------
+
+KEEP ADMIN PANEL FULLY FUNCTIONAL
+
+Admin must still be able to:
+
+create events
+edit events
+archive events
+publish events
+assign tags
+
+Do NOT modify admin routes.
+
+-------------------------------------
+
+FINAL RESULT REQUIRED
+
+Original Central Calendar layout restored.
+
+Dark theme unchanged and stable.
+
+Light theme implemented cleanly.
+
+Theme switching works correctly.
+
+Original SVG logo preserved.
+
+Performance improvements preserved.
+
+Updated tag list applied.
+
+Filtering working correctly.
+
+Admin panel working correctly.
+
+Database untouched.
+
+Routes untouched.
+
+Sessions untouched.
