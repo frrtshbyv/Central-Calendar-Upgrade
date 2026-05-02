@@ -2,7 +2,8 @@ import { ReactNode, useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "wouter";
 import { useSearchEvents, getSearchEventsQueryKey } from "@workspace/api-client-react";
 import { Input } from "@/components/ui/input";
-import { Search, Menu, X, ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Search, Menu, X, ChevronDown, Send } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { Logo } from "@/components/Logo";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -17,14 +18,13 @@ const COUNTRIES: { href: string; key: string; accent?: boolean }[] = [
   { href: "/turkmenistan", key: "nav.turkmenistan" },
   { href: "/caucasus", key: "nav.caucasus" },
   { href: "/cross-border", key: "nav.crossBorder", accent: true },
+  { href: "/online", key: "nav.online", accent: true },
 ];
 
 const NAV_LINKS: { href: string; key: string }[] = [
   { href: "/", key: "nav.home" },
   { href: "/calendar", key: "nav.calendar" },
-  { href: "/online", key: "nav.online" },
   { href: "/articles", key: "nav.articles" },
-  { href: "/submit-event", key: "nav.submit" },
   { href: "/about", key: "nav.about" },
 ];
 
@@ -127,22 +127,43 @@ export function Shell({ children }: { children: ReactNode }) {
             </div>
 
             <Link href="/calendar" className={`hover:text-shell-foreground duration-150 ${location === "/calendar" ? "text-shell-foreground" : ""}`}>{t("nav.calendar")}</Link>
-            <Link href="/online" className={`hover:text-shell-foreground duration-150 ${location === "/online" ? "text-shell-foreground" : ""}`}>{t("nav.online")}</Link>
             <Link href="/articles" className={`hover:text-shell-foreground duration-150 ${location.startsWith("/articles") ? "text-shell-foreground" : ""}`}>{t("nav.articles")}</Link>
-            <Link href="/submit-event" className={`hover:text-shell-foreground duration-150 ${location === "/submit-event" ? "text-shell-foreground" : ""}`}>{t("nav.submit")}</Link>
             <Link href="/about" className={`hover:text-shell-foreground duration-150 ${location === "/about" ? "text-shell-foreground" : ""}`}>{t("nav.about")}</Link>
+            <Button
+              asChild
+              size="sm"
+              className="ml-1 h-8 px-3 bg-shell-foreground text-shell hover:bg-shell-foreground/90"
+            >
+              <Link href="/submit-event">
+                <Send className="mr-1.5 h-3.5 w-3.5" />
+                {t("nav.submit")}
+              </Link>
+            </Button>
           </nav>
 
-          <div ref={searchRef} className="hidden md:flex relative items-center w-56 ml-auto">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-shell-foreground/50 pointer-events-none" />
-            <Input
-              type="search"
-              placeholder={t("nav.search")}
-              className="pl-9 bg-shell-foreground/10 border-shell-foreground/20 text-shell-foreground placeholder:text-shell-foreground/40 h-9 text-sm focus-visible:ring-shell-foreground/30"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              aria-label="Search events"
-            />
+          <div ref={searchRef} className="hidden md:flex relative items-center w-64 ml-auto">
+            <form
+              role="search"
+              onSubmit={(e) => e.preventDefault()}
+              className="relative w-full flex items-center"
+            >
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-shell-foreground/50 pointer-events-none" />
+              <Input
+                type="search"
+                placeholder={t("nav.search")}
+                className="pl-9 pr-10 bg-shell-foreground/10 border-shell-foreground/20 text-shell-foreground placeholder:text-shell-foreground/40 h-9 text-sm focus-visible:ring-shell-foreground/30"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                aria-label="Search events"
+              />
+              <button
+                type="submit"
+                aria-label={t("nav.search")}
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 inline-flex items-center justify-center rounded text-shell-foreground/70 hover:text-shell-foreground hover:bg-shell-foreground/15 transition-colors"
+              >
+                <Search className="h-4 w-4" />
+              </button>
+            </form>
             {debouncedSearch.length > 2 && (
               <div className="absolute top-full mt-2 right-0 w-[320px] bg-popover border border-border rounded-md shadow-lg p-2 max-h-96 overflow-y-auto z-50">
                 {isSearching ? (
@@ -191,17 +212,30 @@ export function Shell({ children }: { children: ReactNode }) {
             aria-label="Site navigation"
             className="lg:hidden border-t border-shell-foreground/10 bg-shell animate-in slide-in-from-top-2 duration-200 max-h-[calc(100vh-3.5rem)] overflow-y-auto overscroll-contain">
             <div className="container mx-auto px-4 py-4 flex flex-col gap-1">
-              <div className="relative mb-3">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-shell-foreground/50 pointer-events-none" />
-                <Input
-                  type="search"
-                  placeholder={t("nav.search")}
-                  className="pl-9 bg-shell-foreground/10 border-shell-foreground/20 text-shell-foreground placeholder:text-shell-foreground/40 h-9 text-sm w-full"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  aria-label="Search events"
-                />
-              </div>
+              <form
+                role="search"
+                onSubmit={(e) => e.preventDefault()}
+                className="relative mb-3 flex items-center gap-2"
+              >
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-shell-foreground/50 pointer-events-none" />
+                  <Input
+                    type="search"
+                    placeholder={t("nav.search")}
+                    className="pl-9 bg-shell-foreground/10 border-shell-foreground/20 text-shell-foreground placeholder:text-shell-foreground/40 h-10 text-sm w-full"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    aria-label="Search events"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  aria-label={t("nav.search")}
+                  className="h-10 px-4 inline-flex items-center justify-center rounded-md bg-shell-foreground text-shell text-sm font-medium hover:bg-shell-foreground/90 transition-colors shrink-0"
+                >
+                  <Search className="h-4 w-4" />
+                </button>
+              </form>
               {debouncedSearch.length > 2 && (
                 <div className="mb-3 -mt-1 bg-popover text-popover-foreground border border-border rounded-md shadow-lg p-2 max-h-72 overflow-y-auto">
                   {isSearching ? (
@@ -242,6 +276,13 @@ export function Shell({ children }: { children: ReactNode }) {
                   {t(l.key)}
                 </Link>
               ))}
+              <Link
+                href="/submit-event"
+                className="mt-2 py-2.5 px-3 rounded-md text-sm font-semibold bg-shell-foreground text-shell hover:bg-shell-foreground/90 transition-colors duration-150 inline-flex items-center justify-center gap-2"
+              >
+                <Send className="h-4 w-4" />
+                {t("nav.submit")}
+              </Link>
               <div className="mt-2 pt-2 border-t border-shell-foreground/10">
                 <button
                   type="button"

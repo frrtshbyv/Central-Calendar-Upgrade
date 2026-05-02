@@ -197,13 +197,13 @@
  * the theme rules — used by the always-dark header where the mark must stay
  * white regardless of the page theme.
  * -------------------------------------------------------------------------- */
-.light-theme .site-logo:not([style*="color"]),
-.light-theme .cc-logo:not([style*="color"]) {
-  color: #3b4f43;
+.light-theme .site-logo:not([data-tone]):not([style*="filter"]),
+.light-theme .cc-logo:not([data-tone]):not([style*="filter"]) {
+  filter: brightness(0);
 }
-.dark-theme .site-logo:not([style*="color"]),
-.dark-theme .cc-logo:not([style*="color"]) {
-  color: #ffffff;
+.dark-theme .site-logo:not([data-tone]):not([style*="filter"]),
+.dark-theme .cc-logo:not([data-tone]):not([style*="filter"]) {
+  filter: brightness(0) invert(1);
 }
 
 /* ----------------------------------------------------------------------------
