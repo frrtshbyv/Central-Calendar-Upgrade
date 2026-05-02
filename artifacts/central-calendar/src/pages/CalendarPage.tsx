@@ -278,8 +278,8 @@ function FilterPill({
         active
           ? "bg-foreground text-background border-foreground"
           : muted
-          ? "bg-transparent text-muted-foreground border-border hover:bg-muted hover:text-foreground"
-          : "bg-card text-foreground border-border hover:bg-muted"
+          ? "bg-transparent text-muted-foreground border-border hover:bg-foreground hover:text-background hover:border-foreground"
+          : "bg-card text-foreground border-border hover:bg-foreground hover:text-background hover:border-foreground"
       }`}
     >
       {label}

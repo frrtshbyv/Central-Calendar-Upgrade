@@ -65,6 +65,37 @@ export function Shell({ children }: { children: ReactNode }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [mobileOpen]);
 
+  // Lock body scroll while the mobile drawer is open. Preserves and restores
+  // the scroll position so iOS Safari doesn't jump to the top on close.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const prev = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+    return () => {
+      body.style.position = prev.position;
+      body.style.top = prev.top;
+      body.style.left = prev.left;
+      body.style.right = prev.right;
+      body.style.width = prev.width;
+      body.style.overflow = prev.overflow;
+      window.scrollTo(0, scrollY);
+    };
+  }, [mobileOpen]);
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
@@ -210,8 +241,28 @@ export function Shell({ children }: { children: ReactNode }) {
             role="dialog"
             aria-modal="true"
             aria-label="Site navigation"
-            className="lg:hidden border-t border-shell-foreground/10 bg-shell animate-in slide-in-from-top-2 duration-200 max-h-[calc(100vh-3.5rem)] overflow-y-auto overscroll-contain">
-            <div className="container mx-auto px-4 py-4 flex flex-col gap-1">
+            className="lg:hidden fixed inset-0 z-[60] bg-shell flex flex-col animate-in fade-in duration-150"
+            style={{ top: 0, paddingTop: "env(safe-area-inset-top)" }}
+          >
+            <div className="flex items-center justify-between px-4 h-14 border-b border-shell-foreground/10 shrink-0">
+              <Link
+                href="/"
+                className="text-shell-foreground"
+                aria-label="Central Calendar home"
+                onClick={() => setMobileOpen(false)}
+              >
+                <Logo size={24} variant="horizontal" tone="light" />
+              </Link>
+              <button
+                type="button"
+                onClick={() => setMobileOpen(false)}
+                aria-label="Close menu"
+                className="p-2 rounded-md text-shell-foreground/80 hover:text-shell-foreground hover:bg-shell-foreground/10"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="container mx-auto px-4 py-4 flex flex-col gap-1 flex-1 overflow-y-auto overscroll-contain">
               <form
                 role="search"
                 onSubmit={(e) => e.preventDefault()}
@@ -263,19 +314,22 @@ export function Shell({ children }: { children: ReactNode }) {
                   )}
                 </div>
               )}
-              {NAV_LINKS.map((l) => (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  className={`py-2.5 px-3 rounded-md text-sm font-medium transition-colors duration-150 ${
-                    location === l.href
-                      ? "bg-shell-foreground/15 text-shell-foreground"
-                      : "text-shell-foreground/70 hover:bg-shell-foreground/10 hover:text-shell-foreground"
-                  }`}
-                >
-                  {t(l.key)}
-                </Link>
-              ))}
+              {NAV_LINKS.map((l) => {
+                const isActive = location === l.href || (l.href === "/articles" && location.startsWith("/articles"));
+                return (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className={`py-3 px-3 rounded-md text-base font-medium transition-colors duration-150 border-l-2 ${
+                      isActive
+                        ? "border-shell-foreground text-shell-foreground"
+                        : "border-transparent text-shell-foreground/75 hover:text-shell-foreground"
+                    }`}
+                  >
+                    {t(l.key)}
+                  </Link>
+                );
+              })}
               <Link
                 href="/submit-event"
                 className="mt-2 py-2.5 px-3 rounded-md text-sm font-semibold bg-shell-foreground text-shell hover:bg-shell-foreground/90 transition-colors duration-150 inline-flex items-center justify-center gap-2"

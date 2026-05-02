@@ -97,11 +97,11 @@ export default function Home() {
           {/* Frosted glass panel — softens the busy city image behind the
               copy and gives the title + description a unified, editorial
               container that reads in both themes. */}
-          <div className="inline-block mb-10 max-w-3xl backdrop-blur-xl bg-hero-foreground/[0.06] border border-hero-foreground/15 rounded-3xl px-6 sm:px-12 py-7 sm:py-9 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.25)]">
-            <p className="text-lg sm:text-xl md:text-2xl text-hero-foreground/90 font-mono uppercase tracking-[0.2em] mb-5">
+          <div className="inline-block mb-10 max-w-3xl bg-shell text-shell-foreground border border-shell-foreground/15 rounded-3xl px-6 sm:px-12 py-7 sm:py-9 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.25)]">
+            <p className="text-lg sm:text-xl md:text-2xl text-shell-foreground font-mono uppercase tracking-[0.2em] mb-5">
               {t("hero.tagline")}
             </p>
-            <p className="text-sm sm:text-base md:text-lg text-hero-foreground/80 leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-shell-foreground/85 leading-relaxed">
               {t("hero.subtitle")}
             </p>
           </div>
