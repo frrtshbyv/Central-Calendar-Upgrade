@@ -180,9 +180,19 @@ export function Shell({ children }: { children: ReactNode }) {
             >
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-shell-foreground/50 pointer-events-none" />
               <Input
-                type="search"
+                type="text"
+                inputMode="search"
+                enterKeyHint="search"
+                autoComplete="off"
                 placeholder={t("nav.search")}
-                className="pl-9 pr-10 bg-shell-foreground/10 border-shell-foreground/20 text-shell-foreground placeholder:text-shell-foreground/40 h-9 text-sm focus-visible:ring-shell-foreground/30"
+                className="cc-search-input pl-9 pr-10 border-shell-foreground/20 placeholder:text-shell-foreground/40 h-9 text-sm focus-visible:ring-shell-foreground/30"
+                style={{
+                  WebkitAppearance: "none",
+                  appearance: "none",
+                  backgroundColor: "rgba(255,255,255,0.10)",
+                  color: "#ffffff",
+                  caretColor: "#ffffff",
+                }}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 aria-label="Search events"
@@ -271,9 +281,20 @@ export function Shell({ children }: { children: ReactNode }) {
                 <div className="relative flex-1">
                   <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-shell-foreground/50 pointer-events-none" />
                   <Input
-                    type="search"
+                    type="text"
+                    inputMode="search"
+                    enterKeyHint="search"
+                    autoComplete="off"
                     placeholder={t("nav.search")}
-                    className="pl-9 bg-shell-foreground/10 border-shell-foreground/20 text-shell-foreground placeholder:text-shell-foreground/40 h-10 text-sm w-full"
+                    className="cc-search-input pl-9 border-shell-foreground/20 placeholder:text-shell-foreground/40 h-10 text-base w-full"
+                    style={{
+                      WebkitAppearance: "none",
+                      appearance: "none",
+                      backgroundColor: "rgba(255,255,255,0.10)",
+                      color: "#ffffff",
+                      caretColor: "#ffffff",
+                      fontSize: "16px",
+                    }}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     aria-label="Search events"
