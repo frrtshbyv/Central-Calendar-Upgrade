@@ -44,6 +44,7 @@ export function Logo({
           width={Math.round(size * HORIZONTAL_ASPECT)}
           height={size}
           loading={priority ? "eager" : "lazy"}
+          {...(priority ? { fetchPriority: "high" as const } : {})}
           decoding="async"
           style={{
             position: "absolute",
@@ -68,6 +69,7 @@ export function Logo({
       width={Math.round(width)}
       height={Math.round(height)}
       loading={priority ? "eager" : "lazy"}
+      {...(priority ? { fetchPriority: "high" as const } : {})}
       decoding="async"
       className={`site-logo cc-logo inline-block align-middle shrink-0 ${className}`}
       data-tone={tone !== "auto" ? tone : undefined}

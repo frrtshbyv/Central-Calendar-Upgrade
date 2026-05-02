@@ -91,7 +91,12 @@ export default function Home() {
             {t("hero.eyebrow")}
           </div>
           <div className="flex justify-center mb-6">
-            <Logo size={200} variant="stacked" className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.18)] max-w-[60vw] h-auto" />
+            <Logo
+              size={200}
+              variant="stacked"
+              priority
+              className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.18)] max-w-[60vw] h-auto"
+            />
           </div>
           <h1 className="sr-only">Central Calendar</h1>
           {/* Frosted glass panel — softens the busy city image behind the

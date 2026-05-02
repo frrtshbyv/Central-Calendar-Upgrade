@@ -42,12 +42,12 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
         {/* Layered hero wash: warm-parchment base (--hero) + soft radial
             vignette. Lets the city image breathe through while keeping the
             brand-green logo and copy legible. */}
-        <div className="absolute inset-0 bg-hero/85" />
+        <div className="absolute inset-0 bg-hero/55 dark:bg-hero/65" />
         <div
           className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 80% 70% at 50% 55%, transparent 0%, hsl(var(--hero) / 0.25) 60%, hsl(var(--hero) / 0.55) 100%)",
+              "radial-gradient(ellipse 80% 70% at 50% 55%, transparent 0%, hsl(var(--hero) / 0.15) 60%, hsl(var(--hero) / 0.45) 100%)",
           }}
         />
       </>
@@ -74,15 +74,16 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
             className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${i === idx ? "opacity-100" : "opacity-0"}`}
           />
         ))}
-        {/* Layered hero wash: warm-parchment base (--hero) + soft radial
-            vignette. Lets the city image breathe through while keeping the
-            brand-green logo and copy legible. */}
-        <div className="absolute inset-0 bg-hero/85" />
+        {/* Layered hero wash: lighter base + soft radial vignette so the city
+            photo stays visible (especially in dark mode where the base color is
+            near-black). The brand logo + copy panel have their own solid bg
+            so contrast is no longer the wash's job. */}
+        <div className="absolute inset-0 bg-hero/55 dark:bg-hero/65" />
         <div
           className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse 80% 70% at 50% 55%, transparent 0%, hsl(var(--hero) / 0.25) 60%, hsl(var(--hero) / 0.55) 100%)",
+              "radial-gradient(ellipse 80% 70% at 50% 55%, transparent 0%, hsl(var(--hero) / 0.15) 60%, hsl(var(--hero) / 0.45) 100%)",
           }}
         />
       </div>
@@ -99,7 +100,7 @@ export function HeroSlider({ fallbackUrl }: { fallbackUrl?: string | null }) {
           </div>
         );
         return (
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 hidden md:block">
+          <div className="absolute bottom-16 md:bottom-8 left-1/2 -translate-x-1/2 z-10 px-4 w-full max-w-md">
             {cur.linkUrl ? (
               <a href={cur.linkUrl} target={/^https?:/i.test(cur.linkUrl) ? "_blank" : undefined} rel="noopener noreferrer">
                 {inner}
