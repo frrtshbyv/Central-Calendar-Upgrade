@@ -1,0 +1,28 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Database backups
+*.sql
+
+# Replit / local workspace
+.agents/
+.cache/
+.config/
+.local/
+.canvas/
+.replit
+.replitignore
+**/.replit-artifact/
+
+# Generated files
+**/dist/
+**/.vite/
+**/tsconfig.tsbuildinfo
+node_modules/
+test-results/
+
+# Local-only project assets
+attached_assets/
+scripts/

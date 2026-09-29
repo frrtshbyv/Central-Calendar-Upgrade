@@ -1,0 +1,438 @@
+import { ReactNode, useState, useEffect, useRef } from "react";
+import { Link, useLocation } from "wouter";
+import { useSearchEvents, getSearchEventsQueryKey } from "@workspace/api-client-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Search, Menu, X, ChevronDown, Send } from "lucide-react";
+import { useDebounce } from "@/hooks/use-debounce";
+import { Logo } from "@/components/Logo";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import { ScrollToTop } from "@/components/ScrollToTop";
+import { useI18n } from "@/i18n";
+
+const COUNTRIES: { href: string; key: string; accent?: boolean }[] = [
+  { href: "/uzbekistan", key: "nav.uzbekistan" },
+  { href: "/kazakhstan", key: "nav.kazakhstan" },
+  { href: "/kyrgyzstan", key: "nav.kyrgyzstan" },
+  { href: "/turkmenistan", key: "nav.turkmenistan" },
+  { href: "/caucasus", key: "nav.caucasus" },
+  { href: "/cross-border", key: "nav.crossBorder", accent: true },
+  { href: "/online", key: "nav.online", accent: true },
+];
+
+const NAV_LINKS: { href: string; key: string }[] = [
+  { href: "/", key: "nav.home" },
+  { href: "/calendar", key: "nav.calendar" },
+  { href: "/articles", key: "nav.articles" },
+  { href: "/about", key: "nav.about" },
+];
+
+export function Shell({ children }: { children: ReactNode }) {
+  const [location] = useLocation();
+  const { t, pickLocalized } = useI18n();
+  const [search, setSearch] = useState("");
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [countriesOpen, setCountriesOpen] = useState(false);
+  const [mobileCountriesOpen, setMobileCountriesOpen] = useState(false);
+  const debouncedSearch = useDebounce(search, 300);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  const { data: searchResults, isLoading: isSearching } = useSearchEvents(
+    { q: debouncedSearch },
+    { query: { enabled: debouncedSearch.length > 2, queryKey: getSearchEventsQueryKey({ q: debouncedSearch }) } }
+  );
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    setMobileOpen(false);
+    setSearch("");
+  }, [location]);
+
+  // Close mobile drawer on Escape for keyboard users.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setMobileOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [mobileOpen]);
+
+  // Lock body scroll while the mobile drawer is open. Preserves and restores
+  // the scroll position so iOS Safari doesn't jump to the top on close.
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const prev = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+    return () => {
+      body.style.position = prev.position;
+      body.style.top = prev.top;
+      body.style.left = prev.left;
+      body.style.right = prev.right;
+      body.style.width = prev.width;
+      body.style.overflow = prev.overflow;
+      window.scrollTo(0, scrollY);
+    };
+  }, [mobileOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearch("");
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background font-sans">
+      <ScrollToTop />
+      <header
+        className={`sticky top-0 z-50 w-full bg-shell border-b border-shell-foreground/10 transition-shadow duration-200 ${
+          scrolled ? "shadow-lg shadow-black/20" : ""
+        }`}
+      >
+        <div
+          className={`container mx-auto px-4 md:px-8 flex items-center gap-4 transition-all duration-200 ${
+            scrolled ? "h-14" : "h-20"
+          }`}
+        >
+          <Link href="/" className="shrink-0 mr-4 text-shell-foreground" aria-label="Central Calendar home">
+            <Logo size={scrolled ? 24 : 32} variant="horizontal" tone="light" priority />
+          </Link>
+
+          <nav className="hidden lg:flex items-center gap-5 text-sm font-medium text-shell-foreground/70 mr-auto">
+            <Link href="/" className={`transition-colors hover:text-shell-foreground duration-150 ${location === "/" ? "text-shell-foreground" : ""}`}>
+              {t("nav.home")}
+            </Link>
+
+            <div
+              className="relative"
+              onMouseEnter={() => setCountriesOpen(true)}
+              onMouseLeave={() => setCountriesOpen(false)}
+            >
+              <button className="cursor-pointer hover:text-shell-foreground flex items-center gap-1 transition-colors duration-150">
+                {t("nav.countries")} <ChevronDown className="h-3 w-3" />
+              </button>
+              <div
+                className={`absolute left-0 top-full pt-2 w-52 transition-all duration-150 origin-top ${
+                  countriesOpen ? "opacity-100 scale-y-100 pointer-events-auto" : "opacity-0 scale-y-95 pointer-events-none"
+                }`}
+              >
+                <div className="bg-popover border border-border shadow-lg rounded-md p-2 flex flex-col gap-0.5">
+                  {COUNTRIES.map((c) => (
+                    <Link
+                      key={c.href}
+                      href={c.href}
+                      className={`p-2 hover:bg-muted rounded text-sm transition-colors duration-150 ${
+                        c.accent ? "font-medium text-foreground border-t border-border mt-1 pt-3" : "text-foreground"
+                      }`}
+                    >
+                      {t(c.key)}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <Link href="/calendar" className={`hover:text-shell-foreground duration-150 ${location === "/calendar" ? "text-shell-foreground" : ""}`}>{t("nav.calendar")}</Link>
+            <Link href="/articles" className={`hover:text-shell-foreground duration-150 ${location.startsWith("/articles") ? "text-shell-foreground" : ""}`}>{t("nav.articles")}</Link>
+            <Link href="/about" className={`hover:text-shell-foreground duration-150 ${location === "/about" ? "text-shell-foreground" : ""}`}>{t("nav.about")}</Link>
+            <Button
+              asChild
+              size="sm"
+              className="ml-1 h-8 px-3 bg-shell-foreground text-shell hover:bg-shell-foreground/90"
+            >
+              <Link href="/submit-event">
+                <Send className="mr-1.5 h-3.5 w-3.5" />
+                {t("nav.submit")}
+              </Link>
+            </Button>
+          </nav>
+
+          <div ref={searchRef} className="hidden md:flex relative items-center w-64 ml-auto">
+            <form
+              role="search"
+              onSubmit={(e) => e.preventDefault()}
+              className="relative w-full flex items-center"
+            >
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-shell-foreground/50 pointer-events-none" />
+              <Input
+                type="text"
+                inputMode="search"
+                enterKeyHint="search"
+                autoComplete="off"
+                placeholder={t("nav.search")}
+                className="cc-search-input pl-9 pr-10 border-shell-foreground/20 placeholder:text-shell-foreground/40 h-9 text-sm focus-visible:ring-shell-foreground/30"
+                style={{
+                  WebkitAppearance: "none",
+                  appearance: "none",
+                  backgroundColor: "rgba(255,255,255,0.10)",
+                  color: "#ffffff",
+                  caretColor: "#ffffff",
+                }}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                aria-label="Search events"
+              />
+              <button
+                type="submit"
+                aria-label={t("nav.search")}
+                className="absolute right-1 top-1/2 -translate-y-1/2 h-7 w-7 inline-flex items-center justify-center rounded text-shell-foreground/70 hover:text-shell-foreground hover:bg-shell-foreground/15 transition-colors"
+              >
+                <Search className="h-4 w-4" />
+              </button>
+            </form>
+            {debouncedSearch.length > 2 && (
+              <div className="absolute top-full mt-2 right-0 w-[320px] bg-popover border border-border rounded-md shadow-lg p-2 max-h-96 overflow-y-auto z-50">
+                {isSearching ? (
+                  <div className="p-4 text-center text-sm text-muted-foreground">{t("common.loading")}</div>
+                ) : searchResults && searchResults.length > 0 ? (
+                  <div className="flex flex-col gap-0.5">
+                    {searchResults.map((event) => (
+                      <Link key={event.id} href={`/event/${event.slug}`} className="p-2 hover:bg-muted rounded-md cursor-pointer block transition-colors duration-150" onClick={() => setSearch("")}>
+                        <div className="font-medium text-sm truncate">{pickLocalized(event.title, (event as any).titleRu)}</div>
+                        <div className="text-xs text-muted-foreground flex gap-2 mt-0.5">
+                          <span>{new Date(event.startDate).toLocaleDateString()}</span>
+                          <span>·</span>
+                          <span>{event.countryName}</span>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="p-4 text-center text-sm text-muted-foreground">{t("events.none", "No results found")}</div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="hidden md:flex items-center gap-1 ml-2">
+            <ThemeToggle />
+            <LanguageSwitcher />
+          </div>
+
+          <button
+            className="ml-auto lg:hidden p-2 rounded-md text-shell-foreground/70 hover:text-shell-foreground hover:bg-shell-foreground/10 transition-colors duration-150"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileOpen}
+            aria-controls="cc-mobile-drawer"
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
+
+        {mobileOpen && (
+          <div
+            id="cc-mobile-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site navigation"
+            className="lg:hidden fixed inset-0 z-[60] bg-shell flex flex-col animate-in fade-in duration-150"
+            style={{ top: 0, paddingTop: "env(safe-area-inset-top)" }}
+          >
+            <div className="flex items-center justify-between px-4 h-14 border-b border-shell-foreground/10 shrink-0">
+              <Link
+                href="/"
+                className="text-shell-foreground"
+                aria-label="Central Calendar home"
+                onClick={() => setMobileOpen(false)}
+              >
+                <Logo size={24} variant="horizontal" tone="light" />
+              </Link>
+              <button
+                type="button"
+                onClick={() => setMobileOpen(false)}
+                aria-label="Close menu"
+                className="p-2 rounded-md text-shell-foreground/80 hover:text-shell-foreground hover:bg-shell-foreground/10"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="container mx-auto px-4 py-4 flex flex-col gap-1 flex-1 overflow-y-auto overscroll-contain">
+              <form
+                role="search"
+                onSubmit={(e) => e.preventDefault()}
+                className="relative mb-3 flex items-center gap-2"
+              >
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-shell-foreground/50 pointer-events-none" />
+                  <Input
+                    type="text"
+                    inputMode="search"
+                    enterKeyHint="search"
+                    autoComplete="off"
+                    placeholder={t("nav.search")}
+                    className="cc-search-input pl-9 border-shell-foreground/20 placeholder:text-shell-foreground/40 h-10 text-base w-full"
+                    style={{
+                      WebkitAppearance: "none",
+                      appearance: "none",
+                      backgroundColor: "rgba(255,255,255,0.10)",
+                      color: "#ffffff",
+                      caretColor: "#ffffff",
+                      fontSize: "16px",
+                    }}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    aria-label="Search events"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  aria-label={t("nav.search")}
+                  className="h-10 px-4 inline-flex items-center justify-center rounded-md bg-shell-foreground text-shell text-sm font-medium hover:bg-shell-foreground/90 transition-colors shrink-0"
+                >
+                  <Search className="h-4 w-4" />
+                </button>
+              </form>
+              {debouncedSearch.length > 2 && (
+                <div className="mb-3 -mt-1 bg-popover text-popover-foreground border border-border rounded-md shadow-lg p-2 max-h-72 overflow-y-auto">
+                  {isSearching ? (
+                    <div className="p-4 text-center text-sm text-muted-foreground">{t("common.loading")}</div>
+                  ) : searchResults && searchResults.length > 0 ? (
+                    <div className="flex flex-col gap-0.5">
+                      {searchResults.map((event) => (
+                        <Link
+                          key={event.id}
+                          href={`/event/${event.slug}`}
+                          className="p-2 hover:bg-muted rounded-md cursor-pointer block transition-colors duration-150"
+                          onClick={() => { setSearch(""); setMobileOpen(false); }}
+                        >
+                          <div className="font-medium text-sm truncate">{pickLocalized(event.title, (event as any).titleRu)}</div>
+                          <div className="text-xs text-muted-foreground flex gap-2 mt-0.5">
+                            <span>{new Date(event.startDate).toLocaleDateString()}</span>
+                            <span>·</span>
+                            <span>{event.countryName}</span>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="p-4 text-center text-sm text-muted-foreground">{t("events.none", "No results found")}</div>
+                  )}
+                </div>
+              )}
+              {NAV_LINKS.map((l) => {
+                const isActive = location === l.href || (l.href === "/articles" && location.startsWith("/articles"));
+                return (
+                  <Link
+                    key={l.href}
+                    href={l.href}
+                    className={`py-3 px-3 rounded-md text-base font-medium transition-colors duration-150 border-l-2 ${
+                      isActive
+                        ? "border-shell-foreground text-shell-foreground"
+                        : "border-transparent text-shell-foreground/75 hover:text-shell-foreground"
+                    }`}
+                  >
+                    {t(l.key)}
+                  </Link>
+                );
+              })}
+              <Link
+                href="/submit-event"
+                className="mt-2 py-2.5 px-3 rounded-md text-sm font-semibold bg-shell-foreground text-shell hover:bg-shell-foreground/90 transition-colors duration-150 inline-flex items-center justify-center gap-2"
+              >
+                <Send className="h-4 w-4" />
+                {t("nav.submit")}
+              </Link>
+              <div className="mt-2 pt-2 border-t border-shell-foreground/10">
+                <button
+                  type="button"
+                  onClick={() => setMobileCountriesOpen((v) => !v)}
+                  className="w-full flex items-center justify-between py-2 px-3 text-xs font-semibold uppercase tracking-wider text-shell-foreground/40 hover:text-shell-foreground/70"
+                  aria-expanded={mobileCountriesOpen}
+                >
+                  <span>{t("nav.countries")}</span>
+                  <ChevronDown className={`h-3 w-3 transition-transform ${mobileCountriesOpen ? "rotate-180" : ""}`} />
+                </button>
+                {mobileCountriesOpen && (
+                  <div className="flex flex-col">
+                    {COUNTRIES.map((c) => (
+                      <Link
+                        key={c.href}
+                        href={c.href}
+                        className={`py-2 px-3 rounded-md text-sm transition-colors duration-150 block ${
+                          c.accent ? "text-shell-foreground/90 font-medium" : "text-shell-foreground/70 hover:bg-shell-foreground/10 hover:text-shell-foreground"
+                        }`}
+                      >
+                        {t(c.key)}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="mt-2 pt-3 border-t border-shell-foreground/10 flex items-center justify-between px-1">
+                <span className="text-xs uppercase tracking-wider text-shell-foreground/40">{t("common.language")}</span>
+                <div className="flex items-center gap-1">
+                  <ThemeToggle />
+                  <LanguageSwitcher />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </header>
+
+      <main className="flex-1">{children}</main>
+
+      <footer className="bg-shell border-t border-shell-foreground/10 py-12 mt-12">
+        <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row justify-between items-center md:items-start gap-10">
+          <div className="max-w-xs text-center md:text-left text-shell-foreground">
+            <Link href="/" aria-label="Central Calendar home" className="inline-block">
+              <Logo size={36} variant="horizontal" tone="light" />
+            </Link>
+            <p className="text-sm text-shell-foreground/50 mt-3">
+              {t("footer.tagline")}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-12 text-sm">
+            <div className="flex flex-col gap-2">
+              <span className="font-medium text-shell-foreground mb-1">{t("footer.explore")}</span>
+              <Link href="/" className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">{t("nav.home")}</Link>
+              <Link href="/calendar" className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">{t("nav.calendar")}</Link>
+              <Link href="/online" className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">{t("nav.online")}</Link>
+              <Link href="/articles" className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">{t("nav.articles")}</Link>
+              <Link href="/cross-border" className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">{t("nav.crossBorder")}</Link>
+              <Link href="/submit-event" className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">{t("nav.submit")}</Link>
+              <Link href="/about" className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">{t("nav.about")}</Link>
+            </div>
+            <div className="flex flex-col gap-2">
+              <span className="font-medium text-shell-foreground mb-1">{t("footer.region")}</span>
+              {COUNTRIES.slice(0, 5).map((c) => (
+                <Link key={c.href} href={c.href} className="text-shell-foreground/50 hover:text-shell-foreground transition-colors duration-150">
+                  {t(c.key)}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 md:px-8 mt-10 pt-6 border-t border-shell-foreground/10 text-center text-xs text-shell-foreground/30">
+          &copy; {new Date().getFullYear()} {t("footer.copyright")}
+        </div>
+      </footer>
+    </div>
+  );
+}

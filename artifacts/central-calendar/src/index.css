@@ -1,0 +1,226 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card-border: hsl(var(--card-border));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover-border: hsl(var(--popover-border));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary-border: var(--primary-border);
+
+  /* Institutional shell wrapper (header / footer).
+     Distinct from --primary so accent buttons keep their dark-green color
+     while the shell adapts to the page surface. */
+  --color-shell: hsl(var(--shell));
+  --color-shell-foreground: hsl(var(--shell-foreground));
+
+  /* Hero stage — its own surface so the hero can use a different palette
+     from the header/footer (e.g. warm parchment in light theme so the
+     #3b4f43 brand mark reads against it). */
+  --color-hero: hsl(var(--hero));
+  --color-hero-foreground: hsl(var(--hero-foreground));
+
+  /* Hover accent for interactive titles / links inside cards. Brand-aligned
+     dark green in light theme, lighter sage in dark theme so it stays
+     legible against the dark card surface (where --primary blends in). */
+  --color-hover-accent: hsl(var(--hover-accent));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary-border: var(--secondary-border);
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted-border: var(--muted-border);
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent-border: var(--accent-border);
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive-border: var(--destructive-border);
+
+  --font-sans: var(--app-font-sans);
+  --font-serif: var(--app-font-serif);
+  --font-mono: var(--app-font-mono);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  /* Warm parchment palette — softer than pure white, easier on the eyes,
+     more editorial / institutional feel. */
+  --background: 38 20% 92%;
+  --foreground: 145 18% 15%;
+
+  /* Cards lift above the body but stay warm, never pure white. */
+  --card: 40 28% 96%;
+  --card-foreground: 145 18% 15%;
+  --card-border: 38 14% 82%;
+
+  --popover: 40 28% 96%;
+  --popover-foreground: 145 18% 15%;
+  --popover-border: 38 14% 82%;
+
+  /* Institutional brand color (light theme) */
+  --primary: 145 14% 27%;
+  --primary-foreground: 40 28% 96%;
+
+  --secondary: 38 16% 87%;
+  --secondary-foreground: 145 18% 20%;
+
+  --muted: 38 16% 87%;
+  --muted-foreground: 145 10% 38%;
+
+  --accent: 38 16% 87%;
+  --accent-foreground: 145 18% 20%;
+
+  --destructive: 0 70% 42%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 38 14% 80%;
+  --input: 38 14% 80%;
+  --ring: 145 14% 27%;
+
+  --radius: 0.5rem;
+
+  --app-font-sans: 'Inter', system-ui, sans-serif;
+  --app-font-serif: 'Georgia', serif;
+  --app-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Brand accent used by SVG logo + accents in light mode */
+  --brand-accent: #3b4f43;
+
+  /* Light theme shell — institutional dark-green bar (header / footer)
+     with white text + logo. */
+  --shell: 145 14% 27%;
+  --shell-foreground: 40 30% 97%;
+
+  /* Light theme hero — warm linen parchment (NOT white) so the brand-green
+     #3b4f43 logo and dark text read with editorial contrast. */
+  --hero: 40 32% 88%;
+  --hero-foreground: 145 18% 15%;
+
+  /* Light theme hover accent — institutional brand green */
+  --hover-accent: 145 14% 27%;
+}
+
+.dark {
+  /* Original dark theme — true dark navy. The branded wrapper
+     (--primary used by header / hero / footer) is set to the SAME
+     dark navy as the page background so the institutional bar
+     blends into the page instead of standing out as a stripe. */
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
+
+  --card: 222 47% 13%;
+  --card-foreground: 210 40% 98%;
+  --card-border: 217 32% 20%;
+
+  --popover: 222 47% 13%;
+  --popover-foreground: 210 40% 98%;
+  --popover-border: 217 32% 20%;
+
+  /* Header / hero / footer (bg-primary) blend into the dark page. */
+  --primary: 222 47% 11%;
+  --primary-foreground: 210 40% 98%;
+
+  --secondary: 217 32% 17%;
+  --secondary-foreground: 210 40% 98%;
+
+  --muted: 217 32% 17%;
+  --muted-foreground: 215 20% 65%;
+
+  --accent: 217 32% 17%;
+  --accent-foreground: 210 40% 98%;
+
+  --destructive: 0 62% 40%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 217 32% 20%;
+  --input: 217 32% 20%;
+  --ring: 212.7 26.8% 83.9%;
+
+  /* Dark theme shell — same dark navy as background so the institutional
+     wrapper blends into the page (no white/green stripe). */
+  --shell: 222 47% 11%;
+  --shell-foreground: 210 40% 98%;
+
+  /* Dark theme hero — keep navy so the white logo and copy stay legible. */
+  --hero: 222 47% 11%;
+  --hero-foreground: 210 40% 98%;
+
+  /* Dark theme hover accent — soft sage green that pops against the navy
+     card surface (where --primary would blend into the background). */
+  --hover-accent: 145 32% 68%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    color-scheme: light dark;
+  }
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+ * SVG Logo color control
+ *
+ * The brand mark in /public/logo.svg uses fill/stroke="currentColor" so we
+ * can drive its color from CSS without ever touching the SVG paths.
+ *   - dark theme  → white
+ *   - light theme → #3b4f43 (institutional brand accent)
+ * An inline `style="color: ..."` on the logo (set by `tone` prop) wins over
+ * the theme rules — used by the always-dark header where the mark must stay
+ * white regardless of the page theme.
+ * -------------------------------------------------------------------------- */
+.light-theme .site-logo:not([data-tone]):not([style*="filter"]),
+.light-theme .cc-logo:not([data-tone]):not([style*="filter"]) {
+  filter: brightness(0);
+}
+.dark-theme .site-logo:not([data-tone]):not([style*="filter"]),
+.dark-theme .cc-logo:not([data-tone]):not([style*="filter"]) {
+  filter: brightness(0) invert(1);
+}
+
+/* ----------------------------------------------------------------------------
+ * Layout stability helpers — explicit aspect ratios prevent CLS
+ * -------------------------------------------------------------------------- */
+.cc-aspect-hero {
+  aspect-ratio: 21 / 9;
+}
+.cc-aspect-card {
+  aspect-ratio: 16 / 9;
+}
+
+/* Smooth font swap fallback to reduce FOIT */
+@font-face {
+  font-family: "Inter Fallback";
+  src: local("Inter"), local("Arial");
+  font-display: swap;
+  size-adjust: 100%;
+  ascent-override: 90%;
+}

@@ -1,0 +1,1300 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Central Calendar API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: events
+    description: Event operations
+  - name: countries
+    description: Country operations
+  - name: tags
+    description: Tag operations
+  - name: admin
+    description: Admin operations
+  - name: search
+    description: Search operations
+  - name: articles
+    description: Article operations
+  - name: settings
+    description: Site settings
+  - name: submissions
+    description: Public event submissions
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /events:
+    get:
+      operationId: listEvents
+      tags: [events]
+      summary: List events
+      parameters:
+        - name: country
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: format
+          in: query
+          schema:
+            type: string
+          description: Filter by event format (offline, online, hybrid)
+        - name: featured
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of events
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListEventsResponse"
+
+  /events/featured:
+    get:
+      operationId: getFeaturedEvents
+      tags: [events]
+      summary: Get featured events
+      responses:
+        "200":
+          description: Featured events
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListEventsResponse"
+
+  /events/upcoming:
+    get:
+      operationId: getUpcomingEvents
+      tags: [events]
+      summary: Get upcoming events
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Upcoming events
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListEventsResponse"
+
+  /events/cross-border:
+    get:
+      operationId: getCrossBorderEvents
+      tags: [events]
+      summary: Get cross-border events
+      responses:
+        "200":
+          description: Cross-border events
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListEventsResponse"
+
+  /events/stats:
+    get:
+      operationId: getEventStats
+      tags: [events]
+      summary: Get event statistics
+      responses:
+        "200":
+          description: Event statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EventStats"
+
+  /events/{slug}:
+    get:
+      operationId: getEventBySlug
+      tags: [events]
+      summary: Get event by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Event details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "404":
+          description: Event not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /events/{slug}/related:
+    get:
+      operationId: getRelatedEvents
+      tags: [events]
+      summary: Get related events
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Related events
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListEventsResponse"
+
+  /submit-event:
+    post:
+      operationId: submitEvent
+      tags: [submissions]
+      summary: Public event submission
+      description: Submits an event for admin approval. Stored with status pending_review.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitEventBody"
+      responses:
+        "201":
+          description: Submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /articles:
+    get:
+      operationId: listArticles
+      tags: [articles]
+      summary: List published articles
+      parameters:
+        - name: country
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListArticlesResponse"
+
+  /articles/{slug}:
+    get:
+      operationId: getArticleBySlug
+      tags: [articles]
+      summary: Get article by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Article
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /site-settings:
+    get:
+      operationId: getSiteSettings
+      tags: [settings]
+      summary: Get public site settings (banner image)
+      responses:
+        "200":
+          description: Settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+
+  /admin/site-settings:
+    put:
+      operationId: updateSiteSettings
+      tags: [admin]
+      summary: Update site settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSiteSettingsBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /banners:
+    get:
+      operationId: listBanners
+      tags: [banners]
+      summary: List active site banners
+      responses:
+        "200":
+          description: Banners
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListBannersResponse"
+
+  /admin/banners:
+    get:
+      operationId: adminListBanners
+      tags: [admin]
+      summary: Admin list all banners
+      responses:
+        "200":
+          description: All banners
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListBannersResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      operationId: createBanner
+      tags: [admin]
+      summary: Create banner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBannerBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Banner"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/banners/{id}:
+    patch:
+      operationId: updateBanner
+      tags: [admin]
+      summary: Update banner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBannerBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Banner"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteBanner
+      tags: [admin]
+      summary: Delete banner
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /translations:
+    get:
+      operationId: listTranslations
+      tags: [translations]
+      summary: List all UI translation overrides
+      responses:
+        "200":
+          description: Translations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListTranslationsResponse"
+
+  /admin/translations:
+    put:
+      operationId: upsertTranslation
+      tags: [admin]
+      summary: Upsert a translation key
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpsertTranslationBody"
+      responses:
+        "200":
+          description: Upserted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Translation"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/articles:
+    get:
+      operationId: adminListArticles
+      tags: [admin]
+      summary: Admin list all articles
+      responses:
+        "200":
+          description: All articles
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListArticlesResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      operationId: createArticle
+      tags: [admin]
+      summary: Create article
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateArticleBody"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/articles/{id}:
+    patch:
+      operationId: updateArticle
+      tags: [admin]
+      summary: Update article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateArticleBody"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Article"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteArticle
+      tags: [admin]
+      summary: Delete article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/events:
+    get:
+      operationId: adminListEvents
+      tags: [admin]
+      summary: Admin list all events
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: country
+          in: query
+          schema:
+            type: string
+        - name: tag
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: All events
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListEventsResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    post:
+      operationId: createEvent
+      tags: [admin]
+      summary: Create event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateEventBody"
+      responses:
+        "201":
+          description: Created event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/events/{id}:
+    patch:
+      operationId: updateEvent
+      tags: [admin]
+      summary: Update event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEventBody"
+      responses:
+        "200":
+          description: Updated event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteEvent
+      tags: [admin]
+      summary: Delete event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/events/{id}/publish:
+    post:
+      operationId: publishEvent
+      tags: [admin]
+      summary: Publish event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Published event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/events/{id}/archive:
+    post:
+      operationId: archiveEvent
+      tags: [admin]
+      summary: Archive event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Archived event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/events/{id}/reject:
+    post:
+      operationId: rejectEvent
+      tags: [admin]
+      summary: Reject pending event submission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Rejected event
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/login:
+    post:
+      operationId: adminLogin
+      tags: [admin]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLoginBody"
+      responses:
+        "200":
+          description: Login success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminLoginResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/logout:
+    post:
+      operationId: adminLogout
+      tags: [admin]
+      summary: Admin logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /admin/me:
+    get:
+      operationId: adminMe
+      tags: [admin]
+      summary: Get current admin session
+      responses:
+        "200":
+          description: Admin session info
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminSession"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /admin/logs:
+    get:
+      operationId: getAdminLogs
+      tags: [admin]
+      summary: Get admin action logs
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Admin logs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListAdminLogsResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /countries:
+    get:
+      operationId: listCountries
+      tags: [countries]
+      summary: List countries
+      responses:
+        "200":
+          description: List of countries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListCountriesResponse"
+
+  /tags:
+    get:
+      operationId: listTags
+      tags: [tags]
+      summary: List tags
+      responses:
+        "200":
+          description: List of tags
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListTagsResponse"
+
+  /search:
+    get:
+      operationId: searchEvents
+      tags: [search]
+      summary: Search events
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListEventsResponse"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required: [status]
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      required: [success]
+
+    Country:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        slug: { type: string }
+      required: [id, name, slug]
+
+    Tag:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        slug: { type: string }
+      required: [id, name, slug]
+
+    Event:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        titleRu:
+          type: ["string", "null"]
+        slug: { type: string }
+        description: { type: string }
+        descriptionRu:
+          type: ["string", "null"]
+        previewImage:
+          type: ["string", "null"]
+        location: { type: string }
+        locationRu:
+          type: ["string", "null"]
+        startDate: { type: string }
+        endDate:
+          type: ["string", "null"]
+        organizerLink:
+          type: ["string", "null"]
+        contactEmail:
+          type: ["string", "null"]
+        status: { type: string }
+        eventFormat: { type: string }
+        featured: { type: boolean }
+        countryId: { type: integer }
+        countryName: { type: string }
+        countrySlug: { type: string }
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        createdAt: { type: string }
+        updatedAt: { type: string }
+      required:
+        - id
+        - title
+        - slug
+        - description
+        - location
+        - startDate
+        - status
+        - eventFormat
+        - featured
+        - countryId
+        - countryName
+        - countrySlug
+        - tags
+        - createdAt
+        - updatedAt
+
+    AdminLog:
+      type: object
+      properties:
+        id: { type: integer }
+        action: { type: string }
+        eventId:
+          type: ["integer", "null"]
+        eventTitle:
+          type: ["string", "null"]
+        timestamp: { type: string }
+      required: [id, action, timestamp]
+
+    EventStats:
+      type: object
+      properties:
+        totalPublished: { type: integer }
+        totalDraft: { type: integer }
+        totalArchived: { type: integer }
+        byCountry:
+          type: array
+          items:
+            type: object
+            properties:
+              countryName: { type: string }
+              countrySlug: { type: string }
+              count: { type: integer }
+            required: [countryName, countrySlug, count]
+        byTag:
+          type: array
+          items:
+            type: object
+            properties:
+              tagName: { type: string }
+              tagSlug: { type: string }
+              count: { type: integer }
+            required: [tagName, tagSlug, count]
+        upcomingThisMonth: { type: integer }
+      required: [totalPublished, totalDraft, totalArchived, byCountry, byTag, upcomingThisMonth]
+
+    CreateEventBody:
+      type: object
+      properties:
+        title: { type: string }
+        titleRu:
+          type: ["string", "null"]
+        slug: { type: string }
+        description: { type: string }
+        descriptionRu:
+          type: ["string", "null"]
+        previewImage:
+          type: ["string", "null"]
+        location: { type: string }
+        locationRu:
+          type: ["string", "null"]
+        startDate: { type: string }
+        endDate:
+          type: ["string", "null"]
+        organizerLink:
+          type: ["string", "null"]
+        contactEmail:
+          type: ["string", "null"]
+        status: { type: string }
+        eventFormat: { type: string }
+        featured: { type: boolean }
+        countryId: { type: integer }
+        tagIds:
+          type: array
+          items: { type: integer }
+      required: [title, slug, description, location, startDate, countryId]
+
+    UpdateEventBody:
+      type: object
+      properties:
+        title: { type: string }
+        titleRu:
+          type: ["string", "null"]
+        slug: { type: string }
+        description: { type: string }
+        descriptionRu:
+          type: ["string", "null"]
+        previewImage:
+          type: ["string", "null"]
+        location: { type: string }
+        locationRu:
+          type: ["string", "null"]
+        startDate: { type: string }
+        endDate:
+          type: ["string", "null"]
+        organizerLink:
+          type: ["string", "null"]
+        contactEmail:
+          type: ["string", "null"]
+        status: { type: string }
+        eventFormat: { type: string }
+        featured: { type: boolean }
+        countryId: { type: integer }
+        tagIds:
+          type: array
+          items: { type: integer }
+
+    SubmitEventBody:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string }
+        countryId: { type: integer }
+        tagIds:
+          type: array
+          items: { type: integer }
+        startDate: { type: string }
+        endDate:
+          type: ["string", "null"]
+        location: { type: string }
+        organizerLink:
+          type: ["string", "null"]
+        contactEmail: { type: string }
+        previewImage:
+          type: ["string", "null"]
+        eventFormat: { type: string }
+      required: [title, description, countryId, startDate, location, contactEmail]
+
+    AdminLoginBody:
+      type: object
+      properties:
+        email: { type: string }
+        password: { type: string }
+      required: [email, password]
+
+    AdminLoginResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        message: { type: string }
+        token: { type: string }
+      required: [success, message]
+
+    AdminSession:
+      type: object
+      properties:
+        authenticated: { type: boolean }
+        email:
+          type: ["string", "null"]
+      required: [authenticated]
+
+    SiteSettings:
+      type: object
+      properties:
+        id: { type: integer }
+        homepageBannerUrl:
+          type: ["string", "null"]
+        updatedAt: { type: string }
+      required: [id, updatedAt]
+
+    UpdateSiteSettingsBody:
+      type: object
+      properties:
+        homepageBannerUrl:
+          type: ["string", "null"]
+
+    Article:
+      type: object
+      properties:
+        id: { type: integer }
+        title: { type: string }
+        titleRu:
+          type: ["string", "null"]
+        slug: { type: string }
+        coverImage:
+          type: ["string", "null"]
+        content: { type: string }
+        contentRu:
+          type: ["string", "null"]
+        countryId:
+          type: ["integer", "null"]
+        countryName:
+          type: ["string", "null"]
+        countrySlug:
+          type: ["string", "null"]
+        author:
+          type: ["string", "null"]
+        status: { type: string }
+        publishedAt:
+          type: ["string", "null"]
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        createdAt: { type: string }
+        updatedAt: { type: string }
+      required: [id, title, slug, content, status, tags, createdAt, updatedAt]
+
+    CreateArticleBody:
+      type: object
+      properties:
+        title: { type: string }
+        titleRu:
+          type: ["string", "null"]
+        slug: { type: string }
+        coverImage:
+          type: ["string", "null"]
+        content: { type: string }
+        contentRu:
+          type: ["string", "null"]
+        countryId:
+          type: ["integer", "null"]
+        author:
+          type: ["string", "null"]
+        status: { type: string }
+        tagIds:
+          type: array
+          items: { type: integer }
+      required: [title, slug, content]
+
+    UpdateArticleBody:
+      type: object
+      properties:
+        title: { type: string }
+        titleRu:
+          type: ["string", "null"]
+        slug: { type: string }
+        coverImage:
+          type: ["string", "null"]
+        content: { type: string }
+        contentRu:
+          type: ["string", "null"]
+        countryId:
+          type: ["integer", "null"]
+        author:
+          type: ["string", "null"]
+        status: { type: string }
+        tagIds:
+          type: array
+          items: { type: integer }
+
+    ListEventsResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Event"
+
+    ListCountriesResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Country"
+
+    ListTagsResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Tag"
+
+    ListAdminLogsResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/AdminLog"
+
+    ListArticlesResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Article"
+
+    Banner:
+      type: object
+      properties:
+        id: { type: integer }
+        imageUrl: { type: string }
+        title:
+          type: ["string", "null"]
+        titleRu:
+          type: ["string", "null"]
+        subtitle:
+          type: ["string", "null"]
+        subtitleRu:
+          type: ["string", "null"]
+        linkUrl:
+          type: ["string", "null"]
+        sortOrder: { type: integer }
+        isActive: { type: boolean }
+        updatedAt: { type: string }
+      required: [id, imageUrl, sortOrder, isActive, updatedAt]
+
+    ListBannersResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Banner"
+
+    CreateBannerBody:
+      type: object
+      properties:
+        imageUrl: { type: string }
+        title:
+          type: ["string", "null"]
+        titleRu:
+          type: ["string", "null"]
+        subtitle:
+          type: ["string", "null"]
+        subtitleRu:
+          type: ["string", "null"]
+        linkUrl:
+          type: ["string", "null"]
+        sortOrder: { type: integer }
+        isActive: { type: boolean }
+      required: [imageUrl]
+
+    UpdateBannerBody:
+      type: object
+      properties:
+        imageUrl: { type: string }
+        title:
+          type: ["string", "null"]
+        titleRu:
+          type: ["string", "null"]
+        subtitle:
+          type: ["string", "null"]
+        subtitleRu:
+          type: ["string", "null"]
+        linkUrl:
+          type: ["string", "null"]
+        sortOrder: { type: integer }
+        isActive: { type: boolean }
+
+    Translation:
+      type: object
+      properties:
+        key: { type: string }
+        en: { type: string }
+        ru: { type: string }
+      required: [key, en, ru]
+
+    ListTranslationsResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/Translation"
+
+    UpsertTranslationBody:
+      type: object
+      properties:
+        key: { type: string }
+        en: { type: string }
+        ru: { type: string }
+      required: [key, en, ru]
