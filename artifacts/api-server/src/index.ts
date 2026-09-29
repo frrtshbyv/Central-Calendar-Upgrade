@@ -1,5 +1,7 @@
 import app from "./app";
 import { logger } from "./lib/logger";
+import { ensureCanonicalTags } from "./lib/seed-tags";
+import { ensurePgExtensions } from "./lib/seed-extensions";
 
 const rawPort = process.env["PORT"] ?? "8080";
 const port = Number(rawPort);
@@ -15,4 +17,7 @@ app.listen(port, (err) => {
   }
 
   logger.info({ port }, "Server listening");
+
+  ensurePgExtensions().catch((err) => logger.warn({ err }, "Extension seed failed"));
+  ensureCanonicalTags().catch((err) => logger.warn({ err }, "Tag seed failed"));
 });

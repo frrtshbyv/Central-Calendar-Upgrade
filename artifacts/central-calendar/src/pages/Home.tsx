@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { Link } from "wouter";
 import { useGetEventStats, useListEvents, useGetSiteSettings, useListArticles, useListTags } from "@workspace/api-client-react";
 import { EventCard } from "@/components/EventCard";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { X, ArrowRight, Send } from "lucide-react";
 import { HeroSlider } from "@/components/HeroSlider";
 import { useI18n } from "@/i18n";
+import { splitTagName } from "@/lib/utils";
 
 const COUNTRIES: { slug: string; key: string }[] = [
   { slug: "uzbekistan", key: "nav.uzbekistan" },
@@ -63,43 +64,71 @@ export default function Home() {
 
   const hasFilters = selectedTags.length > 0 || selectedCountry !== "" || selectedFormat !== "";
 
+  // Scroll the events list into view whenever filters change so the user
+  // always sees the freshly filtered list from its top, regardless of where
+  // they were on the page when they tapped a filter.
+  const eventsListRef = useRef<HTMLDivElement>(null);
+  const isFirstFilterRender = useRef(true);
+  useEffect(() => {
+    if (isFirstFilterRender.current) {
+      isFirstFilterRender.current = false;
+      return;
+    }
+    const el = eventsListRef.current;
+    if (!el) return;
+    // Account for the sticky header (~80px) so the section heading is not
+    // hidden underneath it after the scroll.
+    const top = el.getBoundingClientRect().top + window.scrollY - 96;
+    window.scrollTo({ top, behavior: "smooth" });
+  }, [selectedTags, selectedCountry, selectedFormat]);
+
   return (
     <div className="w-full">
-      <section className="relative bg-primary text-primary-foreground border-b border-border overflow-hidden min-h-[70vh] md:min-h-[80vh] flex items-center">
+      <section className="relative bg-hero text-hero-foreground border-b border-border overflow-hidden min-h-[70vh] md:min-h-[80vh] flex items-center">
         <HeroSlider fallbackUrl={settings?.homepageBannerUrl ?? null} />
         <div className="relative container mx-auto max-w-5xl text-center py-20 sm:py-24 md:py-36 px-4 w-full">
-          <div className="inline-block mb-6 px-3 py-1 border border-primary-foreground/20 rounded-full text-xs font-medium uppercase tracking-[0.2em] text-primary-foreground/70">
+          <div className="inline-block mb-6 px-3 py-1 border border-hero-foreground/25 rounded-full text-xs font-medium uppercase tracking-[0.2em] text-hero-foreground/80">
             {t("hero.eyebrow")}
           </div>
           <div className="flex justify-center mb-6">
-            <Logo size={200} variant="stacked" className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.25)] max-w-[60vw] h-auto" />
+            <Logo
+              size={200}
+              variant="stacked"
+              priority
+              className="drop-shadow-[0_2px_12px_rgba(0,0,0,0.18)] max-w-[60vw] h-auto"
+            />
           </div>
           <h1 className="sr-only">Central Calendar</h1>
-          <p className="text-lg sm:text-xl md:text-2xl text-primary-foreground/80 font-mono uppercase tracking-[0.2em] mb-8">
-            {t("hero.tagline")}
-          </p>
-          <p className="text-sm sm:text-base md:text-lg text-primary-foreground/70 max-w-2xl mx-auto mb-10 leading-relaxed">
-            {t("hero.subtitle")}
-          </p>
+          {/* Frosted glass panel — softens the busy city image behind the
+              copy and gives the title + description a unified, editorial
+              container that reads in both themes. */}
+          <div className="inline-block mb-10 max-w-3xl bg-shell text-shell-foreground border border-shell-foreground/15 rounded-3xl px-6 sm:px-12 py-7 sm:py-9 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.25)]">
+            <p className="text-lg sm:text-xl md:text-2xl text-shell-foreground font-mono uppercase tracking-[0.2em] mb-5">
+              {t("hero.tagline")}
+            </p>
+            <p className="text-sm sm:text-base md:text-lg text-shell-foreground/85 leading-relaxed">
+              {t("hero.subtitle")}
+            </p>
+          </div>
           <div className="flex flex-wrap justify-center gap-3">
-            <Button asChild size="lg" variant="secondary">
+            <Button asChild size="lg" className="bg-hero-foreground text-hero hover:bg-hero-foreground/90">
               <Link href="/calendar">{t("hero.browse")} <ArrowRight className="ml-2 h-4 w-4" /></Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground hover:text-primary">
+            <Button asChild size="lg" variant="outline" className="border-hero-foreground/30 text-hero-foreground hover:bg-hero-foreground hover:text-hero">
               <Link href="/submit-event"><Send className="mr-2 h-4 w-4" /> {t("hero.submit")}</Link>
             </Button>
           </div>
-          <div className="mt-12 flex flex-wrap justify-center gap-4 md:gap-8 text-sm md:text-base font-mono opacity-80">
+          <div className="mt-12 flex flex-wrap justify-center gap-4 md:gap-8 text-sm md:text-base font-mono opacity-90">
             <div className="flex flex-col items-center">
               <span className="text-3xl font-bold mb-1">{stats?.totalPublished ?? 0}</span>
               <span className="uppercase tracking-wider text-xs">{t("hero.totalEvents", "Total Events")}</span>
             </div>
-            <div className="w-px h-12 bg-primary-foreground/20 hidden md:block" />
+            <div className="w-px h-12 bg-hero-foreground/25 hidden md:block" />
             <div className="flex flex-col items-center">
               <span className="text-3xl font-bold mb-1">{stats?.upcomingThisMonth ?? 0}</span>
               <span className="uppercase tracking-wider text-xs">{t("hero.thisMonth", "This Month")}</span>
             </div>
-            <div className="w-px h-12 bg-primary-foreground/20 hidden md:block" />
+            <div className="w-px h-12 bg-hero-foreground/25 hidden md:block" />
             <div className="flex flex-col items-center">
               <span className="text-3xl font-bold mb-1">{stats?.byCountry?.length ?? 0}</span>
               <span className="uppercase tracking-wider text-xs">{t("hero.nations", "Nations")}</span>
@@ -130,21 +159,24 @@ export default function Home() {
                     </button>
                   </span>
                 )}
-                {selectedTags.map((tg) => (
-                  <span key={tg} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/80 text-primary-foreground text-xs font-medium rounded-full">
-                    #{stats?.byTag?.find((tag) => tag.tagSlug === tg)?.tagName ?? tg}
-                    <button onClick={() => toggleTag(tg)} aria-label={`Remove tag ${tg}`}>
-                      <X className="h-3 w-3" />
-                    </button>
-                  </span>
-                ))}
+                {selectedTags.map((tg) => {
+                  const display = stats?.byTag?.find((tag) => tag.tagSlug === tg)?.tagName ?? tg;
+                  return (
+                    <span key={tg} className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary/80 text-primary-foreground text-xs font-medium rounded-full lowercase">
+                      #{splitTagName(display).join(" #") || display.toLowerCase()}
+                      <button onClick={() => toggleTag(tg)} aria-label={`Remove tag ${tg}`}>
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  );
+                })}
                 <button onClick={clearFilters} className="ml-auto text-xs text-muted-foreground hover:text-foreground transition-colors duration-150">
                   {t("filter.clear")}
                 </button>
               </div>
             )}
 
-            <div>
+            <div ref={eventsListRef} className="scroll-mt-24">
               <div className="flex items-center justify-between border-b border-border pb-4 mb-6">
                 <h2 className="text-2xl font-bold">{hasFilters ? t("events.upcoming") : t("events.upcoming")}</h2>
                 <span className="text-xs text-muted-foreground font-mono uppercase tracking-wider">
@@ -177,11 +209,19 @@ export default function Home() {
                     <Link key={a.id} href={`/articles/${a.slug}`} className="block group bg-card border border-border rounded-lg overflow-hidden hover-elevate transition-all">
                       {a.coverImage && (
                         <div className="aspect-video bg-muted overflow-hidden">
-                          <img src={a.coverImage} alt={a.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                          <img
+                            src={a.coverImage}
+                            alt={a.title}
+                            width="640"
+                            height="360"
+                            loading="lazy"
+                            decoding="async"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
                         </div>
                       )}
                       <div className="p-4">
-                        <h3 className="font-semibold mb-1 line-clamp-2 group-hover:text-primary transition-colors">
+                        <h3 className="font-semibold mb-1 line-clamp-2 group-hover:text-hover-accent transition-colors">
                           {pickLocalized(a.title, (a as any).titleRu)}
                         </h3>
                         <p className="text-xs text-muted-foreground">{a.publishedAt ? new Date(a.publishedAt).toLocaleDateString() : ""}{a.author ? ` · ${a.author}` : ""}</p>
@@ -248,15 +288,17 @@ export default function Home() {
                   {allTags?.map((tag) => {
                     const active = selectedTags.includes(tag.slug);
                     const count = stats?.byTag?.find((s) => s.tagSlug === tag.slug)?.count ?? 0;
+                    const tokens = splitTagName(tag.name);
+                    const label = tokens.length > 0 ? tokens.map((t) => `#${t}`).join(" ") : `#${tag.name.toLowerCase()}`;
                     return (
                       <button
                         key={tag.slug}
                         onClick={() => toggleTag(tag.slug)}
-                        className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-all duration-150 inline-flex items-center gap-1 ${
+                        className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-all duration-150 inline-flex items-center gap-1 lowercase ${
                           active ? "bg-primary text-primary-foreground border-primary" : "bg-muted text-foreground border-border hover:border-primary hover:text-primary"
                         } ${count === 0 ? "opacity-60" : ""}`}
                       >
-                        #{tag.name}
+                        {label}
                         {count > 0 && <span className={`text-[10px] ${active ? "text-primary-foreground/70" : "text-muted-foreground"}`}>{count}</span>}
                       </button>
                     );

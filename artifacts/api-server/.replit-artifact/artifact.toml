@@ -7,12 +7,13 @@ id = "3B4_FFSkEVBkAeYMFRJ2e"
 [[services]]
 localPort = 8080
 name = "API Server"
-paths = ["/"]
+paths = ["/api"]
 
 [services.development]
 run = "pnpm --filter @workspace/api-server run dev"
 
 [services.production]
+paths = ["/api"]
 
 [services.production.build]
 args = ["pnpm", "-r", "--filter", "@workspace/api-server...", "--filter", "@workspace/central-calendar...", "run", "build"]

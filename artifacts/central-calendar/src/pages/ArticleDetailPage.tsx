@@ -63,7 +63,16 @@ export default function ArticleDetailPage() {
       </div>
 
       {article.coverImage && (
-        <img src={article.coverImage} alt={title} className="w-full aspect-video object-cover rounded-lg mb-8" />
+        <img
+          src={article.coverImage}
+          alt={title}
+          width="1200"
+          height="675"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+          className="w-full aspect-video object-cover rounded-lg mb-8"
+        />
       )}
 
       <div className="prose prose-neutral dark:prose-invert max-w-none whitespace-pre-wrap leading-relaxed text-foreground">

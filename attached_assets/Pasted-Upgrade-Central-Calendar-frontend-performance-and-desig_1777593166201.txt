@@ -1,0 +1,256 @@
+Upgrade Central Calendar frontend performance and design without modifying backend architecture or database schema.
+
+IMPORTANT:
+
+DO NOT MODIFY DATABASE STRUCTURE
+DO NOT MODIFY ADMIN AUTHENTICATION SYSTEM
+DO NOT MODIFY SESSION STORAGE
+DO NOT MODIFY EVENTS TABLE
+DO NOT MODIFY ARTICLES TABLE
+DO NOT MODIFY TAG RELATIONS
+DO NOT MODIFY DATABASE CONNECTION LOGIC
+
+Only improve:
+
+performance
+UI themes
+tag display
+layout stability
+logo theme switching
+
+-------------------------------------
+
+ADD LIGHT THEME SUPPORT
+
+Implement:
+
+light mode
+dark mode
+system mode detection
+
+Use:
+
+prefers-color-scheme
+
+Store theme preference in localStorage
+
+Switch automatically on load
+
+-------------------------------------
+
+SVG LOGO COLOR CONTROL
+
+Use existing SVG logo file.
+
+In light theme apply logo color:
+
+#3b4f43
+
+In dark theme keep existing logo color unchanged.
+
+Apply color switching using:
+
+CSS fill property
+
+Example:
+
+.dark-theme svg {
+fill: currentColor;
+}
+
+.light-theme svg {
+fill: #3b4f43;
+}
+
+Ensure logo keeps vector sharpness and does not rasterize.
+
+Logo must preload:
+
+rel="preload"
+
+-------------------------------------
+
+OPTIMIZE HERO BANNER IMAGE
+
+Convert hero banner rendering:
+
+add responsive sizes
+
+add:
+
+loading="eager"
+
+for hero image only
+
+Add:
+
+width and height attributes
+
+Prevent layout shift
+
+-------------------------------------
+
+OPTIMIZE ALL OTHER IMAGES
+
+Apply:
+
+loading="lazy"
+
+Use:
+
+modern formats if available
+
+Add explicit width and height attributes
+
+-------------------------------------
+
+ENABLE STATIC ASSET CACHING
+
+Add headers:
+
+Cache-Control: public, max-age=31536000, immutable
+
+Apply to:
+
+images
+fonts
+css
+svg
+
+-------------------------------------
+
+OPTIMIZE FONT LOADING
+
+Add:
+
+font-display: swap
+
+Add:
+
+preconnect to font providers
+
+Avoid render blocking fonts
+
+-------------------------------------
+
+PRELOAD CRITICAL ASSETS
+
+Preload:
+
+hero banner image
+logo svg
+primary font
+
+Use:
+
+<link rel="preload">
+
+-------------------------------------
+
+REDUCE LAYOUT SHIFT (CLS FIX)
+
+Add fixed containers for:
+
+hero banner
+event cards
+images
+
+Use:
+
+aspect-ratio CSS
+
+-------------------------------------
+
+IMPROVE MOBILE RESPONSIVENESS
+
+Ensure layout works correctly:
+
+375px
+768px
+1024px
+1440px
+
+Convert sidebar:
+
+mobile → slide drawer
+
+Convert filters:
+
+mobile → dropdown selector
+
+Ensure event grid:
+
+desktop = 4 columns
+tablet = 2 columns
+mobile = 1 column
+
+-------------------------------------
+
+UPDATE TAG DISPLAY FORMAT
+
+Replace compound tags:
+
+Economy & Finance
+Marketing & Media
+
+with:
+
+#economy
+#finance
+#marketing
+#media
+
+Keep database unchanged
+
+Only update UI rendering layer
+
+-------------------------------------
+
+IMPROVE PAGE SPEED PERFORMANCE
+
+Implement:
+
+lazy loading images
+preload hero image
+font optimization
+cache headers
+non-blocking CSS
+responsive images
+aspect-ratio containers
+
+Do NOT change routing
+
+Do NOT change backend logic
+
+-------------------------------------
+
+FINAL RESULT REQUIRED
+
+Improved mobile PageSpeed score
+
+Working:
+
+light theme
+dark theme
+auto theme detection
+
+SVG logo auto color switching:
+
+light theme → #3b4f43
+dark theme → default color
+
+Optimized hero banner rendering
+
+Optimized fonts loading
+
+Optimized asset caching
+
+Updated tag UI format
+
+Fully working admin panel
+
+Fully working database
+
+Fully working sessions
+
+Fully working events system

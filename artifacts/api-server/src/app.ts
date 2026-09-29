@@ -116,10 +116,32 @@ if (isProduction) {
 
   if (spaDir) {
     logger.info({ spaDir }, "Serving SPA from disk");
-    app.use(express.static(spaDir, { index: false, maxAge: "1h" }));
+    // Vite emits hashed filenames into /assets/* — those are safe to cache forever.
+    // Other static files (svg, png, fonts) get a long cache too. The HTML entrypoint
+    // is served separately below with no-cache so deployments propagate immediately.
+    app.use(
+      express.static(spaDir, {
+        index: false,
+        setHeaders: (res, filePath) => {
+          const isHtml = /\.html?$/i.test(filePath);
+          const isHashedAsset = /\/assets\//.test(filePath);
+          const isLongLived = /\.(?:js|css|woff2?|ttf|eot|otf|svg|png|jpe?g|webp|avif|gif|ico|mp4|webm)$/i.test(filePath);
+          if (isHtml) {
+            // HTML must never be cached so users always pick up the latest hashed asset refs.
+            res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+          } else if (isHashedAsset || isLongLived) {
+            res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+          } else {
+            res.setHeader("Cache-Control", "public, max-age=300, must-revalidate");
+          }
+        },
+      }),
+    );
     app.use((req: Request, res: Response, next: NextFunction) => {
       if (req.path.startsWith("/api/")) return next();
       if (req.method !== "GET" && req.method !== "HEAD") return next();
+      // SPA shell must never be cached so users always get the latest build hash refs.
+      res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
       res.sendFile(path.join(spaDir, "index.html"), (err) => {
         if (err) {
           logger.error({ err, path: req.path }, "Failed to send SPA index");

@@ -30,7 +30,15 @@ export default function ArticlesPage() {
               <Link key={a.id} href={`/articles/${a.slug}`} className="block group bg-card border border-border rounded-lg overflow-hidden hover-elevate transition-all">
                 {a.coverImage ? (
                   <div className="aspect-video bg-muted overflow-hidden">
-                    <img src={a.coverImage} alt={title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <img
+                      src={a.coverImage}
+                      alt={title}
+                      width="640"
+                      height="360"
+                      loading="lazy"
+                      decoding="async"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
                   </div>
                 ) : (
                   <div className="aspect-video bg-gradient-to-br from-primary/20 to-primary/5" />
